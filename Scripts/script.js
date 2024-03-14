@@ -92,6 +92,16 @@ var FarmaciasStyle = [
   })
 ];
 
+var AlojamentoStyle = [
+  new ol.style.Style({
+    image: new ol.style.Icon({
+      anchor: [0.5, 0.5],
+      scale: 0.035,
+      src: "./Images/alojamento.svg"
+    })
+  })
+];
+
 var FerryStyle = [
   new ol.style.Style({
     image: new ol.style.Icon({
@@ -320,6 +330,18 @@ var layerGas = new ol.layer.Vector({
   }),
   style: function(feature, resolution) {
     return GasStyle;
+  },
+  visible: true
+});
+
+var layerAlojamento = new ol.layer.Vector({
+  title: "Alojamento em Aveiro",
+  source: new ol.source.Vector({
+    url: "./alojamento_local.geojson",
+    format: new ol.format.GeoJSON()
+  }),
+  style: function(feature, resolution) {
+    return AlojamentoStyle;
   },
   visible: true
 });
@@ -575,6 +597,7 @@ var map = new ol.Map({
     layerRiaBuffer,
     layerRiaB,
     layerRest,
+    layerAlojamento,
     layerMoliceiros,
     layerBancos,
     layerATM,
