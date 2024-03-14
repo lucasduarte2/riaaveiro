@@ -20,3 +20,25 @@
 .toggleButton:hover {
   background-color: #439944;
 }
+.active {
+  background-color: #4caf50;
+}
+
+#weather-info {
+  background-color: #f0f0f0;
+  border-radius: 10px;
+  padding: 20px;
+  margin-top: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  font-family: Arial, sans-serif;
+}
+
+#weather-info h2 {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+#weather-info p {
+  font-size: 18px;
+  margin-bottom: 5px;
+}

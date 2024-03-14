@@ -115,7 +115,7 @@ var KSufStyle = [
   new ol.style.Style({
     image: new ol.style.Icon({
       anchor: [0.5, 0.5],
-      scale: 0.035,
+      scale: 0.085,
       src: "./Images/kitesurfing.svg"
     })
   })
@@ -125,7 +125,7 @@ var OndaStyle = [
   new ol.style.Style({
     image: new ol.style.Icon({
       anchor: [0.5, 0.5],
-      scale: 0.035,
+      scale: 0.055,
       src: "./Images/onda.svg"
     })
   })
@@ -145,8 +145,18 @@ var PortoStyle = [
   new ol.style.Style({
     image: new ol.style.Icon({
       anchor: [0.5, 0.5],
-      scale: 0.035,
-      src: "./Images/ferry.svg"
+      scale: 0.55,
+      src: "./Images/barco.svg"
+    })
+  })
+];
+
+var PescaStyle = [
+  new ol.style.Style({
+    image: new ol.style.Icon({
+      anchor: [0.5, 0.5],
+      scale: 0.075,
+      src: "./Images/pesca.svg"
     })
   })
 ];
@@ -165,7 +175,7 @@ var PraiasStyle = [
   new ol.style.Style({
     image: new ol.style.Icon({
       anchor: [0.5, 0.5],
-      scale: 0.035,
+      scale: 0.055,
       src: "./Images/praia.svg"
     })
   })
@@ -376,7 +386,7 @@ var layerKsurf = new ol.layer.Vector({
 var layerOnda = new ol.layer.Vector({
   title: "Ondas em Aveiro",
   source: new ol.source.Vector({
-    url: "./ondas2.geojson",
+    url: "./ondas.geojson",
     format: new ol.format.GeoJSON()
   }),
   style: function(feature, resolution) {
@@ -409,6 +419,18 @@ var layerPorto = new ol.layer.Vector({
   visible: true
 });
 
+var layerPesca = new ol.layer.Vector({
+  title: "Pesca em Aveiro",
+  source: new ol.source.Vector({
+    url: "./pesca.geojson",
+    format: new ol.format.GeoJSON()
+  }),
+  style: function(feature, resolution) {
+    return PescaStyle;
+  },
+  visible: true
+});
+
 var layerPercurso = new ol.layer.Vector({
   title: "Percurso em Aveiro",
   source: new ol.source.Vector({
@@ -418,7 +440,7 @@ var layerPercurso = new ol.layer.Vector({
   style: new ol.style.Style({
     stroke: new ol.style.Stroke({
       color: 'green',
-      width: 2
+      width: 3
     })
   }),
   visible: true
@@ -433,7 +455,7 @@ var layerPercursoD = new ol.layer.Vector({
   style: new ol.style.Style({
     stroke: new ol.style.Stroke({
       color: 'gold',
-      width: 2
+      width: 3
     })
   }),
   visible: true
@@ -448,7 +470,7 @@ var layerPercursoA = new ol.layer.Vector({
   style: new ol.style.Style({
     stroke: new ol.style.Stroke({
       color: 'rgb(17, 92, 145)',
-      width: 2
+      width: 3
     })
   }),
   visible: true
@@ -470,10 +492,12 @@ var layerFerryRota = new ol.layer.Vector({
 });
 
 
+
+
 var layerPraias = new ol.layer.Vector({
   title: "Praias em Aveiro",
   source: new ol.source.Vector({
-    url: "./praia.geojson",
+    url: "./praias.geojson",
     format: new ol.format.GeoJSON()
   }),
   style: function(feature, resolution) {
@@ -489,11 +513,32 @@ var layerRiaB = new ol.layer.Vector({
     url: "./ria_aveiro.geojson",
     format: new ol.format.GeoJSON()
   }),
+  style: new ol.style.Style({
+    fill: new ol.style.Fill({
+      color: 'rgba(173, 216, 230, 0.8)'
+  })
+  }),
+  
+  visible: true
+});
+
+var layerRiaBuffer = new ol.layer.Vector({
+  title: "Ria Buffer em Aveiro",
+  source: new ol.source.Vector({
+    url: "./ria_aveiro_buffer.geojson",
+    format: new ol.format.GeoJSON()
+  }),
+  style: new ol.style.Style({
+    fill: new ol.style.Fill({
+      color: 'rgba(255, 165, 0, 0.3)'
+  })
+  }),
+  
   visible: true
 });
 
 var layerSal = new ol.layer.Vector({
-  title: "Ria Buffer em Aveiro",
+  title: "Sal em Aveiro",
   source: new ol.source.Vector({
     url: "./salinas.geojson",
     format: new ol.format.GeoJSON()
@@ -526,6 +571,9 @@ var map = new ol.Map({
         url: "https://tile.thunderforest.com/cycle/{z}/{x}/{y}.png?apikey=0b4a4b88017a4b16b033bde7e90c93f5"
       })
     }),
+    layerRiaBuffer,
+    layerRiaB,
+    layerRest,
     layerMoliceiros,
     layerBancos,
     layerATM,
@@ -546,11 +594,10 @@ var map = new ol.Map({
     layerPercursoD,
     layerPercursoA,
     layerPraias,
-    layerRiaB,
     layerSal,
     layerSurf,
     layerFerryRota,
-    layerRest
+    layerPesca
   ],
   view: new ol.View({
     center: ol.proj.fromLonLat([-8.6189, 40.5954]),
@@ -564,3 +611,32 @@ var map = new ol.Map({
 function toggleLayer(layer) {
   layer.setVisible(!layer.getVisible());
 }
+
+
+
+// Função para fazer uma solicitação HTTP para a API da WeatherAPI
+function fetchWeather() {
+  // URL da API da WeatherAPI
+  var apiUrl = "https://api.weatherapi.com/v1/current.json?key=5de554f2ce654bf68d6212006241403&q=Aveiro";
+
+  // Fazendo uma solicitação HTTP GET
+  fetch(apiUrl)
+    .then(response => response.json())
+    .then(data => {
+      // Processando os dados recebidos da API
+      var weatherInfo = document.getElementById("weather-info");
+      weatherInfo.innerHTML = `
+        <h2>Localização: ${data.location.name}</h2>
+        <p>Temperatura: ${data.current.temp_c}°C</p>
+        <p>Condição: ${data.current.condition.text}</p>
+        <p>Humidade: ${data.current.humidity}%</p>
+        <p>Velocidade do vento: ${data.current.wind_kph} km/h</p>
+      `;
+    })
+    .catch(error => {
+      console.error("Erro ao buscar dados do clima:", error);
+    });
+}
+
+// Chama a função para buscar os dados do clima ao carregar a página
+fetchWeather();
