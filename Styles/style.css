@@ -17,11 +17,13 @@
     border-radius: 8px;
 }
 
+
 .toggleButton:hover {
-  background-color: #439944;
+  background-color: #2b642c;
 }
-.active {
-  background-color: #4caf50;
+
+.novaCor {
+  background-color: #2b642c;
 }
 
 #weather-info {

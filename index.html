@@ -9,10 +9,16 @@
   <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/build/ol.js"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/css/ol.css" />
   <link rel="stylesheet" href="./Styles/style.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 </head>
 
 <body>
-  
+  <script>
+    $(document).ready(function(){
+    $("button").click(function(){
+  $(this).toggleClass("novaCor");
+});});
+  </script>
   <button onclick="toggleLayer(layerMoliceiros)" id="toggleButtonMoliceiros" class="toggleButton">Moliceiros</button>
   <button onclick="toggleLayer(layerBancos)" id="toggleButtonBancos" class="toggleButton">Bancos</button>
   <button onclick="toggleLayer(layerATM)" id="toggleButtonATM" class="toggleButton">ATM</button>
