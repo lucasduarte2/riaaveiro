@@ -1,0 +1,11 @@
+{
+"type": "FeatureCollection",
+"name": "volei_praia",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "full_id": "w561524513", "osm_id": "561524513", "osm_type": "way", "sport": "beachvolleyball", "name": null, "surface": null, "lit": null, "access": null, "leisure": "pitch" }, "geometry": { "type": "Point", "coordinates": [ -8.735298614379886, 40.660609745995806 ] } },
+{ "type": "Feature", "properties": { "full_id": "w910453330", "osm_id": "910453330", "osm_type": "way", "sport": "beachvolleyball", "name": null, "surface": "sand", "lit": "no", "access": "yes", "leisure": "pitch" }, "geometry": { "type": "Point", "coordinates": [ -8.502011624904553, 40.689626301011806 ] } },
+{ "type": "Feature", "properties": { "full_id": "w977815697", "osm_id": "977815697", "osm_type": "way", "sport": "beachvolleyball", "name": "Associação Desportiva Cultural e Recreativa Sra. dos Campos", "surface": "sand", "lit": "yes", "access": "permissive", "leisure": "pitch" }, "geometry": { "type": "Point", "coordinates": [ -8.706236510378229, 40.619088531607872 ] } },
+{ "type": "Feature", "properties": { "full_id": "w977818913", "osm_id": "977818913", "osm_type": "way", "sport": "beachvolleyball", "name": "Ria Activa", "surface": "sand", "lit": "no", "access": "customers", "leisure": "pitch" }, "geometry": { "type": "Point", "coordinates": [ -8.748521893297186, 40.606987769662666 ] } }
+]
+}

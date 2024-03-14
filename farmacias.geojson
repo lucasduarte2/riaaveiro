@@ -1,0 +1,10 @@
+{
+"type": "FeatureCollection",
+"name": "farmacias",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "full_id": "w100832166", "osm_id": "100832166", "osm_type": "way", "amenity": "pharmacy", "shop": null, "level": null, "brand_wiki": null, "brand": null, "building": null, "name": "Farmácia Confiança", "healthcare": "pharmacy", "dispensing": "yes" }, "geometry": { "type": "Point", "coordinates": [ -8.483390497209152, 40.762951306474122 ] } },
+{ "type": "Feature", "properties": { "full_id": "w290196965", "osm_id": "290196965", "osm_type": "way", "amenity": "pharmacy", "shop": null, "level": null, "brand_wiki": null, "brand": null, "building": "yes", "name": null, "healthcare": "pharmacy", "dispensing": "yes" }, "geometry": { "type": "Point", "coordinates": [ -8.478877970365648, 40.692344847654503 ] } },
+{ "type": "Feature", "properties": { "full_id": "w544740520", "osm_id": "544740520", "osm_type": "way", "amenity": "pharmacy", "shop": "chemist", "level": "0", "brand_wiki": "Q115388598", "brand": "Wells", "building": null, "name": "Wells", "healthcare": null, "dispensing": "no" }, "geometry": { "type": "Point", "coordinates": [ -8.614840777358154, 40.649662565445333 ] } }
+]
+}

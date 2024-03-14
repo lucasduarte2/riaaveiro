@@ -1,0 +1,13 @@
+{
+"type": "FeatureCollection",
+"name": "kitesurf",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "full_id": "n10241815448", "osm_id": "10241815448", "osm_type": "node", "sport": "kitesurfing", "name_de": null, "leisure": null, "supervised": "no", "natural": "beach", "name": "Spot Mama Prada", "lifeguard": "no" }, "geometry": { "type": "Point", "coordinates": [ -8.6780933, 40.7450188 ] } },
+{ "type": "Feature", "properties": { "full_id": "n10241886121", "osm_id": "10241886121", "osm_type": "node", "sport": "kitesurfing", "name_de": null, "leisure": "pitch", "supervised": null, "natural": null, "name": null, "lifeguard": null }, "geometry": { "type": "Point", "coordinates": [ -8.6498966, 40.7296757 ] } },
+{ "type": "Feature", "properties": { "full_id": "n10241950917", "osm_id": "10241950917", "osm_type": "node", "sport": "kitesurfing", "name_de": "Kitesurf- und Wingsurfspot Costa Nova (West)", "leisure": "pitch", "supervised": null, "natural": null, "name": null, "lifeguard": null }, "geometry": { "type": "Point", "coordinates": [ -8.7453451, 40.6286818 ] } },
+{ "type": "Feature", "properties": { "full_id": "n10241968903", "osm_id": "10241968903", "osm_type": "node", "sport": "kitesurfing", "name_de": "Kitesurf- und Wingsurfspot Costa Nova (Ost)", "leisure": "pitch", "supervised": null, "natural": null, "name": null, "lifeguard": null }, "geometry": { "type": "Point", "coordinates": [ -8.7370353, 40.6222 ] } },
+{ "type": "Feature", "properties": { "full_id": "n10246202676", "osm_id": "10246202676", "osm_type": "node", "sport": "kitesurfing", "name_de": "Kitesurf- und Wingsurfspot Praia do Barra", "leisure": "pitch", "supervised": null, "natural": null, "name": null, "lifeguard": null }, "geometry": { "type": "Point", "coordinates": [ -8.7504131, 40.6297533 ] } },
+{ "type": "Feature", "properties": { "full_id": "n10249206864", "osm_id": "10249206864", "osm_type": "node", "sport": "kitesurfing", "name_de": "Kitesurfspot Praia do Monte Branco", "leisure": "pitch", "supervised": null, "natural": null, "name": null, "lifeguard": null }, "geometry": { "type": "Point", "coordinates": [ -8.7017169, 40.7533593 ] } }
+]
+}

@@ -1,0 +1,11 @@
+{
+"type": "FeatureCollection",
+"name": "ferry2",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "full_id": "n1918728880", "osm_id": "1918728880", "osm_type": "node", "shelter": null, "lit": null, "bus": null, "bin": null, "bench": null, "public_transport": "stop_position", "operator": "AveiroBus", "name": "São Jacinto", "ferry": "yes", "amenity": "ferry_terminal" }, "geometry": { "type": "Point", "coordinates": [ -8.7297496, 40.6606822 ] } },
+{ "type": "Feature", "properties": { "full_id": "n2466332078", "osm_id": "2466332078", "osm_type": "node", "shelter": null, "lit": null, "bus": null, "bin": null, "bench": null, "public_transport": "stop_position", "operator": "AveiroBus", "name": "Forte da Barra", "ferry": "yes", "amenity": "ferry_terminal" }, "geometry": { "type": "Point", "coordinates": [ -8.7300272, 40.6499036 ] } },
+{ "type": "Feature", "properties": { "full_id": "n4873373707", "osm_id": "4873373707", "osm_type": "node", "shelter": "yes", "lit": "yes", "bus": "yes", "bin": "yes", "bench": "yes", "public_transport": "platform", "operator": null, "name": "Forte da Barra", "ferry": "yes", "amenity": null }, "geometry": { "type": "Point", "coordinates": [ -8.7308092, 40.6498498 ] } },
+{ "type": "Feature", "properties": { "full_id": "n5407993803", "osm_id": "5407993803", "osm_type": "node", "shelter": "no", "lit": null, "bus": null, "bin": null, "bench": "no", "public_transport": "platform", "operator": null, "name": "São Jacinto", "ferry": "yes", "amenity": null }, "geometry": { "type": "Point", "coordinates": [ -8.7297267, 40.6610012 ] } }
+]
+}

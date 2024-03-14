@@ -1,0 +1,10 @@
+{
+"type": "FeatureCollection",
+"name": "paragem_autocarro",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "full_id": "w119020913", "osm_id": "119020913", "osm_type": "way", "amenity": "bus_station", "start_date": null, "shelter": null, "operator": null, "addr_postc": null, "addr_stree": null, "addr_city": null, "short_name": "CCT", "public_tra": "station", "name": "Centro Coordenador de Transportes de Albergaria-a-Velha", "bus": "yes", "addr_house": "Centro Coordenador de Transportes de Albergaria-a-Velha" }, "geometry": { "type": "Point", "coordinates": [ -8.475413601186412, 40.689531452609053 ] } },
+{ "type": "Feature", "properties": { "full_id": "w554024652", "osm_id": "554024652", "osm_type": "way", "amenity": "bus_station", "start_date": null, "shelter": null, "operator": null, "addr_postc": null, "addr_stree": "Rua Manuel Alves Soares", "addr_city": "Oliveira de Azeméis", "short_name": null, "public_tra": "station", "name": "Estação Rodoviária da Transdev de Oliveira de Azeméis", "bus": "yes", "addr_house": null }, "geometry": { "type": "Point", "coordinates": [ -8.476576977972494, 40.838644259355185 ] } },
+{ "type": "Feature", "properties": { "full_id": "w1236120840", "osm_id": "1236120840", "osm_type": "way", "amenity": "bus_station", "start_date": "2018-05-14", "shelter": "no", "operator": "Transdev;AveiroBrus;Citi Express", "addr_postc": "3800-111", "addr_stree": "Rua Artur Almeida Eça", "addr_city": "Aveiro", "short_name": null, "public_tra": "station", "name": "Terminal Rodoviário de Aveiro", "bus": "yes", "addr_house": "Centro Coordenado" }, "geometry": { "type": "Point", "coordinates": [ -8.638561964787179, 40.64378335977154 ] } }
+]
+}

@@ -1,0 +1,8 @@
+{
+"type": "FeatureCollection",
+"name": "aluguer_carros",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "full_id": "w134608155", "osm_id": "134608155", "osm_type": "way", "amenity": "car_rental", "name": "Stand Rui Car" }, "geometry": { "type": "Point", "coordinates": [ -8.55642851923281, 40.715606262383027 ] } }
+]
+}
