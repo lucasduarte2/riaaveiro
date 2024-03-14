@@ -473,7 +473,7 @@ var layerFerryRota = new ol.layer.Vector({
 var layerPraias = new ol.layer.Vector({
   title: "Praias em Aveiro",
   source: new ol.source.Vector({
-    url: "./praias.geojson",
+    url: "./praia.geojson",
     format: new ol.format.GeoJSON()
   }),
   style: function(feature, resolution) {

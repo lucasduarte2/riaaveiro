@@ -3,7 +3,7 @@
     width: 100%;
   }
   
-#toggleButton {
+.toggleButton {
     background-color: #4caf50;
     border: none;
     color: white;
@@ -17,6 +17,6 @@
     border-radius: 8px;
 }
 
-#toggleButton:hover {
+.toggleButton:hover {
   background-color: #409142;
 }
