@@ -444,7 +444,7 @@ var layerOnda = new ol.layer.Vector({
 var layerBus = new ol.layer.Vector({
   title: "Bus em Aveiro",
   source: new ol.source.Vector({
-    url: "./paragensautocarro.geojson",
+    url: "./paragensautocarro.geoJSON",
     format: new ol.format.GeoJSON()
   }),
   style: function(feature, resolution) {
