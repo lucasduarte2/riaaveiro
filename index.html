@@ -5,7 +5,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-  <title>CodePen Home Openlayers style function</title>
+  <title>PTAS Grupo 4</title>
   <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/build/ol.js"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/css/ol.css" />
   <link rel="stylesheet" href="./Styles/style.css">
@@ -19,34 +19,35 @@
   $(this).toggleClass("novaCor");
 });});
   </script>
-  <button onclick="toggleLayer(layerPesca)" id="toggleButtonPesca" class="toggleButton">Pesca</button>
-  <button onclick="toggleLayer(layerRiaBuffer)" id="toggleButtonBuffer" class="toggleButton">Ria Buffer</button>
-  <button onclick="toggleLayer(layerAlojamento)" id="toggleButtonAlojamento" class="toggleButton">Alojamento</button>
-  <button onclick="toggleLayer(layerMoliceiros)" id="toggleButtonMoliceiros" class="toggleButton">Moliceiros</button>
-  <button onclick="toggleLayer(layerBancos)" id="toggleButtonBancos" class="toggleButton">Bancos</button>
-  <button onclick="toggleLayer(layerATM)" id="toggleButtonATM" class="toggleButton">ATM</button>
-  <button onclick="toggleLayer(layerBike)" id="toggleButtonBike" class="toggleButton">Bikes</button>
-  <button onclick="toggleLayer(layerCar)" id="toggleButtonCar" class="toggleButton">Carros</button>
-  <button onclick="toggleLayer(layerXavega)" id="toggleButtonXavega" class="toggleButton">Arte Xavega</button>
-  <button onclick="toggleLayer(layerGas)" id="toggleButtonGas" class="toggleButton">Gas Station</button>
-  <button onclick="toggleLayer(layerComboio)" id="toggleButtonComboio" class="toggleButton">Comboio</button>
-  <button onclick="toggleLayer(layerFarmacia)" id="toggleButtonFarmacia" class="toggleButton">Farmacia</button>
-  <button onclick="toggleLayer(layerFerry)" id="toggleButtonFerry" class="toggleButton">Ferry</button>
-  <button onclick="toggleLayer(layerHospital)" id="toggleButtonHospital" class="toggleButton">Hospital</button>
-  <button onclick="toggleLayer(layerKsurf)" id="toggleButtonKsurf" class="toggleButton">Kite Surfing</button>
-  <button onclick="toggleLayer(layerOnda)" id="toggleButtonOnda" class="toggleButton">Ondas</button>
-  <button onclick="toggleLayer(layerBus)" id="toggleButtonBus" class="toggleButton">Bus</button>
-  <button onclick="toggleLayer(layerPorto)" id="toggleButtonPorto" class="toggleButton">Porto</button>
-  <button onclick="toggleLayer(layerVolley)" id="toggleButtonVolley" class="toggleButton">Volley</button>
-  <button onclick="toggleLayer(layerPercurso)" id="toggleButtonPercurso" class="toggleButton">Percurso Verde</button>
-  <button onclick="toggleLayer(layerPercursoD)" id="toggleButtonPercursoD" class="toggleButton">Percurso Dourado</button>
-  <button onclick="toggleLayer(layerPercursoA)" id="toggleButtonPercursoA" class="toggleButton">Percurso Azul</button>
-  <button onclick="toggleLayer(layerFerryRota)" id="toggleButtonFerryRota" class="toggleButton">Ferry Rota</button>
-  <button onclick="toggleLayer(layerPraias)" id="toggleButtonPraias" class="toggleButton">Praias</button>
-  <button onclick="toggleLayer(layerRiaB)" id="toggleButtonRiaB" class="toggleButton">Ria de Aveiro</button>
-  <button onclick="toggleLayer(layerSal)" id="toggleButtonSal" class="toggleButton">Salinas</button>
-  <button onclick="toggleLayer(layerSurf)" id="toggleButtonSurf" class="toggleButton">Surf</button>
-  <button onclick="toggleLayer(layerRest)" id="toggleButtonRest" class="toggleButton">Restaurante</button>
+<button onclick="toggleLayer(layerBike)" id="toggleButtonBike" class="toggleButton">Aluguer Bicicletas</button>
+<button onclick="toggleLayer(layerCar)" id="toggleButtonCar" class="toggleButton">Aluguer Carros</button>
+<button onclick="toggleLayer(layerATM)" id="toggleButtonATM" class="toggleButton">ATM</button>
+<button onclick="toggleLayer(layerAlojamento)" id="toggleButtonAlojamento" class="toggleButton">Alojamento</button>
+<button onclick="toggleLayer(layerXavega)" id="toggleButtonXavega" class="toggleButton">Arte Xavega</button>
+<button onclick="toggleLayer(layerBancos)" id="toggleButtonBancos" class="toggleButton">Bancos</button>
+<button onclick="toggleLayer(layerGas)" id="toggleButtonGas" class="toggleButton">Bombas Gasolina</button>
+<button onclick="toggleLayer(layerDocas)" id="toggleButtonDocas" class="toggleButton">Docas</button>
+<button onclick="toggleLayer(layerComboio)" id="toggleButtonComboio" class="toggleButton">Estações Comboio</button>
+<button onclick="toggleLayer(layerFarmacia)" id="toggleButtonFarmacia" class="toggleButton">Farmacias</button>
+<button onclick="toggleLayer(layerFerry)" id="toggleButtonFerry" class="toggleButton">Ferry</button>
+<button onclick="toggleLayer(layerHospital)" id="toggleButtonHospital" class="toggleButton">Hospitais</button>
+<button onclick="toggleLayer(layerKsurf)" id="toggleButtonKsurf" class="toggleButton">Kite Surfing</button>
+<button onclick="toggleLayer(layerMoliceiros)" id="toggleButtonMoliceiros" class="toggleButton">Moliceiros</button>
+<button onclick="toggleLayer(layerPesca)" id="toggleButtonPesca" class="toggleButton">Núcleos Pesca</button>
+<button onclick="toggleLayer(layerOnda)" id="toggleButtonOnda" class="toggleButton">Ondas</button>
+<button onclick="toggleLayer(layerBus)" id="toggleButtonBus" class="toggleButton">Paragens Autocarro</button>
+<button onclick="toggleLayer(layerPercursoA)" id="toggleButtonPercursoA" class="toggleButton">Percurso Azul</button>
+<button onclick="toggleLayer(layerPercursoD)" id="toggleButtonPercursoD" class="toggleButton">Percurso Dourado</button>
+<button onclick="toggleLayer(layerPercurso)" id="toggleButtonPercurso" class="toggleButton">Percurso Verde</button>
+<button onclick="toggleLayer(layerPraias)" id="toggleButtonPraias" class="toggleButton">Praias</button>
+<button onclick="toggleLayer(layerPorto)" id="toggleButtonPorto" class="toggleButton">Porto</button>
+<button onclick="toggleLayer(layerRest)" id="toggleButtonRest" class="toggleButton">Restaurantes</button>
+<button onclick="toggleLayer(layerRiaB)" id="toggleButtonRiaB" class="toggleButton">Ria de Aveiro</button>
+<button onclick="toggleLayer(layerRiaBuffer)" id="toggleButtonBuffer" class="toggleButton">Ria Buffer</button>
+<button onclick="toggleLayer(layerFerryRota)" id="toggleButtonFerryRota" class="toggleButton">Rota Ferry</button>
+<button onclick="toggleLayer(layerSal)" id="toggleButtonSal" class="toggleButton">Salinas</button>
+<button onclick="toggleLayer(layerSurf)" id="toggleButtonSurf" class="toggleButton">Surf</button>
+<button onclick="toggleLayer(layerVolley)" id="toggleButtonVolley" class="toggleButton">Volley</button>
   <div id="map" class="map"></div>
   <div id="weather-info"></div>
   <script src="./Scripts/script.js"></script>
