@@ -348,7 +348,7 @@ var layerXavega = new ol.layer.Vector({
 var layerGas = new ol.layer.Vector({
   title: "Gas Station em Aveiro",
   source: new ol.source.Vector({
-    url: "./bombas_gota.geoJSON",
+    url: "./bombas_gota.GeoJSON",
     format: new ol.format.GeoJSON()
   }),
   style: function(feature, resolution) {
@@ -372,7 +372,7 @@ var layerAlojamento = new ol.layer.Vector({
 var layerComboio = new ol.layer.Vector({
   title: "Comboio em Aveiro",
   source: new ol.source.Vector({
-    url: "./estacao.geoJSON",
+    url: "./estacao.GeoJSON",
     format: new ol.format.GeoJSON()
   }),
   style: function(feature, resolution) {
@@ -444,7 +444,7 @@ var layerOnda = new ol.layer.Vector({
 var layerBus = new ol.layer.Vector({
   title: "Bus em Aveiro",
   source: new ol.source.Vector({
-    url: "./paragensautocarro.geoJSON",
+    url: "./paragensautocarro.GeoJSON",
     format: new ol.format.GeoJSON()
   }),
   style: function(feature, resolution) {
