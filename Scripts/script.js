@@ -42,6 +42,16 @@ var BikeStyle = [
   })
 ];
 
+var DocasStyle = [
+  new ol.style.Style({
+    image: new ol.style.Icon({
+      anchor: [0.5, 0.5],
+      scale: 0.04,
+      src: "./Images/doca.svg"
+    })
+  })
+];
+
 var CarStyle = [
   new ol.style.Style({
     image: new ol.style.Icon({
@@ -146,7 +156,7 @@ var BusStyle = [
   new ol.style.Style({
     image: new ol.style.Icon({
       anchor: [0.5, 0.5],
-      scale: 0.035,
+      scale: 0.025,
       src: "./Images/bus.svg"
     })
   })
@@ -298,6 +308,19 @@ var layerBike = new ol.layer.Vector({
   visible: true
 });
 
+var layerDocas = new ol.layer.Vector({
+  title: "Docas em Aveiro",
+  source: new ol.source.Vector({
+    url: "./marinas_docas.geojson",
+    format: new ol.format.GeoJSON()
+  }),
+  style: function(feature, resolution) {
+    return DocasStyle;
+  },
+  visible: true
+});
+
+
 var layerCar = new ol.layer.Vector({
   title: "Carros em Aveiro",
   source: new ol.source.Vector({
@@ -325,7 +348,7 @@ var layerXavega = new ol.layer.Vector({
 var layerGas = new ol.layer.Vector({
   title: "Gas Station em Aveiro",
   source: new ol.source.Vector({
-    url: "./bombas_gasolina.geojson",
+    url: "./bombas_gota.geojson",
     format: new ol.format.GeoJSON()
   }),
   style: function(feature, resolution) {
@@ -349,7 +372,7 @@ var layerAlojamento = new ol.layer.Vector({
 var layerComboio = new ol.layer.Vector({
   title: "Comboio em Aveiro",
   source: new ol.source.Vector({
-    url: "./estacao_comboio.geojson",
+    url: "./estacao.geojson",
     format: new ol.format.GeoJSON()
   }),
   style: function(feature, resolution) {
@@ -421,7 +444,7 @@ var layerOnda = new ol.layer.Vector({
 var layerBus = new ol.layer.Vector({
   title: "Bus em Aveiro",
   source: new ol.source.Vector({
-    url: "./paragem_autocarro.geojson",
+    url: "./paragensautocarro.geojson",
     format: new ol.format.GeoJSON()
   }),
   style: function(feature, resolution) {
@@ -538,7 +561,7 @@ var layerRiaB = new ol.layer.Vector({
   }),
   style: new ol.style.Style({
     fill: new ol.style.Fill({
-      color: 'rgba(173, 216, 230, 0.8)'
+      color: 'rgba(173, 216, 230, 0.3)'
   })
   }),
   
@@ -596,6 +619,7 @@ var map = new ol.Map({
     }),
     layerRiaBuffer,
     layerRiaB,
+    layerBus,
     layerRest,
     layerAlojamento,
     layerMoliceiros,
@@ -603,6 +627,7 @@ var map = new ol.Map({
     layerATM,
     layerBike,
     layerCar,
+    layerDocas,
     layerXavega,
     layerGas,
     layerComboio,
@@ -611,7 +636,6 @@ var map = new ol.Map({
     layerHospital,
     layerKsurf,
     layerOnda,
-    layerBus,
     layerPorto,
     layerVolley,
     layerPercurso,
