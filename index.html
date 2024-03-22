@@ -1,56 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>PTAS Grupo 4</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/build/ol.js"></script>
+    <script src="https://cdn.rawgit.com/Viglino/ol-ext/master/dist/ol-ext.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://viglino.github.io/ol-ext/dist/ol-ext.css"
+    />
+    <script
+      type="text/javascript"
+      src="https://viglino.github.io/ol-ext/dist/ol-ext.js"
+    ></script>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-  <title>PTAS Grupo 4</title>
-  <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/build/ol.js"></script>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/css/ol.css" />
-  <link rel="stylesheet" href="./Styles/style.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-</head>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.rawgit.com/Viglino/ol-ext/master/dist/ol-ext.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/css/ol.css"
+    />
+    <link rel="stylesheet" href="./Styles/style.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/build/ol.js"></script>
+    <script src="https://cdn.rawgit.com/Viglino/ol-ext/master/dist/ol-ext.js"></script>
+  </head>
 
-<body>
-  <script>
-    $(document).ready(function(){
-    $("button").click(function(){
-  $(this).toggleClass("novaCor");
-});});
-  </script>
-<button onclick="toggleLayer(layerBike)" id="toggleButtonBike" class="toggleButton">Aluguer Bicicletas</button>
-<button onclick="toggleLayer(layerCar)" id="toggleButtonCar" class="toggleButton">Aluguer Carros</button>
-<button onclick="toggleLayer(layerATM)" id="toggleButtonATM" class="toggleButton">ATM</button>
-<button onclick="toggleLayer(layerAlojamento)" id="toggleButtonAlojamento" class="toggleButton">Alojamento</button>
-<button onclick="toggleLayer(layerXavega)" id="toggleButtonXavega" class="toggleButton">Arte Xavega</button>
-<button onclick="toggleLayer(layerBancos)" id="toggleButtonBancos" class="toggleButton">Bancos</button>
-<button onclick="toggleLayer(layerGas)" id="toggleButtonGas" class="toggleButton">Bombas Gasolina</button>
-<button onclick="toggleLayer(layerDocas)" id="toggleButtonDocas" class="toggleButton">Docas</button>
-<button onclick="toggleLayer(layerComboio)" id="toggleButtonComboio" class="toggleButton">Estações Comboio</button>
-<button onclick="toggleLayer(layerFarmacia)" id="toggleButtonFarmacia" class="toggleButton">Farmacias</button>
-<button onclick="toggleLayer(layerFerry)" id="toggleButtonFerry" class="toggleButton">Ferry</button>
-<button onclick="toggleLayer(layerHospital)" id="toggleButtonHospital" class="toggleButton">Hospitais</button>
-<button onclick="toggleLayer(layerKsurf)" id="toggleButtonKsurf" class="toggleButton">Kite Surfing</button>
-<button onclick="toggleLayer(layerMoliceiros)" id="toggleButtonMoliceiros" class="toggleButton">Moliceiros</button>
-<button onclick="toggleLayer(layerPesca)" id="toggleButtonPesca" class="toggleButton">Núcleos Pesca</button>
-<button onclick="toggleLayer(layerOnda)" id="toggleButtonOnda" class="toggleButton">Ondas</button>
-<button onclick="toggleLayer(layerBus)" id="toggleButtonBus" class="toggleButton">Paragens Autocarro</button>
-<button onclick="toggleLayer(layerPercursoA)" id="toggleButtonPercursoA" class="toggleButton">Percurso Azul</button>
-<button onclick="toggleLayer(layerPercursoD)" id="toggleButtonPercursoD" class="toggleButton">Percurso Dourado</button>
-<button onclick="toggleLayer(layerPercurso)" id="toggleButtonPercurso" class="toggleButton">Percurso Verde</button>
-<button onclick="toggleLayer(layerPraias)" id="toggleButtonPraias" class="toggleButton">Praias</button>
-<button onclick="toggleLayer(layerPorto)" id="toggleButtonPorto" class="toggleButton">Porto</button>
-<button onclick="toggleLayer(layerRest)" id="toggleButtonRest" class="toggleButton">Restaurantes</button>
-<button onclick="toggleLayer(layerRiaB)" id="toggleButtonRiaB" class="toggleButton">Ria de Aveiro</button>
-<button onclick="toggleLayer(layerRiaBuffer)" id="toggleButtonBuffer" class="toggleButton">Ria Buffer</button>
-<button onclick="toggleLayer(layerFerryRota)" id="toggleButtonFerryRota" class="toggleButton">Rota Ferry</button>
-<button onclick="toggleLayer(layerSal)" id="toggleButtonSal" class="toggleButton">Salinas</button>
-<button onclick="toggleLayer(layerSurf)" id="toggleButtonSurf" class="toggleButton">Surf</button>
-<button onclick="toggleLayer(layerVolley)" id="toggleButtonVolley" class="toggleButton">Volley</button>
-  <div id="map" class="map"></div>
-  <div id="weather-info"></div>
-  <script src="./Scripts/script.js"></script>
-</body>
+  <body>
+    <div id="map" class="map"></div>
+    <div id="map-switcher" class="dropdown">
+      <button id="dropdown-button" class="dropbtn">Mapas</button>
+      <div id="dropdown-content" class="dropdown-content">
+        <label>
+          <input type="radio" name="map" id="map1-radio" />
+          <img src="Images/MapaOSM.png" width="80" height="80" />
+          <span>Mapa OSM</span>
+        </label>
+        <label>
+          <input type="radio" name="map" id="map2-radio" />
+          <img src="Images/Mapa2.png" width="80" height="80" />
+          <span>Mapa 2</span>
+        </label>
+        <label>
+          <input type="radio" name="map" id="map3-radio" />
+          <img src="Images/MapaAereal.png" width="80" height="80" />
+          <span>Bing Aerial</span>
+        </label>
+        <label>
+          <input type="radio" name="map" id="map4-radio" />
+          <img src="Images/MapaDark.png" width="80" height="80" />
+          <span>Bing Dark</span>
+        </label>
+      </div>
+    </div>
+    <div id="popup" class="ol-popup">
+      <a href="#" id="popup-closer" class="ol-popup-closer">&times;</a>
+      <div id="popup-content"></div>
+    </div>
 
+    <script src="./Scripts/script.js"></script>
+  </body>
 </html>
