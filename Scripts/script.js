@@ -858,60 +858,43 @@ map.on("click", function (evt) {
   map.forEachFeatureAtPixel(evt.pixel, function (feature) {
     if (feature === weatherMarker) {
       // Buscar dados da API
-      const url =
-        "https://api.ipma.pt/open-data/observation/meteorology/stations/observations.json";
+      const url = "https://api.ipma.pt/open-data/observation/meteorology/stations/observations.json";
       const stationId = "1210702";
+      const timestamp = "2024-03-27T12:00"; // Timestamp dos dados desejados
 
       fetch(url)
         .then((response) => response.json())
         .then((data) => {
-          // Converter os dados para um array de [data, idEstacao, observação]
-          const allData = Object.entries(data).flatMap(([date, stations]) =>
-            Object.entries(stations).map(([id, observation]) => [
-              date,
-              id,
-              observation,
-            ])
-          );
+          console.log("Dados da API:", data); // Console log dos dados retornados pela API
 
-          // Filtrar os dados pela estação
-          const stationData = allData.filter(([, id]) => id === stationId);
-
-          // Verificar se os dados da estação estão disponíveis
-          if (stationData.length > 0) {
-            // Ordenar os dados pela data
-            stationData.sort(
-              ([dateA], [dateB]) => new Date(dateB) - new Date(dateA)
-            );
-
-            // Obter a observação mais recente
-            const [date, , observation] = stationData[0];
-
-            // Substituir o "T" por um espaço na data
-            const formattedDate = date.replace("T", " ");
-
-            // Exibir os dados no pop-up
-            var popup = new ol.Overlay({
-              element: document.getElementById("popup"),
-              positioning: "bottom-center",
-              stopEvent: false,
-              offset: [0, -50], // ajuste o deslocamento conforme necessário
-            });
-            map.addOverlay(popup);
-            popup.setPosition(evt.coordinate);     
+          // Verificar se os dados para a estação e timestamp desejado estão disponíveis
+          if (data[timestamp] && data[timestamp][stationId]) {
+            const observation = data[timestamp][stationId];
+            const formattedDate = new Date(timestamp).toLocaleString(); // Converter o timestamp para o formato local
             const weatherInfo = `
-            <h3>Data Hora: ${formattedDate}</h2>
-            <h2>Meteorologia Aveiro (Universidade de Aveiro - IPMA)</h2>
-            ${observation && observation.intensidadeVentoKM ? `<p>Intensidade do Vento: ${observation.intensidadeVentoKM} km/h</p>` : ''}
-            ${observation && observation.temperatura ? `<p>Temperatura: ${observation.temperatura}°C</p>` : ''}
-            ${observation && observation.pressao ? `<p>Pressão: ${observation.pressao} hPa</p>` : ''}
-            ${observation && observation.humidade ? `<p>Humidade: ${observation.humidade}%</p>` : ''}
+              <h3>Data Hora: ${formattedDate}</h3>
+              <h2>Meteorologia Aveiro (Universidade de Aveiro - IPMA)</h2>
+              ${observation.intensidadeVento ? `<p>Intensidade do Vento: ${observation.intensidadeVento.toFixed(1)} m/s</p>` : ''}
+              ${observation.temperatura ? `<p>Temperatura: ${observation.temperatura.toFixed(1)}°C</p>` : ''}
+              ${observation.pressao ? `<p>Pressão: ${observation.pressao.toFixed(1)} hPa</p>` : ''}
+              ${observation.humidade ? `<p>Humidade: ${observation.humidade.toFixed(1)}%</p>` : ''}
             `;
             document.getElementById("popup-content").innerHTML = weatherInfo;
+
+            // Abrir o pop-up
+            var popup = document.getElementById("popup");
+            popup.style.display = "block";
+            popup.style.left = evt.pixel[0] + "px";
+            popup.style.top = evt.pixel[1] + "px";
           } else {
-            // Exibir uma mensagem se os dados da estação não estiverem disponíveis
-            document.getElementById("popup-content").textContent =
-            "Dados não disponíveis para a estação " + stationId;
+            // Exibir uma mensagem se os dados da estação ou timestamp desejado não estiverem disponíveis
+            document.getElementById("popup-content").textContent = "Dados não disponíveis para a estação " + stationId + " no timestamp " + timestamp;
+
+            // Abrir o pop-up
+            var popup = document.getElementById("popup");
+            popup.style.display = "block";
+            popup.style.left = evt.pixel[0] + "px";
+            popup.style.top = evt.pixel[1] + "px";
           }
         })
         .catch((error) => console.error("Erro:", error));
@@ -919,15 +902,9 @@ map.on("click", function (evt) {
   });
 });
 
-// Adicionar um evento de clique no mapa inteiro para abrir o pop-up
-map.on("click", function (evt) {
-  var popup = document.getElementById("popup");
-  popup.style.display = "block"; // Abrir o pop-up
-  popup.setPosition(evt.coordinate); // Definir a posição do pop-up
-});
-
 // Criar um evento de clique no botão de fechar
 document.getElementById("popup-closer").addEventListener("click", function () {
   var popup = document.getElementById("popup");
   popup.style.display = "none"; // Fechar o pop-up
 });
+
