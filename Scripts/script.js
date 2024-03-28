@@ -4,8 +4,8 @@ var avesStyle = [
   new ol.style.Style({
     image: new ol.style.Icon({
       anchor: [0.5, 0.5],
-      scale: 0.4,
-      src: "./Images/aves.svg",
+      scale: 0.1,
+      src: "./Images/aves2.svg",
     }),
   }),
 ];
@@ -898,20 +898,20 @@ map.on("click", function (evt) {
               offset: [0, -50], // ajuste o deslocamento conforme necessário
             });
             map.addOverlay(popup);
-            popup.setPosition(evt.coordinate);
+            popup.setPosition(evt.coordinate);     
             const weatherInfo = `
-              <h2>Meteorologia Aveiro (Universidade de Aveiro - IPMA)</h2>
-              <h3>Data Hora: ${formattedDate}</h2>
-              <p>Temperatura: ${observation.temperatura}°C</p>
-              <p>Intensidade do Vento: ${observation.intensidadeVentoKM} km/h</p>
-              <p>Humidade: ${observation.humidade}%</p>
-              <p>Pressão: ${observation.pressao} hPa</p>
+            <h3>Data Hora: ${formattedDate}</h2>
+            <h2>Meteorologia Aveiro (Universidade de Aveiro - IPMA)</h2>
+            ${observation && observation.intensidadeVentoKM ? `<p>Intensidade do Vento: ${observation.intensidadeVentoKM} km/h</p>` : ''}
+            ${observation && observation.temperatura ? `<p>Temperatura: ${observation.temperatura}°C</p>` : ''}
+            ${observation && observation.pressao ? `<p>Pressão: ${observation.pressao} hPa</p>` : ''}
+            ${observation && observation.humidade ? `<p>Humidade: ${observation.humidade}%</p>` : ''}
             `;
             document.getElementById("popup-content").innerHTML = weatherInfo;
           } else {
             // Exibir uma mensagem se os dados da estação não estiverem disponíveis
             document.getElementById("popup-content").textContent =
-              "Dados não disponíveis para a estação " + stationId;
+            "Dados não disponíveis para a estação " + stationId;
           }
         })
         .catch((error) => console.error("Erro:", error));
