@@ -1,5 +1,14 @@
 //---------------------------------------
 // Definição dos estilos
+var avesStyle = [
+  new ol.style.Style({
+    image: new ol.style.Icon({
+      anchor: [0.5, 0.5],
+      scale: 0.4,
+      src: "./Images/aves.svg",
+    }),
+  }),
+];
 
 var defaultStyle = [
   new ol.style.Style({
@@ -243,6 +252,18 @@ var NatacaoStyle = [
 
 //---------------------------------------
 // Definição das camadas vetoriais
+var layerAves = new ol.layer.Vector({
+  title: "Aves",
+  source: new ol.source.Vector({
+    url: "./ave.geojson",
+    format: new ol.format.GeoJSON(),
+  }),
+  style: function (feature, resolution) {
+    return avesStyle;
+  },
+  visible: false,
+});
+
 var layerRest = new ol.layer.Vector({
   title: "Restaurantes",
   source: new ol.source.Vector({
@@ -570,6 +591,21 @@ var layerFerryRota = new ol.layer.Vector({
   visible: false,
 });
 
+var layerPercursoNature = new ol.layer.Vector({
+  title: "Percurso Natureza",
+  source: new ol.source.Vector({
+    url: "./percurso_natureza.geojson",
+    format: new ol.format.GeoJSON(),
+  }),
+  style: new ol.style.Style({
+    stroke: new ol.style.Stroke({
+      color: "green",
+      width: 4,
+    }),
+  }),
+  visible: false,
+});
+
 var layerPraias = new ol.layer.Vector({
   title: "Praias",
   source: new ol.source.Vector({
@@ -725,6 +761,8 @@ var map = new ol.Map({
     layerFerryRota,
     layerNatacao,
     layerPesca,
+    layerAves,
+    layerPercursoNature
   ],
   view: new ol.View({
     center: ol.proj.fromLonLat([-8.6189, 40.5954]),
