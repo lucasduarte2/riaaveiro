@@ -724,10 +724,11 @@ var map = new ol.Map({
     new ol.layer.Tile({
       visible: false,
       title: "Batimetria",
+      //Aparecer a Legenda tem de ser "var: source = ..."
       source: new ol.source.TileWMS({
         url: "https://gis4cloud.pt/geoserver/wms",
         params: {
-          LAYERS: "geonode:20240208_aveiro_zh_5m_lidar_3857",
+          LAYERS: "grupo4_ptas2024:Aveiro Batimetria Reclassificada",
           TILED: true,
         },
       }),
@@ -908,3 +909,26 @@ document.getElementById("popup-closer").addEventListener("click", function () {
   popup.style.display = "none"; // Fechar o pop-up
 });
 
+
+//Codigo para mostrar a legenda da Aveiro Batimetria Reclassificada
+
+// Criando a camada Tile com a fonte definida acima
+var layer = new ol.layer.Tile({
+  visible: false,
+  title: "Batimetria",
+  source: source,
+});
+
+// Adicionando a camada ao mapa
+map.addLayer(layer);
+
+// Função para atualizar a legenda dentro da div
+function updateLegend() {
+  var legendUrl = source.getLegendUrl();
+  if (legendUrl) {
+    document.getElementById("legend").src = legendUrl;
+  }
+}
+
+// Chamar a função para exibir a legenda inicialmente
+updateLegend();
