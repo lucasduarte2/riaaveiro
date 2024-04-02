@@ -712,6 +712,23 @@ var layerMap4 = new ol.layer.Tile({
   displayInLayerSwitcher: false,
 });
 
+// Definir source como uma variável global
+var source = new ol.source.TileWMS({
+  url: "https://gis4cloud.pt/geoserver/wms",
+  params: {
+    LAYERS: "grupo4_ptas2024:Aveiro Batimetria Reclassificada",
+    TILED: true,
+  },
+});
+
+// Definir a camada de batimetria como uma variável global
+var batimetriaLayer = new ol.layer.Tile({
+  visible: false,
+  title: "Batimetria",
+  source: source, // Usar a fonte global aqui
+});
+
+
 var map = new ol.Map({
   target: "map",
   layers: [
@@ -721,16 +738,16 @@ var map = new ol.Map({
     layerMap4,
     layerRiaBuffer,
     layerRiaB,
+    batimetriaLayer,
     new ol.layer.Tile({
       visible: false,
-      title: "Batimetria",
-      //Aparecer a Legenda tem de ser "var: source = ..."
+      title: "Batimetria 25m",
       source: new ol.source.TileWMS({
         url: "https://gis4cloud.pt/geoserver/wms",
         params: {
-          LAYERS: "grupo4_ptas2024:Aveiro Batimetria Reclassificada",
-          TILED: true,
-        },
+          LAYERS: "grupo4_ptas2024:Aveiro",
+          TILED: true
+        }
       }),
     }),
     layerBus,
@@ -909,19 +926,7 @@ document.getElementById("popup-closer").addEventListener("click", function () {
   popup.style.display = "none"; // Fechar o pop-up
 });
 
-
 //Codigo para mostrar a legenda da Aveiro Batimetria Reclassificada
-
-// Criando a camada Tile com a fonte definida acima
-var layer = new ol.layer.Tile({
-  visible: false,
-  title: "Batimetria",
-  source: source,
-});
-
-// Adicionando a camada ao mapa
-map.addLayer(layer);
-
 // Função para atualizar a legenda dentro da div
 function updateLegend() {
   var legendUrl = source.getLegendUrl();
@@ -930,5 +935,19 @@ function updateLegend() {
   }
 }
 
-// Chamar a função para exibir a legenda inicialmente
-updateLegend();
+// Adicionar um evento de mudança de visibilidade à camada de batimetria
+batimetriaLayer.on("change:visible", function() {
+  // Verificar se a camada de batimetria está visível
+  if (batimetriaLayer.getVisible()) {
+    // Se estiver visível, atualizar a legenda
+    updateLegend();
+  } else {
+    // Se não estiver visível, ocultar a legenda definindo a origem da imagem como vazia
+    document.getElementById("legend").src = "";
+  }
+});
+
+// Chamar a função para exibir a legenda apenas se a camada estiver visível inicialmente
+if (batimetriaLayer.getVisible()) {
+  updateLegend();
+}
