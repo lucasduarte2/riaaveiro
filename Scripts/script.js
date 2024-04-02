@@ -951,3 +951,39 @@ batimetriaLayer.on("change:visible", function() {
 if (batimetriaLayer.getVisible()) {
   updateLegend();
 }
+
+
+
+//Camada da Batimetria de 25m 
+
+// Adicione a lógica para alternar a visibilidade da camada de batimetria 25m e mostrar/ocultar a legenda correspondente
+var batimetria25mLayer = map.getLayers().getArray().find(layer => layer.get('title') === 'Batimetria 25m');
+batimetria25mLayer.on('change:visible', function(event) {
+  if (event.target.getVisible()) {
+    document.getElementById('legend-container-5m').style.display = 'block'; // Mostra a div quando a camada está visível
+  } else {
+    document.getElementById('legend-container-5m').style.display = 'none'; // Oculta a div quando a camada está oculta
+  }
+});
+
+// Função para atualizar a legenda da camada "Batimetria Reclassificada"
+function updateLegend() {
+  var legendUrl = source.getLegendUrl();
+  if (legendUrl) {
+    document.getElementById("legend").src = legendUrl;
+  }
+}
+
+// Adicionar um evento de mudança de visibilidade à camada de batimetria
+batimetriaLayer.on("change:visible", function() {
+  if (batimetriaLayer.getVisible()) {
+    updateLegend();
+  } else {
+    document.getElementById("legend").src = "";
+  }
+});
+
+// Chamar a função para exibir a legenda apenas se a camada estiver visível inicialmente
+if (batimetriaLayer.getVisible()) {
+  updateLegend();
+}
