@@ -878,7 +878,7 @@ map.on("click", function (evt) {
       // Buscar dados da API
       const url = "https://api.ipma.pt/open-data/observation/meteorology/stations/observations.json";
       const stationId = "1210702";
-      const timestamp = "2024-03-27T12:00"; // Timestamp dos dados desejados
+      const timestamp = "2024-04-03T06:00"; // Timestamp dos dados desejados
 
       fetch(url)
         .then((response) => response.json())
