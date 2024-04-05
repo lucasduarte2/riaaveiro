@@ -871,14 +871,17 @@ var weatherMarkerLayer = new ol.layer.Vector({
 });
 map.addLayer(weatherMarkerLayer);
 
-// Adicionar um evento de clique ao marcador para exibir um pop-up com informações meteorológicas
 map.on("click", function (evt) {
   map.forEachFeatureAtPixel(evt.pixel, function (feature) {
     if (feature === weatherMarker) {
       // Buscar dados da API
       const url = "https://api.ipma.pt/open-data/observation/meteorology/stations/observations.json";
       const stationId = "1210702";
-      const timestamp = "2024-04-03T06:00"; // Timestamp dos dados desejados
+
+      // Obter a hora atual em milissegundos desde a época Unix (1 de janeiro de 1970)
+      const now = new Date();
+      now.setMinutes(0,0,0);
+      const timestamp = now.toISOString().split(':').slice(0, -1).join(':'); // Formato ISO 8601
 
       fetch(url)
         .then((response) => response.json())
@@ -888,11 +891,11 @@ map.on("click", function (evt) {
           // Verificar se os dados para a estação e timestamp desejado estão disponíveis
           if (data[timestamp] && data[timestamp][stationId]) {
             const observation = data[timestamp][stationId];
-            const formattedDate = new Date(timestamp).toLocaleString(); // Converter o timestamp para o formato local
+            const formattedDate = new Date(timestamp).toLocaleDateString('pt-PT'); // Converter o timestamp para o formato local "dd/mm/aaaa"
             const weatherInfo = `
               <h3>Data Hora: ${formattedDate}</h3>
               <h2>Meteorologia Aveiro (Universidade de Aveiro - IPMA)</h2>
-              ${observation.intensidadeVento ? `<p>Intensidade do Vento: ${observation.intensidadeVento.toFixed(1)} m/s</p>` : ''}
+              ${observation.intensidadeVentoKM ? `<p>Intensidade do Vento: ${observation.intensidadeVentoKM.toFixed(1)} km/h</p>` : ''}
               ${observation.temperatura ? `<p>Temperatura: ${observation.temperatura.toFixed(1)}°C</p>` : ''}
               ${observation.pressao ? `<p>Pressão: ${observation.pressao.toFixed(1)} hPa</p>` : ''}
               ${observation.humidade ? `<p>Humidade: ${observation.humidade.toFixed(1)}%</p>` : ''}
@@ -919,6 +922,7 @@ map.on("click", function (evt) {
     }
   });
 });
+
 
 // Criar um evento de clique no botão de fechar
 document.getElementById("popup-closer").addEventListener("click", function () {
