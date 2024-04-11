@@ -870,7 +870,7 @@ var weatherMarkerLayer = new ol.layer.Vector({
   }),
 });
 map.addLayer(weatherMarkerLayer);
-
+/*
 map.on("click", function (evt) {
   map.forEachFeatureAtPixel(evt.pixel, function (feature) {
     if (feature === weatherMarker) {
@@ -1011,4 +1011,94 @@ document.addEventListener("DOMContentLoaded", function () {
   // Call adjustFooter initially and on window resize
   adjustFooter();
   window.addEventListener("resize", adjustFooter);
+});
+*/
+
+async function calculateReachPolygonWithGraphHopper(
+  centerPoint,
+  maxDistance,
+  type,
+  apiKey
+) {
+  let center = ol.proj.transform(centerPoint, "EPSG:4326", "EPSG:4326");
+  let centerString = center[1] + "," + center[0];
+  let calcType = type === "time" ? "time_limit" : "distance_limit";
+  let url = `https://graphhopper.com/api/1/isochrone?point=${centerString}&${calcType}=${maxDistance}&vehicle=foot&key=${apiKey}`;
+  let response = await fetch(url);
+  let data = await response.json();
+  let coordinates = data.polygons[0].geometry.coordinates;
+  let polygon = new ol.geom.Polygon(coordinates);
+  polygon.transform("EPSG:4326", map.getView().getProjection());
+  return polygon;
+}
+
+async function updateReachPolygonWithGraphHopper(
+  maxDistance,
+  centerPoint,
+  map,
+  apiKey
+) {
+  let polygon = await calculateReachPolygonWithGraphHopper(
+    centerPoint,
+    maxDistance,
+    "time",
+    apiKey
+  );
+  let feature = new ol.Feature(polygon);
+  vectorLayer.getSource().clear();
+  vectorLayer.getSource().addFeature(feature);
+  updateVisiblePoints(polygon);
+}
+
+let vectorLayer = new ol.layer.Vector({
+  source: new ol.source.Vector(),
+});
+
+function updateVisiblePoints(polygon) {
+  let polygonExtent = polygon.getExtent();
+  map.getLayers().forEach(function (layer) {
+    if (layer instanceof ol.layer.Vector) {
+      let source = layer.getSource();
+      let featuresWithinPolygon = [];
+      source.forEachFeature(function (feature) {
+        let geometry = feature.getGeometry();
+        if (
+          geometry &&
+          ol.extent.intersects(polygonExtent, geometry.getExtent())
+        ) {
+          featuresWithinPolygon.push(feature);
+        }
+      });
+      if (featuresWithinPolygon.length > 0) {
+        layer.setVisible(true);
+        source.clear();
+        source.addFeatures(featuresWithinPolygon);
+      } else {
+        layer.setVisible(false);
+      }
+    }
+  });
+}
+
+// Adicionar a camada de vetores ao mapa
+map.addLayer(vectorLayer);
+
+// Adicionar ouvinte de eventos de clique ao mapa
+map.on("singleclick", async function (event) {
+  let clickedCoordinates = event.coordinate;
+  let centerPoint = ol.proj.transform(
+    clickedCoordinates,
+    map.getView().getProjection(),
+    "EPSG:4326"
+  );
+  let maxDistance = parseInt(
+    document.getElementById("distanceSlider").value,
+    10
+  );
+  await updateReachPolygonWithGraphHopper(
+    maxDistance,
+    centerPoint,
+    map,
+    "71725023-52f8-4c77-aacf-69fcbb190afb" //api_key
+  );
 });
