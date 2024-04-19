@@ -20,6 +20,13 @@ body {
   top: 0%;
 }
 
+#legend-container-5m {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  display: none; /* Oculta por padrão */
+}
+
 button.ol-zoom-in,
 button.ol-zoom-out {
   width: 25px; /* Largura do botão */
@@ -27,9 +34,9 @@ button.ol-zoom-out {
 }
 
 .map {
-  height: 930px;
+  height: 945px;
   width: 100%;
-  position: relative;
+  position: absolute;
 }
 
 .dropdown {
@@ -71,7 +78,7 @@ button.ol-zoom-out {
 
 #map-switcher {
   position: absolute;
-  bottom: 10px;
+  bottom: 15px;
   left: 10px;
   background-color: rgba(255, 255, 255, 0.8);
   border-radius: 5px;
@@ -185,13 +192,14 @@ button.ol-zoom-out {
   padding: 10px;
   border-radius: 5px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  min-width: 500px;
+  min-width: 550px;
+  display: none;
 }
 
 .ol-popup-closer {
   position: absolute;
-  top: 5px;
-  right: 20px;
+  bottom: -2px;
+  right: 5px;
   font-size: 40px;
   color: #888;
   text-decoration: none;
