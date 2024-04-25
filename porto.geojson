@@ -1,8 +1,0 @@
-{
-"type": "FeatureCollection",
-"name": "porto",
-"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
-"features": [
-{ "type": "Feature", "properties": { "OBJECTID": 808, "Legenda_1": "Área portuária", "Legenda_2": null, "Legenda_3": null, "Legenda_4": null, "POC": "POC Ovar - Marinha Grande", "texto": "Aveiro", "st_area_sh": 1261231.7499309699, "st_length_": 6521.98573044984, "name": "LTSER Ria de Aveiro", "deimsid": "https://deims.org/dfc24538-730e-4e4b-9f04-8e84608b9999", "field_elev": 543.5 }, "geometry": { "type": "MultiPoint", "coordinates": [ [ -8.7534019128291, 40.642996341361467 ] ] } }
-]
-}

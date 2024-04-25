@@ -1,9 +1,0 @@
-{
-"type": "FeatureCollection",
-"name": "ferry_rota",
-"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
-"features": [
-{ "type": "Feature", "properties": { "full_id": "r8015809", "osm_id": "8015809", "osm_type": "relation", "route": "ferry", "type": "route", "to": "São Jacinto", "roundtrip": "no", "ref": "L13", "public_transport:version": "2", "operator": "AveiroBus", "network": "AveiroBus", "name": "Linha 13: Forte da Barra => São Jacinto", "from": "Forte da Barra", "colour": "#498CB0" }, "geometry": { "type": "MultiLineString", "coordinates": [ [ [ -8.7297496, 40.6606822 ], [ -8.7319154, 40.6589432 ], [ -8.7332082, 40.6572869 ], [ -8.733369, 40.6560975 ], [ -8.7331383, 40.6553324 ], [ -8.7324765, 40.6544612 ], [ -8.7317383, 40.6534318 ], [ -8.730027, 40.6520237 ], [ -8.7294584, 40.6514335 ], [ -8.7293278, 40.6505682 ], [ -8.7295013, 40.6501637 ], [ -8.7300272, 40.6499036 ] ] ] } },
-{ "type": "Feature", "properties": { "full_id": "r8015811", "osm_id": "8015811", "osm_type": "relation", "route": "ferry", "type": "route", "to": "Forte da Barra", "roundtrip": "no", "ref": "L13", "public_transport:version": "2", "operator": "AveiroBus", "network": "AveiroBus", "name": "Linha 13: São Jacinto => Forte da Barra", "from": "São Jacinto", "colour": "#498CB0" }, "geometry": { "type": "MultiLineString", "coordinates": [ [ [ -8.7297496, 40.6606822 ], [ -8.7319154, 40.6589432 ], [ -8.7332082, 40.6572869 ], [ -8.733369, 40.6560975 ], [ -8.7331383, 40.6553324 ], [ -8.7324765, 40.6544612 ], [ -8.7317383, 40.6534318 ], [ -8.730027, 40.6520237 ], [ -8.7294584, 40.6514335 ], [ -8.7293278, 40.6505682 ], [ -8.7295013, 40.6501637 ], [ -8.7300272, 40.6499036 ] ] ] } }
-]
-}
