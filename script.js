@@ -14,7 +14,8 @@ const map = new mapboxgl.Map({
 
 // Add zoom and rotation controls to the map.
 map.addControl(new mapboxgl.NavigationControl());
-map.addControl(new mapboxgl.ScaleControl());
+map.addControl(new mapboxgl.ScaleControl(), "bottom-right");
+
 map.addControl(new mapboxgl.FullscreenControl());
 
 // Add geolocate control to the map.
@@ -50,8 +51,8 @@ const tabelas = [
   "point_nucleos_pesca",
   "ondas",
   "paragensautocarro",
-  /*   "percurso_azul",
-  "percurso_dourado",
+  "percurso_azul",
+  /* "percurso_dourado",
   "percurso_natureza",
   "percurso_verde", */
   "point_porto",
@@ -73,18 +74,28 @@ map.on("load", () => {
     tabelas.forEach((tabela) => {
       // Busca os dados da tabela
       fetch(`bd.php?tabela=${tabela}`)
-        .then((response) => response.json()) // Converte a resposta em JSON
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          return response.json(); // Assuming the response is JSON
+        })
         .then((data) => {
-          /*         console.log(`Dados carregados para ${tabela}:`, data); // Adicione este console.log */
-          // Adiciona os dados ao mapa como uma nova fonte
+          // Process the JSON data
+          console.log(`Dados carregados para ${tabela}:`, data);
           map.addSource(tabela, {
             type: "geojson",
             data: data,
           });
 
           // Carrega a imagem do ícone
+          // Carrega a imagem do ícone
           map.loadImage(getLayerImage(tabela), function (error, image) {
-            if (error) throw error;
+            if (error) {
+              console.error("Error loading image:", error);
+              // Handle errors gracefully
+              return;
+            }
 
             // Adiciona a imagem ao mapa
             map.addImage(tabela, image);
@@ -108,7 +119,37 @@ map.on("load", () => {
               closeOnClick: false,
             });
 
-            // Quando o mouse entra em um ponto na camada...
+            // Quando o mouse entra em um ponto na camada dentro da isocrona...
+            map.on("mouseenter", tabela + "_within", function (e) {
+              // Muda o estilo do cursor como um indicador de interface do usuário.
+              map.getCanvas().style.cursor = "pointer";
+
+              // Copia a matriz de coordenadas.
+              const coordinates = e.features[0].geometry.coordinates.slice();
+              const description = e.features[0].properties.description;
+
+              // Garante que se o mapa estiver ampliado de tal forma que várias
+              // cópias do recurso estejam visíveis, o popup apareça
+              // sobre a cópia que está sendo apontada.
+              while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+                coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+              }
+
+              // Preenche o popup e define suas coordenadas
+              // com base no recurso encontrado.
+              popup
+                .setLngLat(coordinates)
+                .setHTML("<h6>" + tabela + "</h6><p>" + description + "</p>")
+                .addTo(map);
+            });
+
+            // Quando o mouse sai de um ponto na camada...
+            map.on("mouseleave", tabela + "_within", function () {
+              map.getCanvas().style.cursor = "";
+              popup.remove();
+            });
+
+            // Quando o mouse entra em um ponto na camada normal...
             map.on("mouseenter", tabela, function (e) {
               // Muda o estilo do cursor como um indicador de interface do usuário.
               map.getCanvas().style.cursor = "pointer";
@@ -128,13 +169,7 @@ map.on("load", () => {
               // com base no recurso encontrado.
               popup
                 .setLngLat(coordinates)
-                .setHTML(
-                  "<h3>" +
-                    tabela +
-                    "</h3><p>" +
-                    e.features[0].properties.description +
-                    "</p>"
-                )
+                .setHTML("<h6>" + tabela + "</h6><p>" + description + "</p>")
                 .addTo(map);
             });
 
@@ -148,102 +183,147 @@ map.on("load", () => {
         .catch((error) => console.error("Error:", error)); // Regista qualquer erro que ocorra
     });
   }
+  fetch("percursos.php?tabela=percurso_azul")
+    .then((response) => response.json()) // Converte a resposta em JSON
+    .then((data) => {
+      // Adiciona os dados do percurso azul ao mapa como uma nova fonte
+      map.addSource("percurso_azul", {
+        type: "geojson",
+        data: data,
+      });
+
+      // Adiciona uma nova camada ao mapa para renderizar o percurso azul
+      map.addLayer({
+        id: "percurso_azul",
+        type: "line", // Tipo de geometria do percurso azul, pode ser 'line' ou 'fill', dependendo do que você tem no banco de dados
+        source: "percurso_azul",
+        layout: {
+          "line-join": "round",
+          "line-cap": "round",
+          visibility: "none",
+        },
+        paint: {
+          "line-color": "#0000FF", // Cor do percurso azul
+          "line-width": 3, // Largura da linha
+        },
+      });
+    })
+    .catch((error) => console.error("Error:", error)); // Registra qualquer erro que ocorra
 
   // Adiciona as camadas ao mapa quando o mapa é carregado pela primeira vez.
   addLayers();
 
-  const originalStyle = map.getStyle();
-
-  // Código para alternar o estilo do mapa...
-  const layerList = document.getElementById("map-switcher");
-  const inputs = layerList.getElementsByTagName("input");
-
-  for (const input of inputs) {
-    input.onclick = (layer) => {
-      const layerId = layer.target.id;
-      if (layerId === "original") {
-        // Se o usuário selecionar "original", volta para o estilo original.
-        map.setStyle(originalStyle);
-      } else {
-        map.setStyle("mapbox://styles/mapbox/" + layerId);
-      }
-    };
-  }
-
   // Adiciona as camadas ao mapa sempre que o estilo do mapa é alterado.
   map.on("style.load", addLayers);
 
-  // Após o último frame renderizado antes do mapa entrar em um estado "idle"...
-  map.on("idle", () => {
-    // Enumera os ids das camadas.
-    const toggleableLayerIds = [
+  const layerClasses = {
+    "Alojamento-e-Transporte": [
       "point_alojamento_local",
       "aluguer_bicicletas",
       "aluguer_carros",
+      "local_ferry",
+      "terminal_ferry",
+    ],
+    "Pontos-de-Interesse": [
       "arte_xavega",
       "aves",
+      "point_marinas_docas",
+      "point_nucleos_pesca",
+      "ondas",
+      "percurso_azul",
+      "point_porto",
+      "point_praias",
+      "point_surf",
+      "salinas",
+    ],
+    Serviços: [
       "bancos",
       "bombas_gasolina",
       "estacao",
       "farmacias",
       "hospitais",
-      "kitesurf",
-      "local_ferry",
-      "point_marinas_docas",
       "multibanco",
-      "natacao_pontoprofessora",
-      "point_nucleos_pesca",
-      "ondas",
       "paragensautocarro",
-      /*       "percurso_azul",
-      "percurso_dourado",
-      "percurso_natureza",
-      "percurso_verde", */
-      "point_porto",
-      "point_praias",
       "restaurantes",
-      /* "ria_aveiro", */
-      "point_surf",
-      "terminal_ferry",
-      "salinas",
-      "voleipraia",
-    ];
+    ],
+    Atividades: ["kitesurf", "natacao_pontoprofessora", "voleipraia"],
+  };
 
-    for (const id of toggleableLayerIds) {
-      // Ignora as camadas que já têm um botão configurado.
-      if (document.getElementById(id)) {
-        continue;
+  const layerNames = {
+    point_alojamento_local: "Alojamento Local",
+    aluguer_bicicletas: "Aluguer de Bicicletas",
+    aluguer_carros: "Aluguer de Carros",
+    arte_xavega: "Arte Xávega",
+    aves: "Observação de Aves",
+    bancos: "Bancos",
+    bombas_gasolina: "Bombas de Gasolina",
+    estacao: "Estação",
+    farmacias: "Farmácias",
+    hospitais: "Hospitais",
+    kitesurf: "Kitesurf",
+    local_ferry: "Ferry Local",
+    point_marinas_docas: "Marinas e Docas",
+    multibanco: "Multibanco",
+    natacao_pontoprofessora: "Natação",
+    point_nucleos_pesca: "Núcleos de Pesca",
+    ondas: "Ondas",
+    paragensautocarro: "Paragens de Autocarro",
+    percurso_azul: "Percurso Azul",
+    point_porto: "Porto",
+    point_praias: "Praias",
+    restaurantes: "Restaurantes",
+    point_surf: "Surf",
+    terminal_ferry: "Terminal de Ferry",
+    salinas: "Salinas",
+    voleipraia: "Vólei de Praia",
+  };
+
+  // Adicione uma variável para rastrear se os links das layers já foram adicionados
+  let layersAdded = false;
+
+  map.on("idle", () => {
+    // Verifique se os links das layers já foram adicionados
+    if (!layersAdded) {
+      // Se não, adicione os links das layers às classes
+      for (const [classId, layers] of Object.entries(layerClasses)) {
+        const layersDiv = document.querySelector(`#${classId} .layers`);
+        for (const layer of layers) {
+          const link = document.createElement("a");
+          link.id = layer;
+          link.href = "#";
+          link.textContent = layerNames[layer] || layer;
+          link.className = "active";
+          link.onclick = function (e) {
+            const clickedLayer = this.id;
+            e.preventDefault();
+            e.stopPropagation();
+            toggleLayerVisibility(clickedLayer, this);
+          };
+          layersDiv.appendChild(link);
+        }
       }
 
-      // Cria um link.
-      const link = document.createElement("a");
-      link.id = id;
-      link.href = "#";
-      link.textContent = id;
-      link.className = "active";
-
-      // Mostra ou esconde a camada quando o toggle é clicado.
-      link.onclick = function (e) {
-        const clickedLayer = this.textContent;
-        e.preventDefault();
-        e.stopPropagation();
-
-        const visibility = map.getLayoutProperty(clickedLayer, "visibility");
-
-        // Alterna a visibilidade da camada.
-        if (visibility === "visible") {
-          map.setLayoutProperty(clickedLayer, "visibility", "none");
-          this.className = "";
-        } else {
-          this.className = "active";
-          map.setLayoutProperty(clickedLayer, "visibility", "visible");
-        }
-      };
-
-      const layers = document.getElementById("menu");
-      layers.appendChild(link);
+      // Atualize a variável para indicar que os links das layers foram adicionados
+      layersAdded = true;
     }
   });
+
+  function toggleLayerVisibility(layer, linkElement) {
+    // Verifique tanto a camada original quanto a camada dentro da isocrona
+    const layerId = [layer, layer + "_within"].find((id) => map.getLayer(id));
+    if (layerId) {
+      const visibility = map.getLayoutProperty(layerId, "visibility");
+
+      // Alterna a visibilidade da camada.
+      if (visibility === "visible") {
+        map.setLayoutProperty(layerId, "visibility", "none");
+        linkElement.className = "";
+      } else {
+        linkElement.className = "active";
+        map.setLayoutProperty(layerId, "visibility", "visible");
+      }
+    }
+  }
 
   // Função para obter a imagem do ícone para uma tabela
   function getLayerImage(tabela) {
@@ -380,9 +460,13 @@ updateContourOptions();
 
 function toggleSidebar() {
   const sidebar = document.getElementById("sidebar");
-  const sidebarToggle = document.getElementById("sidebar-toggle");
+  const arrowIcon = document.querySelector(".sidebar-toggle .arrow-icon");
   sidebar.classList.toggle("show");
-  sidebarToggle.querySelector(".arrow-icon").classList.toggle("rotate"); // Adiciona ou remove a classe 'rotate' ao ícone
+  if (sidebar.classList.contains("show")) {
+    arrowIcon.innerHTML = "«";
+  } else {
+    arrowIcon.innerHTML = "»";
+  }
 }
 
 // Armazene as coordenadas do último ponto clicado
@@ -533,6 +617,262 @@ map.on("click", function (e) {
   // Calcule a isócrona
   calculateIsochrone();
 });
+
+// Função para limpar todas as isócronas do mapa
+function limparIsocronas() {
+  // Remover a camada de isócronas, se existir
+  if (map.getLayer("isochrone")) {
+    map.removeLayer("isochrone");
+  }
+
+  // Remover a fonte de isócronas, se existir
+  if (map.getSource("isochrone")) {
+    map.removeSource("isochrone");
+  }
+
+  // Limpar as fontes e camadas de pontos dentro das isócronas
+  tabelas.forEach((tabela) => {
+    const sourceWithinId = tabela + "_within";
+    if (map.getLayer(sourceWithinId)) {
+      map.removeLayer(sourceWithinId);
+    }
+    if (map.getSource(sourceWithinId)) {
+      map.removeSource(sourceWithinId);
+    }
+  });
+
+  // Limpar a referência do último ponto clicado
+  lastClickedPoint = null;
+  refreshLayersAfterClear();
+}
+
+function limparTudo() {
+  // Limpe as isócronas
+  limparIsocronas();
+
+  // Remova os marcadores, se existirem
+  if (markerA) markerA.remove();
+  if (markerB) markerB.remove();
+
+  // Remova a rota, se existir
+  if (map.getLayer("route")) {
+    map.removeLayer("route");
+    map.removeSource("route");
+  }
+
+  if (weatherMarker) weatherMarker.remove();
+  if (popup) popup.remove();
+
+  // Redefina os marcadores e a rota
+  markerA = null;
+  markerB = null;
+  weatherMarker = null;
+  popup = null;
+}
+
+const recreateLayer = (tabela, sourceData) => {
+  if (!map.getSource(tabela)) {
+    map.addSource(tabela, {
+      type: "geojson",
+      data: sourceData,
+    });
+
+    map.addLayer({
+      id: tabela,
+      type: "symbol",
+      source: tabela,
+      layout: {
+        "icon-image": tabela,
+        "icon-size": 0.03,
+        "icon-allow-overlap": true,
+        visibility: "none",
+      },
+    });
+  }
+};
+
+const refreshLayersAfterClear = () => {
+  tabelas.forEach((tabela) => {
+    recreateLayer(tabela, originalPointsData[tabela]);
+  });
+};
+
+var markerA, markerB;
+
+document.getElementById("addPointA").addEventListener("click", function () {
+  // Se o marcador A já existir, remova-o
+  if (markerA) markerA.remove();
+
+  // Adicione um novo marcador A no centro do mapa
+  markerA = new mapboxgl.Marker({ color: "red", draggable: true })
+    .setLngLat(map.getCenter())
+    .addTo(map);
+});
+
+document.getElementById("addPointB").addEventListener("click", function () {
+  // Se o marcador B já existir, remova-o
+  if (markerB) markerB.remove();
+
+  // Adicione um novo marcador B no centro do mapa
+  markerB = new mapboxgl.Marker({ color: "blue", draggable: true })
+    .setLngLat(map.getCenter())
+    .addTo(map);
+});
+
+var route;
+
+function calculateRoute() {
+  if (!markerA || !markerB) return; // Se os pontos A e B não foram definidos, retorne
+
+  var pointA = markerA.getLngLat();
+  var pointB = markerB.getLngLat();
+
+  // Converta as coordenadas para um formato que a API de roteamento possa entender
+  var coordinates = `${pointA.lng},${pointA.lat};${pointB.lng},${pointB.lat}`;
+
+  // Construa a URL da API de roteamento
+  var apiUrl = `https://api.mapbox.com/directions/v5/mapbox/driving/${coordinates}?geometries=geojson&access_token=${mapboxgl.accessToken}`;
+
+  // Faça uma solicitação para a API de roteamento
+  fetch(apiUrl)
+    .then((response) => response.json())
+    .then((data) => {
+      // A resposta da API de roteamento incluirá uma rota que você pode adicionar ao mapa
+      route = data.routes[0].geometry;
+
+      // Calcule a distância da rota em metros usando turf.js
+      var distance = turf.length(route, { units: "kilometers" }) * 1000;
+
+      // Adicione a distância como uma propriedade da rota
+      route.properties = { distance: distance }; // Adicione esta linha
+
+      console.log(data);
+
+      // Adicione a rota ao mapa
+      if (map.getLayer("route")) {
+        map.removeLayer("route");
+        map.removeSource("route");
+      }
+      map.addSource("route", {
+        type: "geojson",
+        data: {
+          type: "Feature",
+          geometry: route,
+        },
+      });
+      map.addLayer({
+        id: "route",
+        type: "line",
+        source: "route",
+        paint: {
+          "line-color": "#FFA500",
+          "line-width": 8,
+        },
+      });
+      if (map.getLayer("route")) {
+        console.log("A camada da rota foi adicionada ao mapa.");
+        console.log(route.properties); // Deve mostrar { distance: ... }
+      } else {
+        console.log("A camada da rota NÃO foi adicionada ao mapa.");
+      }
+    });
+}
+
+// Cria um popup, mas não o adiciona ao mapa ainda.
+var popup = new mapboxgl.Popup({
+  closeButton: false,
+  closeOnClick: false,
+});
+
+map.on("mousemove", "route", function (e) {
+  // Verifique se a distância está definida antes de tentar acessar toFixed
+  if (route.properties.distance) {
+    var distance = route.properties.distance.toFixed(2);
+
+    // Atualiza a posição e o texto do popup
+    popup
+      .setLngLat(e.lngLat)
+      .setText(`Distância da rota: ${distance} metros`)
+      .addTo(map);
+  }
+});
+
+map.on("mouseleave", "route", function () {
+  popup.remove();
+});
+
+document
+  .getElementById("calculateRouteButton")
+  .addEventListener("click", calculateRoute);
+
+document.querySelectorAll(".class-title").forEach((title) => {
+  title.addEventListener("click", (event) => {
+    console.log("teste");
+    event.target.parentNode.classList.toggle("active");
+  });
+});
+
+var weatherMarker;
+var openWeatherMapApiKey = "c2d56cde527ab835895db4be206e6c9d";
+
+var popup; // Mantenha uma referência ao popup atual aqui
+
+document
+  .getElementById("addWeatherPoint")
+  .addEventListener("click", function () {
+    if (weatherMarker) weatherMarker.remove();
+
+    var center = map.getCenter();
+
+    weatherMarker = new mapboxgl.Marker({ color: "purple", draggable: true })
+      .setLngLat(center)
+      .addTo(map)
+      .on("dragend", fetchWeatherData);
+
+    // Fetch weather data immediately after adding the marker
+    fetchWeatherData();
+    function fetchWeatherData() {
+      var lngLat = weatherMarker.getLngLat();
+
+      // Construa a URL da API do OpenWeatherMap
+      var apiUrl = `http://api.openweathermap.org/data/2.5/weather?lat=${lngLat.lat}&lon=${lngLat.lng}&appid=${openWeatherMapApiKey}`;
+
+      // Faça uma solicitação para a API do OpenWeatherMap
+      fetch(apiUrl)
+        .then((response) => response.json())
+        .then((data) => {
+          // Os dados meteorológicos estão agora no objeto de dados
+          // Você pode acessar as informações que deseja exibir assim:
+          var temperature = data.main.temp - 273.15; // Converta a temperatura de Kelvin para Celsius
+          var feelsLike = data.main.feels_like - 273.15; // Converta a sensação térmica de Kelvin para Celsius
+          var tempMin = data.main.temp_min - 273.15; // Converta a temperatura mínima de Kelvin para Celsius
+          var tempMax = data.main.temp_max - 273.15; // Converta a temperatura máxima de Kelvin para Celsius
+          var humidity = data.main.humidity; // Humidade
+          var seaLevel = data.main.sea_level; // Nível do mar
+          var windSpeed = data.wind.speed * 3.6; // Converta a velocidade do vento de m/s para km/h
+
+          // Remova o popup existente, se houver
+          if (popup) {
+            popup.remove();
+          }
+
+          // Agora você pode adicionar um popup ao mapa na localização clicada com as informações meteorológicas
+          popup = new mapboxgl.Popup()
+            .setLngLat(lngLat)
+            .setHTML(
+              `<h6>Informações meteorológicas</h6>
+                      <p>Temperatura: ${temperature.toFixed(2)} °C</p>
+                      <p>Sensação térmica: ${feelsLike.toFixed(2)} °C</p>
+                      <p>Temperatura mínima: ${tempMin.toFixed(2)} °C</p>
+                      <p>Temperatura máxima: ${tempMax.toFixed(2)} °C</p>
+                      <p>Humidade: ${humidity} %</p>
+                      <p>Nível do mar: ${seaLevel} m</p>
+                      <p>Velocidade do vento: ${windSpeed.toFixed(2)} km/h</p>`
+            )
+            .addTo(map);
+        });
+    }
+  });
 
 window.onload = function () {
   // Obtenha os elementos selecionados

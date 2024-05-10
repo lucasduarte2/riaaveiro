@@ -25,7 +25,6 @@
     <script src="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
-    <!-- * Bootstrap JS -->
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
@@ -33,44 +32,13 @@
     ></script>
   </head>
   <body>
-    <nav id="menu"></nav>
     <div id="map"></div>
 
     <div id="sidebar" class="sidebar">
       <div class="sidebar-content">
-        <div id="map-switcher">
-          <input
-            id="original"
-            type="radio"
-            name="rtoggle"
-            value="original"
-            checked="checked"
-          />
-          <label for="original">Original</label>
-          <input
-            id="satellite-streets-v12"
-            type="radio"
-            name="rtoggle"
-            value="satellite"
-          />
-          <!-- https://docs.mapbox.com/api/maps/styles/#mapbox-styles -->
-          <label for="satellite-streets-v12">Satélite</label>
-          <input id="light-v11" type="radio" name="rtoggle" value="light" />
-          <label for="light-v11">Claro</label>
-          <input id="dark-v11" type="radio" name="rtoggle" value="dark" />
-          <label for="dark-v11">Escuro</label>
-          <input
-            id="outdoors-v12"
-            type="radio"
-            name="rtoggle"
-            value="outdoors"
-          />
-          <label for="outdoors-v12">Ruas</label>
-        </div>
-
-        <br /><br /><br /><br /><br /><br />
+        <br />
         <fieldset class="select-fieldset">
-          <h2>Definiçoes visuais</h2>
+          <h4>Definiçoes visuais</h4>
           <label>Selecionar período do dia</label>
           <select id="lightPreset" name="lightPreset">
             <option value="dawn" selected="">Amanhecer</option>
@@ -89,10 +57,10 @@
           />
         </fieldset>
 
-        <br /><br /><br />
+        <br />
         <fieldset class="select-fieldset">
           <br />
-          <h2>Opções de routing</h2>
+          <h4>Opções de routing</h4>
           <label>Veiculo: </label>
           <select id="routingProfile" name="routingProfile">
             <option value="driving-traffic">Carro</option>
@@ -119,14 +87,55 @@
             <!-- As opções serão preenchidas dinamicamente -->
           </select>
         </fieldset>
+        <br />
+        <fieldset class="select-fieldset">
+          <button id="addPointA">Adicionar ponto A</button>
+          <button id="addPointB">Adicionar ponto B</button>
+          <button id="calculateRouteButton">Calcular</button>
+        </fieldset>
+
         <div
-          class="sidebar-toggle"
           id="sidebar-toggle"
+          class="sidebar-toggle"
           onclick="toggleSidebar()"
         >
           <span class="arrow-icon">&raquo;</span>
         </div>
         <br />
+        <button type="button" class="btn btn-warning" onclick="limparTudo()">
+          Limpar
+        </button>
+        <br><br>
+        <fieldset>
+          <h4>Metereologia</h4>
+          <button id="addWeatherPoint">Adicionar ponto meteorológico</button>
+        </fieldset>
+
+        <br><br>
+        <div id="menu">
+          <h4>Gestor de Camadas</h4>
+          <br>
+          <div id="Alojamento-e-Transporte" class="layer-class">
+            <h6 class="class-title">Alojamento e Transporte</h6>
+            <span class="arrow-icon2">&darr;</span>
+            <div class="layers"></div>
+          </div>
+          <div id="Pontos-de-Interesse" class="layer-class">
+            <h6 class="class-title">Pontos de Interesse</h6>
+            <span class="arrow-icon2">&darr;</span>
+            <div class="layers"></div>
+          </div>
+          <div id="Serviços" class="layer-class">
+            <h6 class="class-title">Serviços</h6>
+            <span class="arrow-icon2">&darr;</span>
+            <div class="layers"></div>
+          </div>
+          <div id="Atividades" class="layer-class">
+            <h6 class="class-title">Atividades</h6>
+            <span class="arrow-icon2">&darr;</span>
+            <div class="layers"></div>
+          </div>
+        </div>
       </div>
     </div>
     <script src="script.js" async></script>
