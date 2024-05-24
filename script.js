@@ -932,7 +932,7 @@ document
       var lngLat = weatherMarker.getLngLat();
 
       // Construa a URL da API do OpenWeatherMap
-      var apiUrl = `http://api.openweathermap.org/data/2.5/weather?lat=${lngLat.lat}&lon=${lngLat.lng}&appid=${openWeatherMapApiKey}`;
+      var apiUrl = `https://cors-anywhere.herokuapp.com/http://api.openweathermap.org/data/2.5/weather?lat=${lngLat.lat}&lon=${lngLat.lng}&appid=${openWeatherMapApiKey}`;
 
       // Faça uma solicitação para a API do OpenWeatherMap
       fetch(apiUrl)
