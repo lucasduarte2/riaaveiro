@@ -259,14 +259,8 @@ map.on("load", () => {
       "aves",
       "point_marinas_docas",
       "point_nucleos_pesca",
-      "ondas",
-      "percurso_azul",
-      "percurso_dourado",
-      "percurso_verde",
-      "percurso_natureza",
       "point_porto",
       "point_praias",
-      "point_surf",
       "salinas",
     ],
     Serviços: [
@@ -279,7 +273,17 @@ map.on("load", () => {
       "paragensautocarro",
       "restaurantes",
     ],
-    Atividades: ["kitesurf", "natacao_pontoprofessora", "voleipraia"],
+    Atividades: [
+      "kitesurf",
+      "point_surf",
+      "natacao_pontoprofessora",
+      "voleipraia",
+      "ondas",
+      "percurso_azul",
+      "percurso_dourado",
+      "percurso_verde",
+      "percurso_natureza",
+    ],
   };
 
   const layerNames = {
