@@ -7,8 +7,11 @@ if (!$conn) {
     exit;
 }
 
+// Obter o nome da tabela do parâmetro da URL
+$tabela = $_GET['tabela'];
+
 // Preparar e executar a consulta SQL
-$query = "SELECT id, ST_AsGeoJSON(geom) AS geom, name, descriptio FROM percurso_azul";
+$query = "SELECT id, ST_AsGeoJSON(geom) AS geom, name, descriptio FROM $tabela";
 $result = pg_query($conn, $query);
 
 if (!$result) {

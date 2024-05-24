@@ -52,9 +52,9 @@ const tabelas = [
   "ondas",
   "paragensautocarro",
   "percurso_azul",
-  /* "percurso_dourado",
+  "percurso_dourado",
   "percurso_natureza",
-  "percurso_verde", */
+  "percurso_verde",
   "point_porto",
   "point_praias",
   "restaurantes",
@@ -187,44 +187,58 @@ map.on("load", () => {
                 .addTo(map);
             });
 
-            /*             // Quando o mouse sai de um ponto na camada...
+            // Quando o mouse sai de um ponto na camada...
             map.on("mouseleave", tabela, function () {
               map.getCanvas().style.cursor = "";
               popup.remove();
-            }); */
+            });
           });
         })
         .catch((error) => console.error("Error:", error)); // Regista qualquer erro que ocorra
     });
   }
-  fetch(
-    "https://www.gis4cloud.com/grupo4_ptas2024/percursos.php?tabela=percurso_azul"
-  )
-    .then((response) => response.json()) // Converte a resposta em JSON
-    .then((data) => {
-      // Adiciona os dados do percurso azul ao mapa como uma nova fonte
-      map.addSource("percurso_azul", {
-        type: "geojson",
-        data: data,
-      });
+  var percursos = [
+    "percurso_azul",
+    "percurso_dourado",
+    "percurso_natureza",
+    "percurso_verde",
+  ];
 
-      // Adiciona uma nova camada ao mapa para renderizar o percurso azul
-      map.addLayer({
-        id: "percurso_azul",
-        type: "line", // Tipo de geometria do percurso azul, pode ser 'line' ou 'fill', dependendo do que você tem no banco de dados
-        source: "percurso_azul",
-        layout: {
-          "line-join": "round",
-          "line-cap": "round",
-          visibility: "none",
-        },
-        paint: {
-          "line-color": "#0000FF", // Cor do percurso azul
-          "line-width": 3, // Largura da linha
-        },
-      });
-    })
-    .catch((error) => console.error("Error:", error)); // Registra qualquer erro que ocorra
+  percursos.forEach(function (percurso) {
+    fetch(`percursos.php?tabela=${percurso}`)
+      .then((response) => response.json()) // Converte a resposta em JSON
+      .then((data) => {
+        // Adiciona os dados do percurso ao mapa como uma nova fonte
+        map.addSource(percurso, {
+          type: "geojson",
+          data: data,
+        });
+
+        // Adiciona uma nova camada ao mapa para renderizar o percurso
+        map.addLayer({
+          id: percurso,
+          type: "line", // Tipo de geometria do percurso, pode ser 'line' ou 'fill', dependendo do que você tem no banco de dados
+          source: percurso,
+          layout: {
+            "line-join": "round",
+            "line-cap": "round",
+            visibility: "none",
+          },
+          paint: {
+            "line-color":
+              percurso === "percurso_azul"
+                ? "#0000FF"
+                : percurso === "percurso_dourado"
+                ? "#FFD700"
+                : percurso === "percurso_natureza"
+                ? "#A47551"
+                : "#008000", // Cor do percurso
+            "line-width": 3, // Largura da linha
+          },
+        });
+      })
+      .catch((error) => console.error("Error:", error)); // Registra qualquer erro que ocorra
+  });
 
   // Adiciona as camadas ao mapa quando o mapa é carregado pela primeira vez.
   addLayers();
@@ -247,6 +261,9 @@ map.on("load", () => {
       "point_nucleos_pesca",
       "ondas",
       "percurso_azul",
+      "percurso_dourado",
+      "percurso_verde",
+      "percurso_natureza",
       "point_porto",
       "point_praias",
       "point_surf",
@@ -285,6 +302,9 @@ map.on("load", () => {
     ondas: "Ondas",
     paragensautocarro: "Paragens de Autocarro",
     percurso_azul: "Percurso Azul",
+    percurso_dourado: "Percurso Dourado",
+    percurso_natureza: "Percurso Natureza",
+    percurso_verde: "Percurso Verde",
     point_porto: "Porto",
     point_praias: "Praias",
     restaurantes: "Restaurantes",
@@ -690,57 +710,6 @@ function limparIsocronas() {
   refreshLayersAfterClear();
 }
 
-function limparTudo() {
-  // Limpe as isócronas
-  limparIsocronas();
-
-  // Remova os marcadores, se existirem
-  if (markerA) markerA.remove();
-  if (markerB) markerB.remove();
-
-  // Remova a rota, se existir
-  if (map.getLayer("route")) {
-    map.removeLayer("route");
-    map.removeSource("route");
-  }
-
-  if (weatherMarker) weatherMarker.remove();
-  if (popup) popup.remove();
-
-  // Redefina os marcadores e a rota
-  markerA = null;
-  markerB = null;
-  weatherMarker = null;
-  popup = null;
-}
-
-const recreateLayer = (tabela, sourceData) => {
-  if (!map.getSource(tabela)) {
-    map.addSource(tabela, {
-      type: "geojson",
-      data: sourceData,
-    });
-
-    map.addLayer({
-      id: tabela,
-      type: "symbol",
-      source: tabela,
-      layout: {
-        "icon-image": tabela,
-        "icon-size": 0.03,
-        "icon-allow-overlap": true,
-        visibility: "none",
-      },
-    });
-  }
-};
-
-const refreshLayersAfterClear = () => {
-  tabelas.forEach((tabela) => {
-    recreateLayer(tabela, originalPointsData[tabela]);
-  });
-};
-
 var markerA, markerB;
 
 document.getElementById("addPointA").addEventListener("click", function () {
@@ -878,14 +847,12 @@ map.on("mousemove", "route", function (e) {
   // Verifique se a distância está definida antes de tentar acessar toFixed
   if (route.properties.distance) {
     var routeDistance = route.properties.distance.toFixed(2);
-    var distance = (lineDistance).toFixed(2);
+    var distance = lineDistance.toFixed(2);
 
     // Atualiza a posição e o texto do popup
     popup
       .setLngLat(e.lngLat)
-      .setText(
-        `Distância: ${routeDistance}m + ~${distance}m`
-      )
+      .setText(`Distância: ${routeDistance}m + ~${distance}m`)
       .addTo(map);
   }
 });
@@ -932,7 +899,7 @@ document
       var lngLat = weatherMarker.getLngLat();
 
       // Construa a URL da API do OpenWeatherMap
-      var apiUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lngLat.lat}&lon=${lngLat.lng}&appid=${openWeatherMapApiKey}`;
+      var apiUrl = `http://api.openweathermap.org/data/2.5/weather?lat=${lngLat.lat}&lon=${lngLat.lng}&appid=${openWeatherMapApiKey}`;
 
       // Faça uma solicitação para a API do OpenWeatherMap
       fetch(apiUrl)
@@ -981,6 +948,71 @@ document
         });
     }
   });
+
+function limparTudo() {
+  // Limpe as isócronas
+  limparIsocronas();
+
+  // Remova os marcadores, se existirem
+  if (markerA) markerA.remove();
+  if (markerB) markerB.remove();
+
+  // Remova a rota, se existir
+  if (map.getLayer("route")) {
+    map.removeLayer("route");
+    map.removeSource("route");
+  }
+
+  // Remova todas as linhas antigas do mapa
+  lineIds.forEach((lineId) => {
+    if (map.getLayer(lineId)) {
+      map.removeLayer(lineId);
+      map.removeSource(lineId);
+    }
+  });
+  lineIds = [];
+
+  if (weatherMarker) weatherMarker.remove();
+  if (popup) popup.remove();
+
+  // Redefina os marcadores e a rota
+  markerA = null;
+  markerB = null;
+  weatherMarker = null;
+  popup = null;
+
+  popup = new mapboxgl.Popup({
+    closeButton: false,
+    closeOnClick: false,
+  });
+}
+
+const recreateLayer = (tabela, sourceData) => {
+  if (!map.getSource(tabela)) {
+    map.addSource(tabela, {
+      type: "geojson",
+      data: sourceData,
+    });
+
+    map.addLayer({
+      id: tabela,
+      type: "symbol",
+      source: tabela,
+      layout: {
+        "icon-image": tabela,
+        "icon-size": 0.03,
+        "icon-allow-overlap": true,
+        visibility: "none",
+      },
+    });
+  }
+};
+
+const refreshLayersAfterClear = () => {
+  tabelas.forEach((tabela) => {
+    recreateLayer(tabela, originalPointsData[tabela]);
+  });
+};
 
 window.onload = function () {
   // Obtenha os elementos selecionados
