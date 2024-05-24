@@ -73,7 +73,7 @@ map.on("load", () => {
   function addLayers() {
     tabelas.forEach((tabela) => {
       // Busca os dados da tabela
-      fetch(`bd.php?tabela=${tabela}`)
+      fetch(`https://www.gis4cloud.com/grupo4_ptas2024/bd.php?tabela=${tabela}`)
         .then((response) => {
           if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
@@ -149,7 +149,7 @@ map.on("load", () => {
               popup.remove();
             });
 
-            // Quando o mouse entra em um ponto na camada normal...
+            // Quando o mouse entra em um ponto na camada...
             map.on("mouseenter", tabela, function (e) {
               // Muda o estilo do cursor como um indicador de interface do usuário.
               map.getCanvas().style.cursor = "pointer";
@@ -157,6 +157,12 @@ map.on("load", () => {
               // Copia a matriz de coordenadas.
               const coordinates = e.features[0].geometry.coordinates.slice();
               const description = e.features[0].properties.description;
+
+              // Guarde as coordenadas do ponto em uma variável
+              var pointCoordinates = coordinates;
+
+              // Construa a URL do Google Maps Street View com as coordenadas do ponto
+              var streetViewUrl = `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${pointCoordinates[1]},${pointCoordinates[0]}`;
 
               // Garante que se o mapa estiver ampliado de tal forma que várias
               // cópias do recurso estejam visíveis, o popup apareça
@@ -169,21 +175,29 @@ map.on("load", () => {
               // com base no recurso encontrado.
               popup
                 .setLngLat(coordinates)
-                .setHTML("<h6>" + tabela + "</h6><p>" + description + "</p>")
+                .setHTML(
+                  "<h6>" +
+                    tabela +
+                    "</h6><p>" +
+                    description +
+                    "</p><p><a href='" +
+                    streetViewUrl +
+                    "' target='_blank'>Ver no Google Street View</a></p>"
+                )
                 .addTo(map);
             });
 
-            // Quando o mouse sai de um ponto na camada...
+            /*             // Quando o mouse sai de um ponto na camada...
             map.on("mouseleave", tabela, function () {
               map.getCanvas().style.cursor = "";
               popup.remove();
-            });
+            }); */
           });
         })
         .catch((error) => console.error("Error:", error)); // Regista qualquer erro que ocorra
     });
   }
-  fetch("percursos.php?tabela=percurso_azul")
+  fetch("https://www.gis4cloud.com/grupo4_ptas2024/percursos.php?tabela=percurso_azul")
     .then((response) => response.json()) // Converte a resposta em JSON
     .then((data) => {
       // Adiciona os dados do percurso azul ao mapa como uma nova fonte
@@ -718,8 +732,8 @@ document.getElementById("addPointB").addEventListener("click", function () {
     .setLngLat(map.getCenter())
     .addTo(map);
 });
-
 var route;
+var lineIds = []; // Adicione esta linha para armazenar os IDs das linhas
 
 function calculateRoute() {
   if (!markerA || !markerB) return; // Se os pontos A e B não foram definidos, retorne
@@ -730,8 +744,16 @@ function calculateRoute() {
   // Converta as coordenadas para um formato que a API de roteamento possa entender
   var coordinates = `${pointA.lng},${pointA.lat};${pointB.lng},${pointB.lat}`;
 
-  // Construa a URL da API de roteamento
   var apiUrl = `https://api.mapbox.com/directions/v5/mapbox/driving/${coordinates}?geometries=geojson&access_token=${mapboxgl.accessToken}`;
+
+  // Remova todas as linhas antigas do mapa
+  lineIds.forEach((lineId) => {
+    if (map.getLayer(lineId)) {
+      map.removeLayer(lineId);
+      map.removeSource(lineId);
+    }
+  });
+  lineIds = []; // Limpe o array de IDs de linha
 
   // Faça uma solicitação para a API de roteamento
   fetch(apiUrl)
@@ -744,9 +766,7 @@ function calculateRoute() {
       var distance = turf.length(route, { units: "kilometers" }) * 1000;
 
       // Adicione a distância como uma propriedade da rota
-      route.properties = { distance: distance }; // Adicione esta linha
-
-      console.log(data);
+      route.properties = { distance: distance };
 
       // Adicione a rota ao mapa
       if (map.getLayer("route")) {
@@ -769,12 +789,47 @@ function calculateRoute() {
           "line-width": 8,
         },
       });
-      if (map.getLayer("route")) {
-        console.log("A camada da rota foi adicionada ao mapa.");
-        console.log(route.properties); // Deve mostrar { distance: ... }
-      } else {
-        console.log("A camada da rota NÃO foi adicionada ao mapa.");
+
+      var routeStart = route.coordinates[0];
+      var routeEnd = route.coordinates[route.coordinates.length - 1];
+
+      var unreachablePoints = [];
+      if (routeStart[0] !== pointA.lng || routeStart[1] !== pointA.lat) {
+        unreachablePoints.push(pointA);
       }
+      if (routeEnd[0] !== pointB.lng || routeEnd[1] !== pointB.lat) {
+        unreachablePoints.push(pointB);
+      }
+
+      unreachablePoints.forEach((unreachablePoint) => {
+        var point = turf.point([unreachablePoint.lng, unreachablePoint.lat]);
+        var nearestPoint = turf.nearestPointOnLine(route, point);
+        var lineToNearestPoint = turf.lineString([
+          [unreachablePoint.lng, unreachablePoint.lat],
+          nearestPoint.geometry.coordinates,
+        ]);
+
+        var lineId =
+          "line-to-nearest-point-" +
+          unreachablePoint.lng +
+          "-" +
+          unreachablePoint.lat;
+
+        map.addLayer({
+          id: lineId,
+          type: "line",
+          source: {
+            type: "geojson",
+            data: lineToNearestPoint,
+          },
+          paint: {
+            "line-color": "#ff0000",
+            "line-width": 2,
+          },
+        });
+
+        lineIds.push(lineId); // Adicione o ID da linha ao array de IDs de linha
+      });
     });
 }
 
@@ -815,7 +870,7 @@ document.querySelectorAll(".class-title").forEach((title) => {
 var weatherMarker;
 var openWeatherMapApiKey = "c2d56cde527ab835895db4be206e6c9d";
 
-var popup; // Mantenha uma referência ao popup atual aqui
+var popup_tempo; // Mantenha uma referência ao popup atual aqui
 
 document
   .getElementById("addWeatherPoint")
@@ -851,13 +906,13 @@ document
           var seaLevel = data.main.sea_level; // Nível do mar
           var windSpeed = data.wind.speed * 3.6; // Converta a velocidade do vento de m/s para km/h
 
-          // Remova o popup existente, se houver
-          if (popup) {
-            popup.remove();
+          // Remova o popup_tempo existente, se houver
+          if (popup_tempo) {
+            popup_tempo.remove();
           }
 
-          // Agora você pode adicionar um popup ao mapa na localização clicada com as informações meteorológicas
-          popup = new mapboxgl.Popup()
+          // Agora você pode adicionar um popup_tempo ao mapa na localização clicada com as informações meteorológicas
+          popup_tempo = new mapboxgl.Popup()
             .setLngLat(lngLat)
             .setHTML(
               `<h6>Informações meteorológicas</h6>
@@ -872,6 +927,13 @@ document
             .addTo(map);
         });
     }
+    // Adicione um ouvinte de evento ao pop-up que remove o marcador quando o pop-up é fechado
+    popup_tempo.on("close", function () {
+      if (weatherMarker) {
+        weatherMarker.remove();
+        weatherMarker = null;
+      }
+    });
   });
 
 window.onload = function () {
