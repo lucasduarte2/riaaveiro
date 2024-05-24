@@ -5,10 +5,10 @@ mapboxgl.accessToken =
 // Cria um novo mapa
 const map = new mapboxgl.Map({
   container: "map", // ID do elemento HTML que irá conter o mapa
-  center: [-8.66251015660316, 40.6469574920449], // Coordenadas do centro inicial do mapa
-  zoom: 15.2, // Nível de zoom inicial
-  pitch: 45, // Ângulo de inclinação inicial
-  bearing: 0, // Direção inicial
+  center: [-8.654168722609962, 40.63221083028599], // Coordenadas do centro inicial do mapa
+  zoom: 16.4, // Nível de zoom inicial
+  pitch: 75, // Ângulo de inclinação inicial
+  bearing: 7.5, // Direção inicial
   maxBounds: [-9.6, 40.4, -8.45, 41], // Limites máximos do mapa
 });
 
@@ -197,7 +197,9 @@ map.on("load", () => {
         .catch((error) => console.error("Error:", error)); // Regista qualquer erro que ocorra
     });
   }
-  fetch("https://www.gis4cloud.com/grupo4_ptas2024/percursos.php?tabela=percurso_azul")
+  fetch(
+    "https://www.gis4cloud.com/grupo4_ptas2024/percursos.php?tabela=percurso_azul"
+  )
     .then((response) => response.json()) // Converte a resposta em JSON
     .then((data) => {
       // Adiciona os dados do percurso azul ao mapa como uma nova fonte
@@ -404,12 +406,40 @@ map.on("load", () => {
         return "imagens/voleipraia.png";
     }
   }
+  /*   map.addSource("batimetria5m", {
+    type: "raster",
+    tiles: [
+      "https://gis4cloud.pt/geoserver/wms?service=WMS&request=GetMap&layers=grupo4_ptas2024:Aveiro%20Batimetria%20Reclassificada&styles=&format=image%2Fpng&transparent=true&version=1.1.1&width=256&height=256&srs=EPSG%3A3857&bbox={bbox-epsg-3857}",
+    ],
+    tileSize: 256,
+  });
+
+  map.addLayer({
+    id: "batimetria5m",
+    type: "raster",
+    source: "batimetria5m",
+    paint: {},
+  }); */
+  /*   map.addSource("batimetria25m", {
+    type: "raster",
+    tiles: [
+      "https://gis4cloud.pt/geoserver/grupo4_ptas2024/wms?service=WMS&version=1.1.0&request=GetMap&layers=grupo4_ptas2024%3AAveiro&bbox=-54562.5%2C104837.5%2C-44187.5%2C112287.5&width=768&height=551&srs=EPSG%3A3763&styles=&format=application/openlayers",
+    ],
+    tileSize: 256,
+  });
+
+  map.addLayer({
+    id: "batimetria25m",
+    type: "raster",
+    source: "batimetria25m",
+    paint: {},
+  }); */
 });
 
 // Quando o estilo do mapa terminar de carregar...
 map.on("style.load", () => {
   // Define a propriedade "lightPreset" do mapa para "dawn"
-  map.setConfigProperty("basemap", "lightPreset", "dawn");
+  map.setConfigProperty("basemap", "lightPreset", "dusk");
 });
 
 // Quando o valor do elemento "lightPreset" mudar...
@@ -733,7 +763,8 @@ document.getElementById("addPointB").addEventListener("click", function () {
     .addTo(map);
 });
 var route;
-var lineIds = []; // Adicione esta linha para armazenar os IDs das linhas
+var lineIds = [];
+var lineDistance;
 
 function calculateRoute() {
   if (!markerA || !markerB) return; // Se os pontos A e B não foram definidos, retorne
@@ -815,6 +846,10 @@ function calculateRoute() {
           "-" +
           unreachablePoint.lat;
 
+        // Calcule a distância da linha em metros usando turf.js
+        lineDistance =
+          turf.length(lineToNearestPoint, { units: "kilometers" }) * 1000;
+
         map.addLayer({
           id: lineId,
           type: "line",
@@ -842,12 +877,15 @@ var popup = new mapboxgl.Popup({
 map.on("mousemove", "route", function (e) {
   // Verifique se a distância está definida antes de tentar acessar toFixed
   if (route.properties.distance) {
-    var distance = route.properties.distance.toFixed(2);
+    var routeDistance = route.properties.distance.toFixed(2);
+    var distance = (lineDistance).toFixed(2);
 
     // Atualiza a posição e o texto do popup
     popup
       .setLngLat(e.lngLat)
-      .setText(`Distância da rota: ${distance} metros`)
+      .setText(
+        `Distância: ${routeDistance}m + ~${distance}m`
+      )
       .addTo(map);
   }
 });
@@ -871,6 +909,7 @@ var weatherMarker;
 var openWeatherMapApiKey = "c2d56cde527ab835895db4be206e6c9d";
 
 var popup_tempo; // Mantenha uma referência ao popup atual aqui
+var isMarkerBeingDragged = false;
 
 document
   .getElementById("addWeatherPoint")
@@ -882,11 +921,14 @@ document
     weatherMarker = new mapboxgl.Marker({ color: "purple", draggable: true })
       .setLngLat(center)
       .addTo(map)
-      .on("dragend", fetchWeatherData);
+      .on("dragend", function () {
+        fetchWeatherData();
+      });
 
     // Fetch weather data immediately after adding the marker
     fetchWeatherData();
     function fetchWeatherData() {
+      isMarkerBeingDragged = true;
       var lngLat = weatherMarker.getLngLat();
 
       // Construa a URL da API do OpenWeatherMap
@@ -905,6 +947,10 @@ document
           var humidity = data.main.humidity; // Humidade
           var seaLevel = data.main.sea_level; // Nível do mar
           var windSpeed = data.wind.speed * 3.6; // Converta a velocidade do vento de m/s para km/h
+          var weatherIcon = data.weather[0].icon; // Obtenha o ícone do tempo
+
+          // Construa a URL do ícone do tempo
+          var weatherIconUrl = `http://openweathermap.org/img/w/${weatherIcon}.png`;
 
           // Remova o popup_tempo existente, se houver
           if (popup_tempo) {
@@ -916,24 +962,24 @@ document
             .setLngLat(lngLat)
             .setHTML(
               `<h6>Informações meteorológicas</h6>
-                      <p>Temperatura: ${temperature.toFixed(2)} °C</p>
-                      <p>Sensação térmica: ${feelsLike.toFixed(2)} °C</p>
-                      <p>Temperatura mínima: ${tempMin.toFixed(2)} °C</p>
-                      <p>Temperatura máxima: ${tempMax.toFixed(2)} °C</p>
-                      <p>Humidade: ${humidity} %</p>
-                      <p>Nível do mar: ${seaLevel} m</p>
-                      <p>Velocidade do vento: ${windSpeed.toFixed(2)} km/h</p>`
+                    <img src="${weatherIconUrl}" alt="Ícone do tempo" width="100" height="100">
+                    <p>Temperatura: ${temperature.toFixed(2)} °C</p>
+                    <p>Sensação térmica: ${feelsLike.toFixed(2)} °C</p>
+                    <p>Temperatura mínima: ${tempMin.toFixed(2)} °C</p>
+                    <p>Temperatura máxima: ${tempMax.toFixed(2)} °C</p>
+                    <p>Humidade: ${humidity} %</p>
+                    <p>Pressão atmosférica: ${seaLevel} hPa</p>
+                    <p>Velocidade do vento: ${windSpeed.toFixed(2)} km/h</p>`
             )
             .addTo(map);
+          isMarkerBeingDragged = false;
+          popup_tempo.on("close", function () {
+            if (weatherMarker && !isMarkerBeingDragged) {
+              weatherMarker.remove();
+            }
+          });
         });
     }
-    // Adicione um ouvinte de evento ao pop-up que remove o marcador quando o pop-up é fechado
-    popup_tempo.on("close", function () {
-      if (weatherMarker) {
-        weatherMarker.remove();
-        weatherMarker = null;
-      }
-    });
   });
 
 window.onload = function () {
