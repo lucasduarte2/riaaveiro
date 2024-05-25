@@ -205,7 +205,7 @@ map.on("load", () => {
   ];
 
   percursos.forEach(function (percurso) {
-    fetch(`percursos.php?tabela=${percurso}`)
+    fetch(`https://www.gis4cloud.com/grupo4_ptas2024/percursos.php?tabela=${percurso}`)
       .then((response) => response.json()) // Converte a resposta em JSON
       .then((data) => {
         // Adiciona os dados do percurso ao mapa como uma nova fonte
