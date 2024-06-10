@@ -72,131 +72,154 @@ map.on("load", () => {
   // Função para adicionar as camadas ao mapa.
   function addLayers() {
     tabelas.forEach((tabela) => {
-      // Busca os dados da tabela
-      fetch(`https://www.gis4cloud.com/grupo4_ptas2024/bd.php?tabela=${tabela}`)
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-          }
-          return response.json(); // Assuming the response is JSON
-        })
-        .then((data) => {
-          // Process the JSON data
-          console.log(`Dados carregados para ${tabela}:`, data);
-          map.addSource(tabela, {
-            type: "geojson",
-            data: data,
-          });
+        // Busca os dados da tabela
+        fetch(`bd.php?tabela=${tabela}`)
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json(); // Assuming the response is JSON
+            })
+            .then((data) => {
+                // Process the JSON data
+                console.log(`Dados carregados para ${tabela}:`, data);
+                map.addSource(tabela, {
+                    type: "geojson",
+                    data: data,
+                });
 
-          // Carrega a imagem do ícone
-          // Carrega a imagem do ícone
-          map.loadImage(getLayerImage(tabela), function (error, image) {
-            if (error) {
-              console.error("Error loading image:", error);
-              // Handle errors gracefully
-              return;
-            }
+                // Carrega a imagem do ícone
+                // Carrega a imagem do ícone
+                map.loadImage(getLayerImage(tabela), function (error, image) {
+                    if (error) {
+                        console.error("Error loading image:", error);
+                        // Handle errors gracefully
+                        return;
+                    }
 
-            // Adiciona a imagem ao mapa
-            map.addImage(tabela, image);
+                    // Adiciona a imagem ao mapa
+                    map.addImage(tabela, image);
 
-            // Adiciona uma nova camada ao mapa usando os dados e a imagem
-            map.addLayer({
-              id: tabela,
-              type: "symbol",
-              source: tabela,
-              layout: {
-                "icon-image": tabela,
-                "icon-size": 0.03,
-                "icon-allow-overlap": true,
-                visibility: "none",
-              },
-            });
+                    // Adiciona uma nova camada ao mapa usando os dados e a imagem
+                    map.addLayer({
+                        id: tabela,
+                        type: "symbol",
+                        source: tabela,
+                        layout: {
+                            "icon-image": tabela,
+                            "icon-size": 0.03,
+                            "icon-allow-overlap": true,
+                            visibility: "none",
+                        },
+                    });
 
-            // Cria um popup, mas não o adiciona ao mapa ainda.
-            const popup = new mapboxgl.Popup({
-              closeButton: false,
-              closeOnClick: false,
-            });
+                    // Cria um popup, mas não o adiciona ao mapa ainda.
+                    const popup = new mapboxgl.Popup({
+                        closeButton: false,
+                        closeOnClick: false,
+                    });
 
-            // Quando o mouse entra em um ponto na camada dentro da isocrona...
-            map.on("mouseenter", tabela + "_within", function (e) {
-              // Muda o estilo do cursor como um indicador de interface do usuário.
-              map.getCanvas().style.cursor = "pointer";
+                    // Quando o mouse entra em um ponto na camada dentro da isocrona...
+                    map.on("mouseenter", tabela + "_within", function (e) {
+                        // Muda o estilo do cursor como um indicador de interface do usuário.
+                        map.getCanvas().style.cursor = "pointer";
 
-              // Copia a matriz de coordenadas.
-              const coordinates = e.features[0].geometry.coordinates.slice();
-              const description = e.features[0].properties.description;
+                        // Copia a matriz de coordenadas.
+                        const coordinates = e.features[0].geometry.coordinates.slice();
+                        const nome = e.features[0].properties.nome; // Verifique se 'nome' é acessado corretamente aqui
+                        console.log(nome);
 
-              // Garante que se o mapa estiver ampliado de tal forma que várias
-              // cópias do recurso estejam visíveis, o popup apareça
-              // sobre a cópia que está sendo apontada.
-              while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-                coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
-              }
+                        // Garante que se o mapa estiver ampliado de tal forma que várias
+                        // cópias do recurso estejam visíveis, o popup apareça
+                        // sobre a cópia que está sendo apontada.
+                        while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+                            coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+                        }
 
-              // Preenche o popup e define suas coordenadas
-              // com base no recurso encontrado.
-              popup
-                .setLngLat(coordinates)
-                .setHTML("<h6>" + tabela + "</h6><p>" + description + "</p>")
-                .addTo(map);
-            });
+                        // Preenche o popup e define suas coordenadas
+                        // com base no recurso encontrado.
+                        popup
+                            .setLngLat(coordinates)
+                            .setHTML("<h6>" + tabela + "</h6>" + "<h6>" + nome + "</h6>")
+                            .addTo(map);
+                    });
 
-            // Quando o mouse sai de um ponto na camada...
-            map.on("mouseleave", tabela + "_within", function () {
-              map.getCanvas().style.cursor = "";
-              popup.remove();
-            });
+                    // Quando o mouse sai de um ponto na camada...
+                    map.on("mouseleave", tabela + "_within", function () {
+                        map.getCanvas().style.cursor = "";
+                        popup.remove();
+                    });
 
-            // Quando o mouse entra em um ponto na camada...
-            map.on("mouseenter", tabela, function (e) {
-              // Muda o estilo do cursor como um indicador de interface do usuário.
-              map.getCanvas().style.cursor = "pointer";
+                    // Quando o mouse entra em um ponto na camada...
+                    map.on("mouseenter", tabela, function (e) {
+                        // Muda o estilo do cursor como um indicador de interface do usuário.
+                        map.getCanvas().style.cursor = "pointer";
 
-              // Copia a matriz de coordenadas.
-              const coordinates = e.features[0].geometry.coordinates.slice();
-              const description = e.features[0].properties.description;
+                        // Copia a matriz de coordenadas.
+                        const coordinates = e.features[0].geometry.coordinates.slice();
+                        const nome = e.features[0].properties.nome ? e.features[0].properties.nome : 'Desconhecido';
 
-              // Guarde as coordenadas do ponto em uma variável
-              var pointCoordinates = coordinates;
+                        //const description = e.features[0].properties.description;
 
-              // Construa a URL do Google Maps Street View com as coordenadas do ponto
-              var streetViewUrl = `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${pointCoordinates[1]},${pointCoordinates[0]}`;
+                        // Guarde as coordenadas do ponto em uma variável
+                        var pointCoordinates = coordinates;
 
-              // Garante que se o mapa estiver ampliado de tal forma que várias
-              // cópias do recurso estejam visíveis, o popup apareça
-              // sobre a cópia que está sendo apontada.
-              while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-                coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
-              }
+                        // Construa a URL do Google Maps Street View com as coordenadas do ponto
+                        var streetViewUrl = `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${pointCoordinates[1]},${pointCoordinates[0]}`;
 
-              // Preenche o popup e define suas coordenadas
-              // com base no recurso encontrado.
-              popup
-                .setLngLat(coordinates)
-                .setHTML(
-                  "<h6>" +
-                    tabela +
-                    "</h6><p>" +
-                    description +
-                    "</p><p><a href='" +
-                    streetViewUrl +
-                    "' target='_blank'>Ver no Google Street View</a></p>"
-                )
-                .addTo(map);
-            });
+                        // Garante que se o mapa estiver ampliado de tal forma que várias
+                        // cópias do recurso estejam visíveis, o popup apareça
+                        // sobre a cópia que está sendo apontada.
+                        while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+                            coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+                        }
 
-            // Quando o mouse sai de um ponto na camada...
-            map.on("mouseleave", tabela, function () {
-              map.getCanvas().style.cursor = "";
-              popup.remove();
-            });
-          });
-        })
-        .catch((error) => console.error("Error:", error)); // Regista qualquer erro que ocorra
+                        // Faz a chamada à API de reversão do OpenStreetMap para obter o endereço
+                        fetch(`https://nominatim.openstreetmap.org/reverse?lat=${pointCoordinates[1]}&lon=${pointCoordinates[0]}&format=json`)
+                            .then(response => response.json())
+                            .then(data => {
+                                const addressParts = data.address;
+                                const rua = addressParts.road ? addressParts.road : 'Desconhecido';
+                                const codigoPostal = addressParts.postcode ? addressParts.postcode : 'Desconhecido';
+                                const cidade = addressParts.city ? addressParts.city : 'Desconhecido';
+                                const addressHTML = `
+                                    <p><strong>Rua:</strong> ${rua}</p>
+                                    <p><strong>Código Postal:</strong> ${codigoPostal}</p>
+                                    <p><strong>Cidade:</strong> ${cidade}</p>
+                                `;
+                                // Preenche o popup e define suas coordenadas
+                                // com base no recurso encontrado.
+                                popup
+                                    .setLngLat(coordinates)
+                                    .setHTML(
+                                        "<h6><b>Tipo:</b> " +
+                                        tabela +
+                                        "</h6><p><b>Nome:</b> " +
+                                        nome +
+                                        "</p>" +
+                                        addressHTML +
+                                        "<p><a href='" +
+                                        streetViewUrl +
+                                        "' target='_blank'>Ver no Google Street View</a></p>"
+                                    )
+                                    .addTo(map);
+                            })
+                            .catch(error => console.error("Error fetching address:", error));
+                    });
+
+                    // Quando o mouse sai de um ponto na camada...
+                    map.on("mouseleave", tabela, function () {
+                        map.getCanvas().style.cursor = "";
+                        popup.remove();
+                    });
+                });
+            })
+            .catch((error) => console.error("Error:", error)); // Regista qualquer erro que ocorra
     });
-  }
+}
+
+
+
   var percursos = [
     "percurso_azul",
     "percurso_dourado",
@@ -871,7 +894,6 @@ document
 
 document.querySelectorAll(".class-title").forEach((title) => {
   title.addEventListener("click", (event) => {
-    console.log("teste");
     event.target.parentNode.classList.toggle("active");
   });
 });

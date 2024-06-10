@@ -1,6 +1,18 @@
 <?php
 function getGeoJSON($tabela)
 {
+
+    // Verificar se a tabela é 'spatial_ref_sys' e pular
+    if ($tabela === 'spatial_ref_sys') {
+        return json_encode(
+            array(
+                'type' => 'FeatureCollection',
+                'features' => array(),
+                'message' => 'Tabela spatial_ref_sys foi ignorada.'
+            )
+        );
+    }
+
     $cacheFile = 'cache/' . $tabela . '.json';
     // Definir o tempo de expiração do cache em segundos (1 hora)
     $cacheTime = 3600;
@@ -17,7 +29,7 @@ function getGeoJSON($tabela)
         die("Erro ao conectar à base de dados.");
     }
 
-    $query = "SELECT lat, lng FROM " . $tabela . ";";
+    $query = "SELECT lat, lng, nome FROM " . $tabela . ";";
     $result = pg_query($conn, $query);
     if (!$result) {
         die("Erro ao executar a consulta SQL.");
@@ -27,6 +39,7 @@ function getGeoJSON($tabela)
         'type' => 'FeatureCollection',
         'features' => array()
     );
+    // Dentro do loop que processa os resultados da sua consulta SQL e constrói o GeoJSON
     while ($row = pg_fetch_assoc($result)) {
         $feature = array(
             'type' => 'Feature',
@@ -37,7 +50,9 @@ function getGeoJSON($tabela)
                     floatval($row['lat'])
                 )
             ),
-            'properties' => array()
+            'properties' => array(
+                'nome' => $row['nome'] // Adicionando o nome aqui
+            )
         );
         array_push($geojson['features'], $feature);
     }
