@@ -114,22 +114,38 @@
         <br /><br />
       </div>
     </div>
-    <div id="menu">
-      <div id="Alojamento-e-Transporte" class="layer-class">
-        <h6 class="class-title">Alojamento e Transporte</h6>
-        <div class="layers"></div>
-      </div>
-      <div id="Pontos-de-Interesse" class="layer-class">
-        <h6 class="class-title">Pontos de Interesse</h6>
-        <div class="layers"></div>
-      </div>
-      <div id="Serviços" class="layer-class">
-        <h6 class="class-title">Serviços</h6>
-        <div class="layers"></div>
-      </div>
-      <div id="Atividades" class="layer-class">
-        <h6 class="class-title">Atividades</h6>
-        <div class="layers"></div>
+
+    <div class="popupLayers" id="popupLayers">
+      Selecionar layers
+    </div>
+    
+    <div class="popupOpcoesMapa" id="popupOpcoesMapa">
+      Opções do Mapa
+    </div>
+
+    <div id="sidebarLayers" class="sidebarLayers">
+      <div class="sidebarLayers-content">
+        <div id="sidebarLayers-toggle" class="sidebarLayers-toggle" onclick="toggleSidebarLayers()"><span class="arrow-icon">&laquo;</span></div>
+          <div id="Alojamento-e-Transporte" class="layer-class">
+            <a class="class-title" onclick="toggleArrow(this)">Alojamento e Transporte <span class="fa fa-arrow-down"></span></a>
+            <div class="layers"></div>
+          </div>
+          <br>
+          <div id="Pontos-de-Interesse" class="layer-class">
+            <a class="class-title" onclick="toggleArrow(this)">Pontos de Interesse <span class="fa fa-arrow-down"></span></a>
+            <div class="layers"></div>
+          </div>
+          <br>
+          <div id="Serviços" class="layer-class">
+            <a class="class-title" onclick="toggleArrow(this)">Serviços <span class="fa fa-arrow-down"></span></a>
+            <div class="layers"></div>
+          </div>
+          <br>
+          <div id="Atividades" class="layer-class">
+            <a class="class-title" onclick="toggleArrow(this)">Atividades <span class="fa fa-arrow-down"></span></a>
+            <div class="layers"></div>
+          </div>
+        </div>
       </div>
     </div>
 

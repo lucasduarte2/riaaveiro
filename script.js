@@ -1,3 +1,37 @@
+document.addEventListener("DOMContentLoaded", function () {
+  var popup = document.getElementById("popupLayers");
+  var popup_mapa = document.getElementById("popupOpcoesMapa");
+
+  // Exibir o pop-up após 2 segundos
+  setTimeout(function () {
+    popup.style.display = "block";
+    popup.style.animation = "slideInFromRight 0.5s ease forwards";
+  }, 500);
+
+  // Ocultar o pop-up após 7 segundos
+  setTimeout(function () {
+    popup.style.animation = "slideOutToRight 0.5s ease forwards";
+    setTimeout(function () {
+      popup.style.display = "none";
+    }, 500);
+  }, 5000);
+
+    // Exibir o pop-up após 2 segundos
+    setTimeout(function () {
+      popup_mapa.style.display = "block";
+      popup_mapa.style.animation = "slideInFromLeft 0.5s ease forwards";
+    }, 500);
+  
+    // Ocultar o pop-up após 7 segundos
+    setTimeout(function () {
+      popup_mapa.style.animation = "slideOutToLeft 0.5s ease forwards";
+      setTimeout(function () {
+        popup_mapa.style.display = "none";
+      }, 500);
+    }, 5000);
+});
+
+
 // Define a chave de acesso do Mapbox
 mapboxgl.accessToken =
   "pk.eyJ1Ijoic2RhbmllbHNpbHZhIiwiYSI6ImNsdmY0bTUwNDAzbWwyamw4NjUwMW5paTUifQ.0MAtfqLmatOkT_NjHAo9Ag";
@@ -72,151 +106,151 @@ map.on("load", () => {
   // Função para adicionar as camadas ao mapa.
   function addLayers() {
     tabelas.forEach((tabela) => {
-        // Busca os dados da tabela
-        fetch(`bd.php?tabela=${tabela}`)
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-                return response.json(); // Assuming the response is JSON
-            })
-            .then((data) => {
-                // Process the JSON data
-                console.log(`Dados carregados para ${tabela}:`, data);
-                map.addSource(tabela, {
-                    type: "geojson",
-                    data: data,
-                });
+      // Busca os dados da tabela
+      fetch(`bd.php?tabela=${tabela}`)
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          return response.json(); // Assuming the response is JSON
+        })
+        .then((data) => {
+          // Process the JSON data
+          console.log(`Dados carregados para ${tabela}:`, data);
+          map.addSource(tabela, {
+            type: "geojson",
+            data: data,
+          });
 
-                // Carrega a imagem do ícone
-                // Carrega a imagem do ícone
-                map.loadImage(getLayerImage(tabela), function (error, image) {
-                    if (error) {
-                        console.error("Error loading image:", error);
-                        // Handle errors gracefully
-                        return;
-                    }
+          // Carrega a imagem do ícone
+          // Carrega a imagem do ícone
+          map.loadImage(getLayerImage(tabela), function (error, image) {
+            if (error) {
+              console.error("Error loading image:", error);
+              // Handle errors gracefully
+              return;
+            }
 
-                    // Adiciona a imagem ao mapa
-                    map.addImage(tabela, image);
+            // Adiciona a imagem ao mapa
+            map.addImage(tabela, image);
 
-                    // Adiciona uma nova camada ao mapa usando os dados e a imagem
-                    map.addLayer({
-                        id: tabela,
-                        type: "symbol",
-                        source: tabela,
-                        layout: {
-                            "icon-image": tabela,
-                            "icon-size": 0.03,
-                            "icon-allow-overlap": true,
-                            visibility: "none",
-                        },
-                    });
+            // Adiciona uma nova camada ao mapa usando os dados e a imagem
+            map.addLayer({
+              id: tabela,
+              type: "symbol",
+              source: tabela,
+              layout: {
+                "icon-image": tabela,
+                "icon-size": 0.03,
+                "icon-allow-overlap": true,
+                visibility: "none",
+              },
+            });
 
-                    // Cria um popup, mas não o adiciona ao mapa ainda.
-                    const popup = new mapboxgl.Popup({
-                        closeButton: false,
-                        closeOnClick: false,
-                    });
+            // Cria um popup, mas não o adiciona ao mapa ainda.
+            const popup = new mapboxgl.Popup({
+              closeButton: false,
+              closeOnClick: false,
+            });
 
-                    // Quando o mouse entra em um ponto na camada dentro da isocrona...
-                    map.on("mouseenter", tabela + "_within", function (e) {
-                        // Muda o estilo do cursor como um indicador de interface do usuário.
-                        map.getCanvas().style.cursor = "pointer";
+            // Quando o mouse entra em um ponto na camada dentro da isocrona...
+            map.on("mouseenter", tabela + "_within", function (e) {
+              // Muda o estilo do cursor como um indicador de interface do usuário.
+              map.getCanvas().style.cursor = "pointer";
 
-                        // Copia a matriz de coordenadas.
-                        const coordinates = e.features[0].geometry.coordinates.slice();
-                        const nome = e.features[0].properties.nome; // Verifique se 'nome' é acessado corretamente aqui
-                        console.log(nome);
+              // Copia a matriz de coordenadas.
+              const coordinates = e.features[0].geometry.coordinates.slice();
+              const nome = e.features[0].properties.nome; // Verifique se 'nome' é acessado corretamente aqui
+              console.log(nome);
 
-                        // Garante que se o mapa estiver ampliado de tal forma que várias
-                        // cópias do recurso estejam visíveis, o popup apareça
-                        // sobre a cópia que está sendo apontada.
-                        while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-                            coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
-                        }
+              // Garante que se o mapa estiver ampliado de tal forma que várias
+              // cópias do recurso estejam visíveis, o popup apareça
+              // sobre a cópia que está sendo apontada.
+              while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+                coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+              }
 
-                        // Preenche o popup e define suas coordenadas
-                        // com base no recurso encontrado.
-                        popup
-                            .setLngLat(coordinates)
-                            .setHTML("<h6>" + tabela + "</h6>" + "<h6>" + nome + "</h6>")
-                            .addTo(map);
-                    });
+              // Preenche o popup e define suas coordenadas
+              // com base no recurso encontrado.
+              popup
+                .setLngLat(coordinates)
+                .setHTML("<h6>" + tabela + "</h6>" + "<h6>" + nome + "</h6>")
+                .addTo(map);
+            });
 
-                    // Quando o mouse sai de um ponto na camada...
-                    map.on("mouseleave", tabela + "_within", function () {
-                        map.getCanvas().style.cursor = "";
-                        popup.remove();
-                    });
+            // Quando o mouse sai de um ponto na camada...
+            map.on("mouseleave", tabela + "_within", function () {
+              map.getCanvas().style.cursor = "";
+              popup.remove();
+            });
 
-                    // Quando o mouse entra em um ponto na camada...
-                    map.on("mouseenter", tabela, function (e) {
-                        // Muda o estilo do cursor como um indicador de interface do usuário.
-                        map.getCanvas().style.cursor = "pointer";
+            // Quando o mouse entra em um ponto na camada...
+            map.on("mouseenter", tabela, function (e) {
+              // Muda o estilo do cursor como um indicador de interface do usuário.
+              map.getCanvas().style.cursor = "pointer";
 
-                        // Copia a matriz de coordenadas.
-                        const coordinates = e.features[0].geometry.coordinates.slice();
-                        const nome = e.features[0].properties.nome ? e.features[0].properties.nome : 'Desconhecido';
+              // Copia a matriz de coordenadas.
+              const coordinates = e.features[0].geometry.coordinates.slice();
+              const nome = e.features[0].properties.nome ? e.features[0].properties.nome : 'Desconhecido';
 
-                        //const description = e.features[0].properties.description;
+              //const description = e.features[0].properties.description;
 
-                        // Guarde as coordenadas do ponto em uma variável
-                        var pointCoordinates = coordinates;
+              // Guarde as coordenadas do ponto em uma variável
+              var pointCoordinates = coordinates;
 
-                        // Construa a URL do Google Maps Street View com as coordenadas do ponto
-                        var streetViewUrl = `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${pointCoordinates[1]},${pointCoordinates[0]}`;
+              // Construa a URL do Google Maps Street View com as coordenadas do ponto
+              var streetViewUrl = `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${pointCoordinates[1]},${pointCoordinates[0]}`;
 
-                        // Garante que se o mapa estiver ampliado de tal forma que várias
-                        // cópias do recurso estejam visíveis, o popup apareça
-                        // sobre a cópia que está sendo apontada.
-                        while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-                            coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
-                        }
+              // Garante que se o mapa estiver ampliado de tal forma que várias
+              // cópias do recurso estejam visíveis, o popup apareça
+              // sobre a cópia que está sendo apontada.
+              while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+                coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+              }
 
-                        // Faz a chamada à API de reversão do OpenStreetMap para obter o endereço
-                        fetch(`https://nominatim.openstreetmap.org/reverse?lat=${pointCoordinates[1]}&lon=${pointCoordinates[0]}&format=json`)
-                            .then(response => response.json())
-                            .then(data => {
-                                const addressParts = data.address;
-                                const rua = addressParts.road ? addressParts.road : 'Desconhecido';
-                                const codigoPostal = addressParts.postcode ? addressParts.postcode : 'Desconhecido';
-                                const cidade = addressParts.city ? addressParts.city : 'Desconhecido';
-                                const addressHTML = `
+              // Faz a chamada à API de reversão do OpenStreetMap para obter o endereço
+              fetch(`https://nominatim.openstreetmap.org/reverse?lat=${pointCoordinates[1]}&lon=${pointCoordinates[0]}&format=json`)
+                .then(response => response.json())
+                .then(data => {
+                  const addressParts = data.address;
+                  const rua = addressParts.road ? addressParts.road : 'Desconhecido';
+                  const codigoPostal = addressParts.postcode ? addressParts.postcode : 'Desconhecido';
+                  const cidade = addressParts.city ? addressParts.city : 'Desconhecido';
+                  const addressHTML = `
                                     <p><strong>Rua:</strong> ${rua}</p>
                                     <p><strong>Código Postal:</strong> ${codigoPostal}</p>
                                     <p><strong>Cidade:</strong> ${cidade}</p>
                                 `;
-                                // Preenche o popup e define suas coordenadas
-                                // com base no recurso encontrado.
-                                popup
-                                    .setLngLat(coordinates)
-                                    .setHTML(
-                                        "<h6><b>Tipo:</b> " +
-                                        tabela +
-                                        "</h6><p><b>Nome:</b> " +
-                                        nome +
-                                        "</p>" +
-                                        addressHTML +
-                                        "<p><a href='" +
-                                        streetViewUrl +
-                                        "' target='_blank'>Ver no Google Street View</a></p>"
-                                    )
-                                    .addTo(map);
-                            })
-                            .catch(error => console.error("Error fetching address:", error));
-                    });
+                  // Preenche o popup e define suas coordenadas
+                  // com base no recurso encontrado.
+                  popup
+                    .setLngLat(coordinates)
+                    .setHTML(
+                      "<h6><b>Tipo:</b> " +
+                      tabela +
+                      "</h6><p><b>Nome:</b> " +
+                      nome +
+                      "</p>" +
+                      addressHTML +
+                      "<p><a href='" +
+                      streetViewUrl +
+                      "' target='_blank'>Ver no Google Street View</a></p>"
+                    )
+                    .addTo(map);
+                })
+                .catch(error => console.error("Error fetching address:", error));
+            });
 
-                    // Quando o mouse sai de um ponto na camada...
-                    map.on("mouseleave", tabela, function () {
-                        map.getCanvas().style.cursor = "";
-                        popup.remove();
-                    });
-                });
-            })
-            .catch((error) => console.error("Error:", error)); // Regista qualquer erro que ocorra
+            // Quando o mouse sai de um ponto na camada...
+            map.on("mouseleave", tabela, function () {
+              map.getCanvas().style.cursor = "";
+              popup.remove();
+            });
+          });
+        })
+        .catch((error) => console.error("Error:", error)); // Regista qualquer erro que ocorra
     });
-}
+  }
 
 
 
@@ -252,10 +286,10 @@ map.on("load", () => {
               percurso === "percurso_azul"
                 ? "#0000FF"
                 : percurso === "percurso_dourado"
-                ? "#FFD700"
-                : percurso === "percurso_natureza"
-                ? "#A47551"
-                : "#008000", // Cor do percurso
+                  ? "#FFD700"
+                  : percurso === "percurso_natureza"
+                    ? "#A47551"
+                    : "#008000", // Cor do percurso
             "line-width": 3, // Largura da linha
           },
         });
@@ -355,11 +389,12 @@ map.on("load", () => {
           link.id = layer;
           link.href = "#";
           link.textContent = layerNames[layer] || layer;
-          link.className = "active";
+          link.className = "layer-link";
           link.onclick = function (e) {
             const clickedLayer = this.id;
             e.preventDefault();
             e.stopPropagation();
+
             toggleLayerVisibility(clickedLayer, this);
           };
           layersDiv.appendChild(link);
@@ -380,9 +415,9 @@ map.on("load", () => {
       // Alterna a visibilidade da camada.
       if (visibility === "visible") {
         map.setLayoutProperty(layerId, "visibility", "none");
-        linkElement.className = "";
+        linkElement.classList.remove("active");
       } else {
-        linkElement.className = "active";
+        linkElement.classList.add("active");
         map.setLayoutProperty(layerId, "visibility", "visible");
       }
     }
@@ -558,6 +593,22 @@ function toggleSidebar() {
   } else {
     arrowIcon.innerHTML = "»";
   }
+}
+
+function toggleSidebarLayers() {
+  const sidebar = document.getElementById("sidebarLayers");
+  const arrowIcon = document.querySelector(".sidebarLayers-toggle .arrow-icon");
+  sidebar.classList.toggle("show");
+  if (sidebar.classList.contains("show")) {
+    arrowIcon.innerHTML = "»";
+  } else {
+    arrowIcon.innerHTML = "«";
+  }
+}
+
+function toggleArrow(element) {
+  element.querySelector("span").classList.toggle("fa-arrow-up");
+  element.querySelector("span").classList.toggle("fa-arrow-down");
 }
 
 // Armazene as coordenadas do último ponto clicado
