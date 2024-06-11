@@ -104,7 +104,21 @@ var originalPointsData = {};
 // Quando o mapa terminar de carregar...
 map.on("load", () => {
   // Função para adicionar as camadas ao mapa.
+  
+
+
+  function createPopupHTML(tabela, nome, addressHTML, streetViewUrl) {
+    return `
+      <h6><b>Tipo:</b> ${tabela}</h6>
+      <p><b>Nome:</b> ${nome}</p>
+      ${addressHTML}
+      <p><a href="${streetViewUrl}" target="_blank">Ver no Google Street View</a></p>
+    `;
+  }
+  
   function addLayers() {
+    let currentPopup = null; // Variável para armazenar o popup atual
+  
     tabelas.forEach((tabela) => {
       // Busca os dados da tabela
       fetch(`bd.php?tabela=${tabela}`)
@@ -121,8 +135,7 @@ map.on("load", () => {
             type: "geojson",
             data: data,
           });
-
-          // Carrega a imagem do ícone
+  
           // Carrega a imagem do ícone
           map.loadImage(getLayerImage(tabela), function (error, image) {
             if (error) {
@@ -130,10 +143,10 @@ map.on("load", () => {
               // Handle errors gracefully
               return;
             }
-
+  
             // Adiciona a imagem ao mapa
             map.addImage(tabela, image);
-
+  
             // Adiciona uma nova camada ao mapa usando os dados e a imagem
             map.addLayer({
               id: tabela,
@@ -146,70 +159,44 @@ map.on("load", () => {
                 visibility: "none",
               },
             });
-
+  
             // Cria um popup, mas não o adiciona ao mapa ainda.
             const popup = new mapboxgl.Popup({
-              closeButton: false,
+              closeButton: true, // Adiciona o botão de fechar
               closeOnClick: false,
             });
-
+  
+            // Função para fechar o popup atual se existir
+            function closeCurrentPopup() {
+              if (currentPopup) {
+                currentPopup.remove();
+                currentPopup = null;
+              }
+            }
+  
             // Quando o mouse entra em um ponto na camada dentro da isocrona...
             map.on("mouseenter", tabela + "_within", function (e) {
+              closeCurrentPopup(); // Fecha o popup atual
+  
               // Muda o estilo do cursor como um indicador de interface do usuário.
               map.getCanvas().style.cursor = "pointer";
-
-              // Copia a matriz de coordenadas.
-              const coordinates = e.features[0].geometry.coordinates.slice();
-              const nome = e.features[0].properties.nome; // Verifique se 'nome' é acessado corretamente aqui
-              console.log(nome);
-
-              // Garante que se o mapa estiver ampliado de tal forma que várias
-              // cópias do recurso estejam visíveis, o popup apareça
-              // sobre a cópia que está sendo apontada.
-              while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-                coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
-              }
-
-              // Preenche o popup e define suas coordenadas
-              // com base no recurso encontrado.
-              popup
-                .setLngLat(coordinates)
-                .setHTML("<h6>" + tabela + "</h6>" + "<h6>" + nome + "</h6>")
-                .addTo(map);
-            });
-
-            // Quando o mouse sai de um ponto na camada...
-            map.on("mouseleave", tabela + "_within", function () {
-              map.getCanvas().style.cursor = "";
-              popup.remove();
-            });
-
-            // Quando o mouse entra em um ponto na camada...
-            map.on("mouseenter", tabela, function (e) {
-              // Muda o estilo do cursor como um indicador de interface do usuário.
-              map.getCanvas().style.cursor = "pointer";
-
+  
               // Copia a matriz de coordenadas.
               const coordinates = e.features[0].geometry.coordinates.slice();
               const nome = e.features[0].properties.nome ? e.features[0].properties.nome : 'Desconhecido';
-
-              //const description = e.features[0].properties.description;
-
-              // Guarde as coordenadas do ponto em uma variável
-              var pointCoordinates = coordinates;
-
+  
               // Construa a URL do Google Maps Street View com as coordenadas do ponto
-              var streetViewUrl = `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${pointCoordinates[1]},${pointCoordinates[0]}`;
-
+              var streetViewUrl = `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${coordinates[1]},${coordinates[0]}`;
+  
               // Garante que se o mapa estiver ampliado de tal forma que várias
               // cópias do recurso estejam visíveis, o popup apareça
               // sobre a cópia que está sendo apontada.
               while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
                 coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
               }
-
+  
               // Faz a chamada à API de reversão do OpenStreetMap para obter o endereço
-              fetch(`https://nominatim.openstreetmap.org/reverse?lat=${pointCoordinates[1]}&lon=${pointCoordinates[0]}&format=json`)
+              fetch(`https://nominatim.openstreetmap.org/reverse?lat=${coordinates[1]}&lon=${coordinates[0]}&format=json`)
                 .then(response => response.json())
                 .then(data => {
                   const addressParts = data.address;
@@ -217,40 +204,84 @@ map.on("load", () => {
                   const codigoPostal = addressParts.postcode ? addressParts.postcode : 'Desconhecido';
                   const cidade = addressParts.city ? addressParts.city : 'Desconhecido';
                   const addressHTML = `
-                                    <p><strong>Rua:</strong> ${rua}</p>
-                                    <p><strong>Código Postal:</strong> ${codigoPostal}</p>
-                                    <p><strong>Cidade:</strong> ${cidade}</p>
-                                `;
+                    <p><strong>Rua:</strong> ${rua}</p>
+                    <p><strong>Código Postal:</strong> ${codigoPostal}</p>
+                    <p><strong>Cidade:</strong> ${cidade}</p>
+                  `;
                   // Preenche o popup e define suas coordenadas
                   // com base no recurso encontrado.
                   popup
                     .setLngLat(coordinates)
-                    .setHTML(
-                      "<h6><b>Tipo:</b> " +
-                      tabela +
-                      "</h6><p><b>Nome:</b> " +
-                      nome +
-                      "</p>" +
-                      addressHTML +
-                      "<p><a href='" +
-                      streetViewUrl +
-                      "' target='_blank'>Ver no Google Street View</a></p>"
-                    )
+                    .setHTML(createPopupHTML(tabela, nome, addressHTML, streetViewUrl))
                     .addTo(map);
+                  currentPopup = popup; // Armazena o popup atual
                 })
                 .catch(error => console.error("Error fetching address:", error));
             });
-
+  
+            // Quando o mouse sai de um ponto na camada...
+            map.on("mouseleave", tabela + "_within", function () {
+              map.getCanvas().style.cursor = "";
+              closeCurrentPopup(); // Fecha o popup atual
+            });
+  
+            // Quando o mouse entra em um ponto na camada...
+            map.on("mouseenter", tabela, function (e) {
+              closeCurrentPopup(); // Fecha o popup atual
+  
+              // Muda o estilo do cursor como um indicador de interface do usuário.
+              map.getCanvas().style.cursor = "pointer";
+  
+              // Copia a matriz de coordenadas.
+              const coordinates = e.features[0].geometry.coordinates.slice();
+              const nome = e.features[0].properties.nome ? e.features[0].properties.nome : 'Desconhecido';
+  
+              // Construa a URL do Google Maps Street View com as coordenadas do ponto
+              var streetViewUrl = `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${coordinates[1]},${coordinates[0]}`;
+  
+              // Garante que se o mapa estiver ampliado de tal forma que várias
+              // cópias do recurso estejam visíveis, o popup apareça
+              // sobre a cópia que está sendo apontada.
+              while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+                coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+              }
+  
+              // Faz a chamada à API de reversão do OpenStreetMap para obter o endereço
+              fetch(`https://nominatim.openstreetmap.org/reverse?lat=${coordinates[1]}&lon=${coordinates[0]}&format=json`)
+                .then(response => response.json())
+                .then(data => {
+                  const addressParts = data.address;
+                  const rua = addressParts.road ? addressParts.road : 'Desconhecido';
+                  const codigoPostal = addressParts.postcode ? addressParts.postcode : 'Desconhecido';
+                  const cidade = addressParts.city ? addressParts.city : 'Desconhecido';
+                  const addressHTML = `
+                    <p><strong>Rua:</strong> ${rua}</p>
+                    <p><strong>Código Postal:</strong> ${codigoPostal}</p>
+                    <p><strong>Cidade:</strong> ${cidade}</p>
+                  `;
+                  // Preenche o popup e define suas coordenadas
+                  // com base no recurso encontrado.
+                  popup
+                    .setLngLat(coordinates)
+                    .setHTML(createPopupHTML(tabela, nome, addressHTML, streetViewUrl))
+                    .addTo(map);
+                  currentPopup = popup; // Armazena o popup atual
+                })
+                .catch(error => console.error("Error fetching address:", error));
+            });
+  
             // Quando o mouse sai de um ponto na camada...
             map.on("mouseleave", tabela, function () {
               map.getCanvas().style.cursor = "";
-              popup.remove();
+              closeCurrentPopup(); // Fecha o popup atual
             });
           });
         })
         .catch((error) => console.error("Error:", error)); // Regista qualquer erro que ocorra
     });
   }
+  
+  
 
 
 
