@@ -103,8 +103,14 @@ var originalPointsData = {};
 
 // Quando o mapa terminar de carregar...
 map.on("load", () => {
-  // Função para adicionar as camadas ao mapa.
-
+  map.setFog({
+    'range': [-1, 9],
+    'horizon-blend': 0.3,
+    'color': '#242B4B',
+    'high-color': '#161B36',
+    'space-color': '#0B1026',
+    'star-intensity': 0.8
+})
 
 
   function createPopupHTML(tabela, nome, addressHTML, streetViewUrl) {
