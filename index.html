@@ -22,6 +22,7 @@
       integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
       crossorigin="anonymous"
     />
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" />
     <script src="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
@@ -30,6 +31,8 @@
       integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
       crossorigin="anonymous"
     ></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
   </head>
   <body>
     <div id="map"></div>
@@ -88,8 +91,15 @@
         </fieldset>
         <br />
         <fieldset class="select-fieldset">
-          <button id="addPointA">Adicionar ponto A</button>
-          <button id="addPointB">Adicionar ponto B</button>
+          <fieldset class="select-fieldset">
+            <button id="addPointA">Adicionar ponto A</button>
+            <input type="text" id="addressInputA" style="width: 100%; margin-top: 5px;" placeholder="Digite a localização do ponto A" />
+          </fieldset>
+
+          <fieldset class="select-fieldset">
+            <button id="addPointB">Adicionar ponto B</button>
+            <input type="text" id="addressInputB" style="width: 100%; margin-top: 5px;" placeholder="Digite a localização do ponto B" />
+          </fieldset>
           <button id="calculateRouteButton">Calcular</button>
         </fieldset>
 
@@ -106,8 +116,9 @@
         </button>
         <br /><br />
         <fieldset>
-          <h4>Metereologia</h4>
+          <h4>Meteorologia</h4>
           <button id="addWeatherPoint">Adicionar ponto meteorológico</button>
+          <input type="text" id="addressInputWeather" style="width: 100%; margin-top: 5px;" placeholder="Digite a localização do ponto meteorológico" />
         </fieldset>
 
         <br /><br />

@@ -16,19 +16,19 @@ document.addEventListener("DOMContentLoaded", function () {
     }, 500);
   }, 5000);
 
-    // Exibir o pop-up após 2 segundos
+  // Exibir o pop-up após 2 segundos
+  setTimeout(function () {
+    popup_mapa.style.display = "block";
+    popup_mapa.style.animation = "slideInFromLeft 0.5s ease forwards";
+  }, 500);
+
+  // Ocultar o pop-up após 7 segundos
+  setTimeout(function () {
+    popup_mapa.style.animation = "slideOutToLeft 0.5s ease forwards";
     setTimeout(function () {
-      popup_mapa.style.display = "block";
-      popup_mapa.style.animation = "slideInFromLeft 0.5s ease forwards";
+      popup_mapa.style.display = "none";
     }, 500);
-  
-    // Ocultar o pop-up após 7 segundos
-    setTimeout(function () {
-      popup_mapa.style.animation = "slideOutToLeft 0.5s ease forwards";
-      setTimeout(function () {
-        popup_mapa.style.display = "none";
-      }, 500);
-    }, 5000);
+  }, 5000);
 });
 
 
@@ -104,7 +104,7 @@ var originalPointsData = {};
 // Quando o mapa terminar de carregar...
 map.on("load", () => {
   // Função para adicionar as camadas ao mapa.
-  
+
 
 
   function createPopupHTML(tabela, nome, addressHTML, streetViewUrl) {
@@ -115,10 +115,10 @@ map.on("load", () => {
       <p><a href="${streetViewUrl}" target="_blank">Ver no Google Street View</a></p>
     `;
   }
-  
+
   function addLayers() {
     let currentPopup = null; // Variável para armazenar o popup atual
-  
+
     tabelas.forEach((tabela) => {
       // Busca os dados da tabela
       fetch(`bd.php?tabela=${tabela}`)
@@ -135,7 +135,7 @@ map.on("load", () => {
             type: "geojson",
             data: data,
           });
-  
+
           // Carrega a imagem do ícone
           map.loadImage(getLayerImage(tabela), function (error, image) {
             if (error) {
@@ -143,10 +143,10 @@ map.on("load", () => {
               // Handle errors gracefully
               return;
             }
-  
+
             // Adiciona a imagem ao mapa
             map.addImage(tabela, image);
-  
+
             // Adiciona uma nova camada ao mapa usando os dados e a imagem
             map.addLayer({
               id: tabela,
@@ -159,13 +159,13 @@ map.on("load", () => {
                 visibility: "none",
               },
             });
-  
+
             // Cria um popup, mas não o adiciona ao mapa ainda.
             const popup = new mapboxgl.Popup({
               closeButton: true, // Adiciona o botão de fechar
               closeOnClick: false,
             });
-  
+
             // Função para fechar o popup atual se existir
             function closeCurrentPopup() {
               if (currentPopup) {
@@ -173,28 +173,28 @@ map.on("load", () => {
                 currentPopup = null;
               }
             }
-  
+
             // Quando o mouse entra em um ponto na camada dentro da isocrona...
             map.on("mouseenter", tabela + "_within", function (e) {
               closeCurrentPopup(); // Fecha o popup atual
-  
+
               // Muda o estilo do cursor como um indicador de interface do usuário.
               map.getCanvas().style.cursor = "pointer";
-  
+
               // Copia a matriz de coordenadas.
               const coordinates = e.features[0].geometry.coordinates.slice();
               const nome = e.features[0].properties.nome ? e.features[0].properties.nome : 'Desconhecido';
-  
+
               // Construa a URL do Google Maps Street View com as coordenadas do ponto
               var streetViewUrl = `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${coordinates[1]},${coordinates[0]}`;
-  
+
               // Garante que se o mapa estiver ampliado de tal forma que várias
               // cópias do recurso estejam visíveis, o popup apareça
               // sobre a cópia que está sendo apontada.
               while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
                 coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
               }
-  
+
               // Faz a chamada à API de reversão do OpenStreetMap para obter o endereço
               fetch(`https://nominatim.openstreetmap.org/reverse?lat=${coordinates[1]}&lon=${coordinates[0]}&format=json`)
                 .then(response => response.json())
@@ -218,34 +218,34 @@ map.on("load", () => {
                 })
                 .catch(error => console.error("Error fetching address:", error));
             });
-  
+
             // Quando o mouse sai de um ponto na camada...
             map.on("mouseleave", tabela + "_within", function () {
               map.getCanvas().style.cursor = "";
               closeCurrentPopup(); // Fecha o popup atual
             });
-  
+
             // Quando o mouse entra em um ponto na camada...
             map.on("mouseenter", tabela, function (e) {
               closeCurrentPopup(); // Fecha o popup atual
-  
+
               // Muda o estilo do cursor como um indicador de interface do usuário.
               map.getCanvas().style.cursor = "pointer";
-  
+
               // Copia a matriz de coordenadas.
               const coordinates = e.features[0].geometry.coordinates.slice();
               const nome = e.features[0].properties.nome ? e.features[0].properties.nome : 'Desconhecido';
-  
+
               // Construa a URL do Google Maps Street View com as coordenadas do ponto
               var streetViewUrl = `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${coordinates[1]},${coordinates[0]}`;
-  
+
               // Garante que se o mapa estiver ampliado de tal forma que várias
               // cópias do recurso estejam visíveis, o popup apareça
               // sobre a cópia que está sendo apontada.
               while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
                 coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
               }
-  
+
               // Faz a chamada à API de reversão do OpenStreetMap para obter o endereço
               fetch(`https://nominatim.openstreetmap.org/reverse?lat=${coordinates[1]}&lon=${coordinates[0]}&format=json`)
                 .then(response => response.json())
@@ -269,7 +269,7 @@ map.on("load", () => {
                 })
                 .catch(error => console.error("Error fetching address:", error));
             });
-  
+
             // Quando o mouse sai de um ponto na camada...
             map.on("mouseleave", tabela, function () {
               map.getCanvas().style.cursor = "";
@@ -280,8 +280,8 @@ map.on("load", () => {
         .catch((error) => console.error("Error:", error)); // Regista qualquer erro que ocorra
     });
   }
-  
-  
+
+
 
 
 
@@ -416,19 +416,26 @@ map.on("load", () => {
       for (const [classId, layers] of Object.entries(layerClasses)) {
         const layersDiv = document.querySelector(`#${classId} .layers`);
         for (const layer of layers) {
-          const link = document.createElement("a");
-          link.id = layer;
-          link.href = "#";
-          link.textContent = layerNames[layer] || layer;
-          link.className = "layer-link";
-          link.onclick = function (e) {
-            const clickedLayer = this.id;
-            e.preventDefault();
-            e.stopPropagation();
+          const layerContainer = document.createElement("div");
+          layerContainer.className = "form-check form-switch";
 
-            toggleLayerVisibility(clickedLayer, this);
+          const checkbox = document.createElement("input");
+          checkbox.className = "form-check-input";
+          checkbox.type = "checkbox";
+          checkbox.role = "switch";
+          checkbox.id = layer;
+          checkbox.onchange = function () {
+            toggleLayerVisibility(layer, this);
           };
-          layersDiv.appendChild(link);
+
+          const label = document.createElement("label");
+          label.className = "form-check-label";
+          label.htmlFor = layer;
+          label.textContent = layerNames[layer] || layer;
+
+          layerContainer.appendChild(checkbox);
+          layerContainer.appendChild(label);
+          layersDiv.appendChild(layerContainer);
         }
       }
 
@@ -437,7 +444,7 @@ map.on("load", () => {
     }
   });
 
-  function toggleLayerVisibility(layer, linkElement) {
+  function toggleLayerVisibility(layer, switchElement) {
     // Verifique tanto a camada original quanto a camada dentro da isocrona
     const layerId = [layer, layer + "_within"].find((id) => map.getLayer(id));
     if (layerId) {
@@ -446,10 +453,10 @@ map.on("load", () => {
       // Alterna a visibilidade da camada.
       if (visibility === "visible") {
         map.setLayoutProperty(layerId, "visibility", "none");
-        linkElement.classList.remove("active");
+        switchElement.checked = false;
       } else {
-        linkElement.classList.add("active");
         map.setLayoutProperty(layerId, "visibility", "visible");
+        switchElement.checked = true;
       }
     }
   }
@@ -817,6 +824,11 @@ function limparIsocronas() {
   // Limpar a referência do último ponto clicado
   lastClickedPoint = null;
   refreshLayersAfterClear();
+
+  // Limpar os campos de pesquisa de moradas
+  document.getElementById("addressInputA").value = "";
+  document.getElementById("addressInputB").value = "";
+  document.getElementById("addressInputWeather").value = "";
 }
 
 var markerA, markerB;
@@ -840,6 +852,69 @@ document.getElementById("addPointB").addEventListener("click", function () {
     .setLngLat(map.getCenter())
     .addTo(map);
 });
+
+// Função para adicionar o autocomplete e a busca de endereço
+function addAutocompleteAndSearch(inputId, markerColor, map) {
+  $(function () {
+    $(`#${inputId}`).autocomplete({
+      source: function (request, response) {
+        const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(request.term)}.json?access_token=${mapboxgl.accessToken}&autocomplete=true`;
+
+        axios.get(url)
+          .then(res => {
+            // Filtra as moradas dentro dos limites do mapa
+            const featuresWithinBounds = res.data.features.filter(feature => {
+              const coords = feature.geometry.coordinates;
+              const lngLat = mapboxgl.LngLat.convert(coords);
+              return lngLat.lng >= -9.6 && lngLat.lng <= -8.45 && lngLat.lat >= 40.4 && lngLat.lat <= 41;
+            });
+
+            response(featuresWithinBounds.map(feature => ({
+              label: feature.place_name,
+              value: feature.place_name,
+              feature: feature
+            })));
+          })
+          .catch(err => {
+            console.error(err);
+            response([]);
+          });
+      },
+      minLength: 2,
+      select: function (event, ui) {
+        const coords = ui.item.feature.geometry.coordinates;
+        const description = ui.item.feature.place_name;
+
+        // Centralize o mapa na localização
+        map.flyTo({
+          center: coords,
+          zoom: 15
+        });
+
+        // Adiciona o marcador correspondente ao campo de busca
+        if (inputId === "addressInputA") {
+          if (markerA) markerA.remove();
+          markerA = new mapboxgl.Marker({ color: markerColor, draggable: true })
+            .setLngLat(coords)
+            .addTo(map);
+        } else if (inputId === "addressInputB") {
+          if (markerB) markerB.remove();
+          markerB = new mapboxgl.Marker({ color: markerColor, draggable: true })
+            .setLngLat(coords)
+            .addTo(map);
+        }
+      }
+    });
+  });
+}
+
+// Adiciona autocomplete e busca para o campo do Ponto A
+addAutocompleteAndSearch("addressInputA", "red", map);
+
+// Adiciona autocomplete e busca para o campo do Ponto B
+addAutocompleteAndSearch("addressInputB", "blue", map);
+
+
 var route;
 var lineIds = [];
 var lineDistance;
@@ -1002,6 +1077,64 @@ document
 
     // Fetch weather data immediately after adding the marker
     fetchWeatherData();
+
+    // Função para adicionar o autocomplete e a busca de endereço
+    function addAutocompleteAndSearch(inputId, markerColor, map) {
+      $(function () {
+        $(`#${inputId}`).autocomplete({
+          source: function (request, response) {
+            const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(request.term)}.json?access_token=${mapboxgl.accessToken}&autocomplete=true`;
+
+            axios.get(url)
+              .then(res => {
+                // Filtra as moradas dentro dos limites do mapa
+                const featuresWithinBounds = res.data.features.filter(feature => {
+                  const coords = feature.geometry.coordinates;
+                  const lngLat = mapboxgl.LngLat.convert(coords);
+                  return lngLat.lng >= -9.6 && lngLat.lng <= -8.45 && lngLat.lat >= 40.4 && lngLat.lat <= 41;
+                });
+
+                response(featuresWithinBounds.map(feature => ({
+                  label: feature.place_name,
+                  value: feature.place_name,
+                  feature: feature
+                })));
+              })
+              .catch(err => {
+                console.error(err);
+                response([]);
+              });
+          },
+          minLength: 2,
+          select: function (event, ui) {
+            const coords = ui.item.feature.geometry.coordinates;
+            const description = ui.item.feature.place_name;
+
+            // Centralize o mapa na localização
+            map.flyTo({
+              center: coords,
+              zoom: 15
+            });
+
+            // Adiciona o marcador correspondente ao campo de busca
+            if (inputId === "addressInputWeather") {
+              if (weatherMarker) weatherMarker.remove();
+              weatherMarker = new mapboxgl.Marker({ color: markerColor, draggable: true })
+                .setLngLat(coords)
+                .addTo(map)
+                .on("dragend", function () {
+                  fetchWeatherData();
+                });
+              fetchWeatherData(); // Fetch weather data immediately after adding the marker
+            }
+          }
+        });
+      });
+    }
+
+    // Adiciona autocomplete e busca para o campo do Ponto Meteorológico
+    addAutocompleteAndSearch("addressInputWeather", "purple", map);
+
     function fetchWeatherData() {
       isMarkerBeingDragged = true;
       var lngLat = weatherMarker.getLngLat();

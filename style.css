@@ -21,7 +21,7 @@ body {
   height: 100%;
   background-color: #f8f8f8;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-  z-index: 1;
+  z-index: 9;
   padding: 20px;
   box-sizing: border-box;
   transition: transform 0.3s ease-in-out;
@@ -194,7 +194,7 @@ body {
   position: fixed;
   top: 20%;
   right: 70px;
-  background-color: #586c56;
+  background-color: #007bff;
   color: white;
   padding: 10px 20px;
   border-radius: 5px;
@@ -212,7 +212,7 @@ body {
   transform: translateY(-50%);
   border-width: 10px;
   border-style: solid;
-  border-color: transparent transparent transparent #586c56;
+  border-color: transparent transparent transparent #007bff;
 }
 
 @keyframes slideInFromRight {
@@ -241,7 +241,7 @@ body {
   position: fixed;
   top: 20px;
   left: 70px;
-  background-color: #586c56;
+  background-color: #007bff;
   color: white;
   padding: 10px 20px;
   border-radius: 5px;
@@ -259,7 +259,7 @@ body {
   transform: translateY(-50%);
   border-width: 10px;
   border-style: solid;
-  border-color: transparent #586c56 transparent transparent;
+  border-color: transparent #007bff transparent transparent;
 }
 
 @keyframes slideInFromLeft {
