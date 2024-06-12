@@ -110,7 +110,7 @@ map.on("load", () => {
     'high-color': '#161B36',
     'space-color': '#0B1026',
     'star-intensity': 0.8
-})
+  })
 
 
   function createPopupHTML(tabela, nome, addressHTML, streetViewUrl) {
@@ -1024,7 +1024,145 @@ function calculateRoute() {
 
         lineIds.push(lineId); // Adicione o ID da linha ao array de IDs de linha
       });
+
+      animateAlongRoute(route);
+    })
+    .catch((error) => {
+      console.error("Erro ao calcular a rota:", error);
     });
+}
+
+function animateAlongRoute(route) {
+  // Calculate the total length of the route
+  const lineDistance = turf.length(route, { units: "kilometers" });
+
+  // Calculate the number of steps based on the length of the route
+  let steps = Math.round(lineDistance * 50); // Ajuste o multiplicador conforme necessário para ajustar a velocidade
+
+  // Definir um limite mínimo para o número de etapas
+  const minSteps = 100;
+  steps = Math.max(steps, minSteps);
+
+  const arc = [];
+
+  // Create an arc with the calculated coordinates
+  for (let i = 0; i < lineDistance; i += lineDistance / steps) {
+    const segment = turf.along(route, i, { units: "kilometers" });
+    arc.push(segment.geometry.coordinates);
+  }
+
+  // Update the route with calculated arc coordinates
+  route.coordinates = arc;
+
+  // Initial point at the start of the route
+  const point = {
+    type: "FeatureCollection",
+    features: [
+      {
+        type: "Feature",
+        properties: {},
+        geometry: {
+          type: "Point",
+          coordinates: route.coordinates[0],
+        },
+      },
+    ],
+  };
+
+  let counter = 0;
+
+  // Add the point to the map
+  if (!map.getSource("point")) {
+    map.addSource("point", {
+      type: "geojson",
+      data: point,
+    });
+  }
+
+  // Load the selected icon based on the current option
+  loadSelectedIcon();
+
+  function loadSelectedIcon() {
+    const selectedProfile = document.getElementById("routingProfile").value;
+    let imageUrl;
+
+    switch (selectedProfile) {
+      case "driving-traffic":
+        imageUrl = "https://cdn-icons-png.flaticon.com/128/0/798.png";
+        break;
+      case "walking":
+        imageUrl = "https://cdn-icons-png.flaticon.com/128/16419/16419629.png";
+        break;
+      case "cycling":
+        imageUrl = "https://cdn-icons-png.flaticon.com/128/2772/2772608.png";
+        break;
+    }
+
+    map.loadImage(imageUrl, function (error, image) {
+      if (error) throw error;
+
+      // Remove the existing layer if it exists
+      if (map.getLayer("point")) {
+        map.removeLayer("point");
+      }
+
+      // Remove the existing image if it exists
+      if (map.hasImage('icon')) {
+        map.removeImage('icon');
+      }
+
+      map.addImage('icon', image);
+      map.addLayer({
+        'id': 'point',
+        'source': 'point',
+        'type': 'symbol',
+        'layout': {
+          'icon-image': 'icon',
+          'icon-size': 0.5, // Reduz o tamanho do ícone para 0.5
+          'icon-rotate': ['get', 'bearing'],
+          'icon-rotation-alignment': 'map',
+          'icon-allow-overlap': true,
+          'icon-ignore-placement': true
+        }
+      });
+      document.getElementById("replay").style.display = "block";
+    });
+  }
+
+
+  // Function to animate along the route
+  function animate() {
+    const start = route.coordinates[counter >= steps ? counter - 1 : counter];
+    const end = route.coordinates[counter >= steps ? counter : counter + 1];
+    if (!start || !end) return;
+
+    point.features[0].geometry.coordinates = route.coordinates[counter];
+
+    point.features[0].properties.bearing = turf.bearing(
+      turf.point(start),
+      turf.point(end)
+    );
+
+    map.getSource("point").setData(point);
+
+    if (counter < steps) {
+      requestAnimationFrame(animate);
+    }
+
+    counter++;
+  }
+
+  // Start the animation
+  animate();
+
+  // Add event listener to the "replay" button
+  document.getElementById("replay").addEventListener("click", () => {
+    counter = 0;
+    animate();
+  });
+
+  // Add event listener to the routing profile select
+  document.getElementById("routingProfile").addEventListener("change", loadSelectedIcon);
 }
 
 // Cria um popup, mas não o adiciona ao mapa ainda.
@@ -1232,6 +1370,12 @@ function limparTudo() {
     closeButton: false,
     closeOnClick: false,
   });
+
+  // Remover imagem do ícone
+  map.removeImage('icon');
+
+  // Esconder o botão "Replay Animation"
+  document.getElementById("replay").style.display = "none";
 }
 
 const recreateLayer = (tabela, sourceData) => {
