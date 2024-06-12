@@ -944,17 +944,19 @@ var route;
 var lineIds = [];
 var lineDistance;
 
+// Função para calcular a rota
 function calculateRoute() {
   if (!markerA || !markerB) return; // Se os pontos A e B não foram definidos, retorne
 
   var pointA = markerA.getLngLat();
   var pointB = markerB.getLngLat();
-  var pointIntermedio = markerIntermedio ? markerIntermedio.getLngLat() : null; // Verifiqua se o ponto intermédio está definido
+  var pointIntermedio = markerIntermedio ? markerIntermedio.getLngLat() : null; // Verifique se o ponto intermédio está definido
+  var selectedCategory = document.getElementById("selectedCategory").value; // Obtém a categoria de ponto de interesse selecionada
 
   // Converta as coordenadas para um formato que a API de roteamento possa entender
   var coordinates = `${pointA.lng},${pointA.lat}`;
 
-  // Se o ponto C estiver definido, inclua-o nas coordenadas
+  // Se o ponto intermédio estiver definido, inclua-o nas coordenadas
   if (pointIntermedio) {
     coordinates += `;${pointIntermedio.lng},${pointIntermedio.lat}`;
   }
@@ -974,16 +976,25 @@ function calculateRoute() {
 
   // Faça uma solicitação para a API de roteamento
   fetch(apiUrl)
-    .then((response) => response.json())
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`Erro na requisição: ${response.status}`);
+      }
+      return response.json();
+    })
     .then((data) => {
       // A resposta da API de roteamento incluirá uma rota que você pode adicionar ao mapa
-      route = data.routes[0].geometry;
+      var route = data.routes[0].geometry;
 
       // Calcule a distância da rota em metros usando turf.js
       var distance = turf.length(route, { units: "kilometers" }) * 1000;
 
-      // Adicione a distância como uma propriedade da rota
-      route.properties = { distance: distance };
+      // Crie um objeto GeoJSON com a rota e adicione a distância como uma propriedade
+      var routeGeoJSON = {
+        type: "Feature",
+        properties: { distance: distance },
+        geometry: route
+      };
 
       // Adicione a rota ao mapa
       if (map.getLayer("route")) {
@@ -992,10 +1003,7 @@ function calculateRoute() {
       }
       map.addSource("route", {
         type: "geojson",
-        data: {
-          type: "Feature",
-          geometry: route,
-        },
+        data: routeGeoJSON,
       });
       map.addLayer({
         id: "route",
@@ -1033,7 +1041,7 @@ function calculateRoute() {
           unreachablePoint.lat;
 
         // Calcule a distância da linha em metros usando turf.js
-        lineDistance =
+        var lineDistance =
           turf.length(lineToNearestPoint, { units: "kilometers" }) * 1000;
 
         map.addLayer({
@@ -1054,12 +1062,100 @@ function calculateRoute() {
 
       animateAlongRoute(route);
 
-      // Exibe o botão "Adicionar ponto intermédio" e o campo de entrada do ponto intermediário
+      // Se uma categoria de ponto de interesse estiver selecionada, busque os pontos de interesse
+      if (selectedCategory) {
+        fetch(`bd.php?tabela=${selectedCategory}`)
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error(`Erro na requisição de pontos de interesse: ${response.status}`);
+            }
+            return response.json();
+          })
+          .then((pointsOfInterest) => {
+            // Encontre o ponto de interesse mais próximo na rota
+            var nearestPointOfInterest = pointsOfInterest.features.reduce((nearestPoint, currentPoint) => {
+              var distanceToRoute = turf.pointToLineDistance(currentPoint, route);
+              if (!nearestPoint || distanceToRoute < nearestPoint.distanceToRoute) {
+                return {
+                  point: currentPoint,
+                  distanceToRoute: distanceToRoute
+                };
+              } else {
+                return nearestPoint;
+              }
+            }, null);
+
+            // Se um ponto de interesse próximo foi encontrado, recalcule a rota para incluí-lo
+            if (nearestPointOfInterest) {
+              coordinates = `${pointA.lng},${pointA.lat}`;
+              if (pointIntermedio) {
+                coordinates += `;${pointIntermedio.lng},${pointIntermedio.lat}`;
+              }
+              coordinates += `;${nearestPointOfInterest.point.geometry.coordinates[0]},${nearestPointOfInterest.point.geometry.coordinates[1]};${pointB.lng},${pointB.lat}`;
+
+              apiUrl = `https://api.mapbox.com/directions/v5/mapbox/driving/${coordinates}?geometries=geojson&access_token=${mapboxgl.accessToken}`;
+
+              fetch(apiUrl)
+                .then((response) => {
+                  if (!response.ok) {
+                    throw new Error(`Erro na requisição: ${response.status}`);
+                  }
+                  return response.json();
+                })
+                .then((data) => {
+                  // A resposta da API de roteamento incluirá a nova rota que você pode adicionar ao mapa
+                  var newRoute = data.routes[0].geometry;
+
+                  // Calcule a distância da rota em metros usando turf.js
+                  var distance = turf.length(newRoute, { units: "kilometers" }) * 1000;
+
+                  // Crie um objeto GeoJSON com a nova rota e adicione a distância como uma propriedade
+                  var newRouteGeoJSON = {
+                    type: "Feature",
+                    properties: { distance: distance },
+                    geometry: newRoute
+                  };
+
+                  // Adicione a nova rota ao mapa
+                  if (map.getLayer("route")) {
+                    map.removeLayer("route");
+                    map.removeSource("route");
+                  }
+                  map.addSource("route", {
+                    type: "geojson",
+                    data: newRouteGeoJSON,
+                  });
+                  map.addLayer({
+                    id: "route",
+                    type: "line",
+                    source: "route",
+                    paint: {
+                      "line-color": "#FFA500",
+                      "line-width": 8,
+                    },
+                  });
+
+                  animateAlongRoute(newRoute);
+                })
+                .catch((error) => {
+                  console.error(error);
+                });
+            }
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+      }
+
+      // Exibe o botão "Adicionar ponto intermédio" e o campo de entrada do ponto intermédio
       document.getElementById("addPointIntermedio").style.display = "block";
       document.getElementById("addressInputIntermedio").style.display = "block";
+
+      // Exibe o botão "Selecionar ponto de interesse"
+      document.getElementById("selectedCategory").style.display = "block";
     })
     .catch((error) => {
-      console.error("Erro ao calcular a rota:", error);
+      console.error(error);
     });
 }
 
@@ -1414,6 +1510,8 @@ function limparTudo() {
   document.getElementById("addPointIntermedio").style.display = "none";
   document.getElementById("addressInputIntermedio").style.display = "none";
 
+  // Esconde o botão "Selecionar categoria do ponto de interesse"
+  document.getElementById("selectedCategory").style.display = "none";
 }
 
 const recreateLayer = (tabela, sourceData) => {
