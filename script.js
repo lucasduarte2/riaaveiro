@@ -112,6 +112,42 @@ map.on("load", () => {
     'star-intensity': 0.8
   })
 
+  // Nova camada WMS
+  map.addSource('batimetria25mLayer', {
+    'type': 'raster',
+    'tiles': [
+      'https://gis4cloud.pt/geoserver/wms?service=WMS&request=GetMap&layers=grupo4_ptas2024:Aveiro&styles=&format=image%2Fpng&transparent=true&version=1.1.1&width=256&height=256&srs=EPSG%3A3857&bbox={bbox-epsg-3857}'
+
+      //'https://gis4cloud.pt/geoserver/wms?service=WMS&request=GetMap&layers=grupo4_ptas2024:Aveiro_25m&styles=&format=image%2Fpng&transparent=true&version=1.1.1&width=256&height=256&srs=EPSG%3A3857&bbox={bbox-epsg-3857}'
+    ],
+    'tileSize': 256
+  });
+
+  map.addLayer({
+    'id': 'batimetria25m',
+    'type': 'raster',
+    'source': 'batimetria25mLayer',
+    'paint': {
+      'raster-opacity': 0
+    },
+  });
+
+  map.addSource('batimetria2mLayer', {
+    'type': 'raster',
+    'tiles': [
+      'https://gis4cloud.pt/geoserver/wms?service=WMS&request=GetMap&layers=grupo4_ptas2024:Aveiro%20Batimetria%20Reclassificada&styles=&format=image%2Fpng&transparent=true&version=1.1.1&width=256&height=256&srs=EPSG%3A3857&bbox={bbox-epsg-3857}'
+    ],
+    'tileSize': 256
+  });
+
+  map.addLayer({
+    'id': 'batimetria2m',
+    'type': 'raster',
+    'source': 'batimetria2mLayer',
+    'paint': {
+      'raster-opacity': 0
+    }
+  });
 
   function createPopupHTML(tabela, nome, addressHTML, streetViewUrl) {
     return `
@@ -445,10 +481,58 @@ map.on("load", () => {
         }
       }
 
+      // Adicionar botões de batimetria à div com ID "Batimetrias"
+      const batimetriaDiv = document.querySelector("#Batimetrias .layers");
+      const batimetriaLayers = ["batimetria25m", "batimetria2m"];
+
+      for (const layer of batimetriaLayers) {
+        const layerContainer = document.createElement("div");
+        layerContainer.className = "form-check form-switch";
+
+        const checkbox = document.createElement("input");
+        checkbox.className = "form-check-input";
+        checkbox.type = "checkbox";
+        checkbox.role = "switch";
+        checkbox.id = layer;
+        checkbox.onchange = function () {
+          toggleBatimetriaVisibility(layer, this);
+        };
+
+        const label = document.createElement("label");
+        label.className = "form-check-label";
+        label.htmlFor = layer;
+        label.textContent = layerNames[layer] || layer;
+
+        layerContainer.appendChild(checkbox);
+        layerContainer.appendChild(label);
+        batimetriaDiv.appendChild(layerContainer);
+      }
+
       // Atualize a variável para indicar que os links das layers foram adicionados
       layersAdded = true;
     }
   });
+
+  function toggleBatimetriaVisibility(layerId, checkbox) {
+    const legend25m = document.getElementById('legend25m');
+    const legend2m = document.getElementById('legend2m');
+
+    if (checkbox.checked) {
+      map.setPaintProperty(layerId, 'raster-opacity', 1);
+      if (layerId === 'batimetria25m') {
+        legend25m.style.display = 'block';
+      } else if (layerId === 'batimetria2m') {
+        legend2m.style.display = 'block';
+      }
+    } else {
+      map.setPaintProperty(layerId, 'raster-opacity', 0);
+      if (layerId === 'batimetria25m') {
+        legend25m.style.display = 'none';
+      } else if (layerId === 'batimetria2m') {
+        legend2m.style.display = 'none';
+      }
+    }
+  }
 
   function toggleLayerVisibility(layer, switchElement) {
     // Verifique tanto a camada original quanto a camada dentro da isocrona

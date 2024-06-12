@@ -36,6 +36,10 @@
   </head>
   <body>
     <div id="map"></div>
+    <div id="legend25m">
+      <h4>Legenda</h4>
+      <img src="https://gis4cloud.pt/geoserver/wms?service=WMS&request=GetLegendGraphic&format=image/png&layer=grupo4_ptas2024:Aveiro" alt="Legenda da camada WMS">
+    </div>
     <div id="sidebar" class="sidebar">
       <div class="sidebar-content">
         <br />
@@ -198,6 +202,11 @@
           <br>
           <div id="Atividades" class="layer-class">
             <a class="class-title" onclick="toggleArrow(this)">Atividades <span class="fa fa-arrow-down"></span></a>
+            <div class="layers"></div>
+          </div>
+          <br>
+          <div id="Batimetrias" class="layer-class">
+            <a class="class-title" onclick="toggleArrow(this)">Batimetrias <span class="fa fa-arrow-down"></span></a>
             <div class="layers"></div>
           </div>
         </div>
