@@ -81,6 +81,8 @@ body {
   align-items: center;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  border-bottom-right-radius: 8px;
+  border-top-right-radius: 8px;
 }
 
 .sidebar-content {
@@ -132,6 +134,8 @@ body {
   align-items: center;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  border-bottom-left-radius: 8px;
+  border-top-left-radius: 8px;
 }
 
 .sidebarLayers-content {
