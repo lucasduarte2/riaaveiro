@@ -837,7 +837,7 @@ function limparIsocronas() {
   document.getElementById("addressInputWeather").value = "";
 }
 
-var markerA, markerB;
+var markerA, markerB, markerIntermedio;
 
 document.getElementById("addPointA").addEventListener("click", function () {
   // Se o marcador A já existir, remova-o
@@ -858,6 +858,17 @@ document.getElementById("addPointB").addEventListener("click", function () {
     .setLngLat(map.getCenter())
     .addTo(map);
 });
+
+document.getElementById("addPointIntermedio").addEventListener("click", function () {
+  // Se o marcador intermédio já existir, remova-o
+  if (markerIntermedio) markerIntermedio.remove();
+
+  // Adicione um novo marcador B no centro do mapa
+  markerIntermedio = new mapboxgl.Marker({ color: "orange", draggable: true })
+    .setLngLat(map.getCenter())
+    .addTo(map);
+});
+
 
 // Função para adicionar o autocomplete e a busca de endereço
 function addAutocompleteAndSearch(inputId, markerColor, map) {
@@ -908,6 +919,11 @@ function addAutocompleteAndSearch(inputId, markerColor, map) {
           markerB = new mapboxgl.Marker({ color: markerColor, draggable: true })
             .setLngLat(coords)
             .addTo(map);
+        } else if (inputId === "addressInputIntermedio") {
+          if (markerIntermedio) markerIntermedio.remove();
+          markerIntermedio = new mapboxgl.Marker({ color: markerColor, draggable: true })
+            .setLngLat(coords)
+            .addTo(map);
         }
       }
     });
@@ -920,6 +936,9 @@ addAutocompleteAndSearch("addressInputA", "red", map);
 // Adiciona autocomplete e busca para o campo do Ponto B
 addAutocompleteAndSearch("addressInputB", "blue", map);
 
+// Adiciona autocomplete e busca para o campo do Ponto Intermédio
+addAutocompleteAndSearch("addressInputIntermedio", "orange", map);
+
 
 var route;
 var lineIds = [];
@@ -930,9 +949,17 @@ function calculateRoute() {
 
   var pointA = markerA.getLngLat();
   var pointB = markerB.getLngLat();
+  var pointIntermedio = markerIntermedio ? markerIntermedio.getLngLat() : null; // Verifiqua se o ponto intermédio está definido
 
   // Converta as coordenadas para um formato que a API de roteamento possa entender
-  var coordinates = `${pointA.lng},${pointA.lat};${pointB.lng},${pointB.lat}`;
+  var coordinates = `${pointA.lng},${pointA.lat}`;
+
+  // Se o ponto C estiver definido, inclua-o nas coordenadas
+  if (pointIntermedio) {
+    coordinates += `;${pointIntermedio.lng},${pointIntermedio.lat}`;
+  }
+
+  coordinates += `;${pointB.lng},${pointB.lat}`;
 
   var apiUrl = `https://api.mapbox.com/directions/v5/mapbox/driving/${coordinates}?geometries=geojson&access_token=${mapboxgl.accessToken}`;
 
@@ -1026,6 +1053,10 @@ function calculateRoute() {
       });
 
       animateAlongRoute(route);
+
+      // Exibe o botão "Adicionar ponto intermédio" e o campo de entrada do ponto intermediário
+      document.getElementById("addPointIntermedio").style.display = "block";
+      document.getElementById("addressInputIntermedio").style.display = "block";
     })
     .catch((error) => {
       console.error("Erro ao calcular a rota:", error);
@@ -1341,6 +1372,7 @@ function limparTudo() {
   // Remova os marcadores, se existirem
   if (markerA) markerA.remove();
   if (markerB) markerB.remove();
+  if (markerIntermedio) markerIntermedio.remove();
 
   // Remova a rota, se existir
   if (map.getLayer("route")) {
@@ -1363,6 +1395,7 @@ function limparTudo() {
   // Redefina os marcadores e a rota
   markerA = null;
   markerB = null;
+  markerIntermedio = null;
   weatherMarker = null;
   popup = null;
 
@@ -1371,11 +1404,16 @@ function limparTudo() {
     closeOnClick: false,
   });
 
-  // Remover imagem do ícone
+  // Remove imagem do ícone
   map.removeImage('icon');
 
-  // Esconder o botão "Replay Animation"
+  // Esconde o botão "Replay Animation"
   document.getElementById("replay").style.display = "none";
+
+  // Esconde o botão "Adicionar ponto intermédio" e o input de texto correspondente
+  document.getElementById("addPointIntermedio").style.display = "none";
+  document.getElementById("addressInputIntermedio").style.display = "none";
+
 }
 
 const recreateLayer = (tabela, sourceData) => {
