@@ -1299,7 +1299,7 @@ function animateAlongRoute(route) {
 
     switch (selectedProfile) {
       case "driving-traffic":
-        imageUrl = "https://cdn-icons-png.flaticon.com/128/0/798.png";
+        imageUrl = "https://i.ibb.co/jWxT7Np/image-2.png";
         break;
       case "walking":
         imageUrl = "https://cdn-icons-png.flaticon.com/128/16419/16419629.png";
