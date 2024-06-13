@@ -1356,15 +1356,6 @@ function animateAlongRoute(route) {
 
     map.getSource("point").setData(point);
 
-    // Check if reached the end of route
-    if (counter >= steps - 1) {
-      // Show celebration gif
-      showCelebrationGif();
-
-      // Stop animation
-      return;
-    }
-
     if (counter < steps) {
       requestAnimationFrame(animate);
     }
@@ -1383,51 +1374,6 @@ function animateAlongRoute(route) {
 
   // Add event listener to the routing profile select
   document.getElementById("routingProfile").addEventListener("change", loadSelectedIcon);
-
-  // Function to show celebration gif
-  function showCelebrationGif() {
-    // Remove existing layers and sources
-    if (map.getLayer("route")) {
-      map.removeLayer("route");
-      map.removeSource("route");
-    }
-    if (map.getLayer("point")) {
-      map.removeLayer("point");
-      map.removeSource("point");
-    }
-
-    // Add image layer for celebration gif
-    map.loadImage('https://images-ext-1.discordapp.net/external/8xMZxjk5YjDJJet6hhd53PjzkHLrsgcxWh952A_aJNw/https/content.imageresizer.com/images/memes/Cops-meme-7.jpg?format=webp', function (error, image) {
-      if (error) throw error;
-
-      map.addImage('celebration-gif', image);
-      map.addLayer({
-        'id': 'celebration-layer',
-        'type': 'symbol',
-        'source': {
-          'type': 'geojson',
-          'data': {
-            'type': 'FeatureCollection',
-            'features': [{
-              'type': 'Feature',
-              'geometry': {
-                'type': 'Point',
-                'coordinates': route.coordinates[route.coordinates.length - 1]
-              }
-            }]
-          }
-        },
-        'layout': {
-          'icon-image': 'celebration-gif',
-          'icon-size': 2, // Ajuste o tamanho conforme necessário
-          'icon-rotate': 0,
-          'icon-rotation-alignment': 'map',
-          'icon-allow-overlap': true,
-          'icon-ignore-placement': true
-        }
-      });
-    });
-  }
 }
 
 // Cria um popup, mas não o adiciona ao mapa ainda.
