@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", function () {
   setTimeout(function () {
     popup.style.display = "block";
     popup.style.animation = "slideInFromRight 0.5s ease forwards";
-  }, 500);
+  }, 2000);
 
   // Ocultar o pop-up após 7 segundos
   setTimeout(function () {
@@ -14,13 +14,13 @@ document.addEventListener("DOMContentLoaded", function () {
     setTimeout(function () {
       popup.style.display = "none";
     }, 500);
-  }, 5000);
+  }, 7000);
 
   // Exibir o pop-up após 2 segundos
   setTimeout(function () {
     popup_mapa.style.display = "block";
     popup_mapa.style.animation = "slideInFromLeft 0.5s ease forwards";
-  }, 500);
+  }, 2000);
 
   // Ocultar o pop-up após 7 segundos
   setTimeout(function () {
@@ -28,7 +28,7 @@ document.addEventListener("DOMContentLoaded", function () {
     setTimeout(function () {
       popup_mapa.style.display = "none";
     }, 500);
-  }, 5000);
+  }, 7000);
 });
 
 
