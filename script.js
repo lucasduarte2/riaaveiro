@@ -1237,6 +1237,7 @@ function calculateRoute() {
 
       // Exibe o botão "Selecionar ponto de interesse"
       document.getElementById("selectedCategory").style.display = "block";
+      document.getElementById("selectedCategoryLabel").style.display = "block";
     })
     .catch((error) => {
       console.error(error);
@@ -1596,6 +1597,7 @@ function limparTudo() {
 
   // Esconde o botão "Selecionar categoria do ponto de interesse"
   document.getElementById("selectedCategory").style.display = "none";
+  document.getElementById("selectedCategoryLabel").style.display = "none";
 }
 
 const recreateLayer = (tabela, sourceData) => {
