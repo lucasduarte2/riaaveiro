@@ -319,7 +319,7 @@ map.on("load", () => {
                     .setLngLat(coordinates)
                     .setHTML(createPopupHTML(tabela, nome, addressHTML, streetViewUrl))
                     .addTo(map);
-                  currentPopup = popup; // Armazena o popup atual
+                  currentPopup = popup;
                 })
                 .catch(error => console.error("Error fetching address:", error));
             });
