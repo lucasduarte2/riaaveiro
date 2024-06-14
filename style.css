@@ -118,6 +118,8 @@ body {
   box-sizing: border-box;
   transition: transform 0.3s ease-in-out;
   transform: translateX(-300px);
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
 }
 
 .sidebar.show {
@@ -175,6 +177,7 @@ body {
   transition: background-color 0.3s ease;
   border-bottom-right-radius: 8px;
   border-top-right-radius: 8px;
+
 }
 
 .sidebar-content {
@@ -206,11 +209,14 @@ body {
   box-sizing: border-box;
   transition: transform 0.3s ease-in-out, right 0.3s ease;
   transform: translateX(0px);
+  border-top-left-radius: 8px; 
+  border-bottom-left-radius: 8px;
 }
 
 .sidebarLayers.show {
   transform: translateX(0px);
   right: 0; 
+  
 }
 
 .sidebarLayers-toggle {
@@ -228,6 +234,7 @@ body {
   transition: background-color 0.3s ease;
   border-bottom-left-radius: 8px;
   border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
 }
 
 .sidebarLayers-content {
