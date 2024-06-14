@@ -69,31 +69,54 @@
           <br />
           <h4>Opções de routing</h4>
           <label>Veiculo: </label>
-          <select id="routingProfile" name="routingProfile">
+<!--           <select id="routingProfile" name="routingProfile">
             <option value="driving-traffic">Carro</option>
             <option value="walking">A pé</option>
             <option value="cycling">Bicicleta</option>
-          </select>
+          </select> -->
+          <div class="veiculos" id="vehicleOptions">
+            <div class="option" data-value="driving-traffic" onclick="selectOption(this, 'routingProfile', 'driving-traffic')">
+              <img src="./imagens/carro.png" alt="Carro"/>
+            </div>
+            <div class="option" data-value="walking" onclick="selectOption(this, 'routingProfile', 'walking')">
+              <img src="./imagens/walking.png" alt="A pé"/>
+            </div>
+            <div class="option" data-value="cycling" onclick="selectOption(this, 'routingProfile', 'cycling')">
+              <img src="./imagens/bicicleta.png" alt="Bicicleta"/>
+            </div>
+          </div>
         </fieldset>
 
         <fieldset class="select-fieldset">
-          <label>Selecionar tipo de métrica</label>
-          <select
+          <label>Tipo de métrica:</label>
+<!--           <select
             id="contourType"
             name="contourType"
             onchange="updateContourOptions()"
           >
             <option value="minutes">Minutos</option>
             <option value="meters">Metros</option>
-          </select>
+          </select> -->
+         <div class="metrica" id="metricOptions">
+            <div class="option" data-value="minutes" onclick="selectMetric('minutes')">
+              <label>Minutos</label>
+            </div>
+            <div class="option" data-value="meters" onclick="selectMetric('meters')">
+              <label>Metros</label>
+            </div>
+          </div>   
         </fieldset>
 
         <fieldset class="select-fieldset">
-          <label>Quantidade</label>
-          <select id="contour" name="contour">
-            <!-- As opções serão preenchidas dinamicamente -->
-          </select>
+          <label>Quantidade:</label>
+          <div class="slidecontainer" id="sliderContainer">
+            <input type="range" min="1" max="6" value="1" class="slider" id="myRange">
+            <p>Value: <span id="demo"></span></p>
+          </div>
+<!--           <select id="contour" name="contour">
+          </select> -->
         </fieldset>
+        
         <br />
         <fieldset class="select-fieldset">
           <fieldset class="select-fieldset">
@@ -215,6 +238,7 @@
     </div>
     <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.3.1/mapbox-gl-directions.css" type="text/css">
     <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.3.1/mapbox-gl-directions.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.6.3/nouislider.min.js"></script>
     <script src="script.js" async></script>
   </body>
 </html>

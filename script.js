@@ -65,6 +65,33 @@ map.addControl(
   })
 );
 
+let isRotating = true;
+let lastInteractionTime = Date.now();
+
+function rotateCamera(timestamp) {
+  // clamp the rotation between 0 -360 degrees
+  // Divide timestamp by 200 to slow rotation to ~5 degrees / sec
+  if (isRotating) {
+    map.rotateTo((timestamp / 300) % 360, { duration: 0 });
+  }
+  // Request the next frame of the animation.
+  requestAnimationFrame(rotateCamera);
+}
+
+// Add event listeners for user interactions
+map.on('mousedown', () => {
+  isRotating = false;
+  lastInteractionTime = Date.now();
+});
+
+map.on('mouseup', () => {
+  setTimeout(() => {
+    if (Date.now() - lastInteractionTime >= 5000) {
+      isRotating = true;
+    }
+  }, 5000);
+});
+
 // Define as tabelas que serão usadas
 const tabelas = [
   "point_alojamento_local",
@@ -103,6 +130,12 @@ var originalPointsData = {};
 
 // Quando o mapa terminar de carregar...
 map.on("load", () => {
+  // Inicia a rotação após 5 segundos de inatividade
+  setTimeout(() => {
+    isRotating = true;
+    rotateCamera(0); // Inicia a animação da rotação
+  }, 5000);
+
   map.setFog({
     'range': [-1, 9],
     'horizon-blend': 0.3,
@@ -157,11 +190,11 @@ map.on("load", () => {
       <p><a href="${streetViewUrl}" target="_blank">Ver no Google Street View</a></p>
     `;
   }
-  
+
   function addLayers() {
     let currentPopup = null; // Variável para armazenar o popup atual
     let closePopupTimeout = null; // Variável para armazenar o timeout
-  
+
     tabelas.forEach((tabela) => {
       // Busca os dados da tabela
       fetch(`https://gis4cloud.com/grupo4_ptas2024/bd.php?tabela=${tabela}`)
@@ -178,7 +211,7 @@ map.on("load", () => {
             type: "geojson",
             data: data,
           });
-  
+
           // Carrega a imagem do ícone
           map.loadImage(getLayerImage(tabela), function (error, image) {
             if (error) {
@@ -186,10 +219,10 @@ map.on("load", () => {
               // Handle errors gracefully
               return;
             }
-  
+
             // Adiciona a imagem ao mapa
             map.addImage(tabela, image);
-  
+
             // Adiciona uma nova camada ao mapa usando os dados e a imagem
             map.addLayer({
               id: tabela,
@@ -202,13 +235,13 @@ map.on("load", () => {
                 visibility: "none",
               },
             });
-  
+
             // Cria um popup, mas não o adiciona ao mapa ainda.
             const popup = new mapboxgl.Popup({
               closeButton: true, // Adiciona o botão de fechar
               closeOnClick: false,
             });
-  
+
             // Função para fechar o popup atual se existir
             function closeCurrentPopup() {
               if (currentPopup) {
@@ -216,7 +249,7 @@ map.on("load", () => {
                 currentPopup = null;
               }
             }
-  
+
             // Quando o mouse entra em um ponto na camada dentro da isocrona...
             map.on("mouseenter", tabela + "_within", function (e) {
               closeCurrentPopup(); // Fecha o popup atual
@@ -224,24 +257,24 @@ map.on("load", () => {
                 clearTimeout(closePopupTimeout);
                 closePopupTimeout = null;
               }
-  
+
               // Muda o estilo do cursor como um indicador de interface do usuário.
               map.getCanvas().style.cursor = "pointer";
-  
+
               // Copia a matriz de coordenadas.
               const coordinates = e.features[0].geometry.coordinates.slice();
               const nome = e.features[0].properties.nome ? e.features[0].properties.nome : 'Desconhecido';
-  
+
               // Construa a URL do Google Maps Street View com as coordenadas do ponto
               var streetViewUrl = `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${coordinates[1]},${coordinates[0]}`;
-  
+
               // Garante que se o mapa estiver ampliado de tal forma que várias
               // cópias do recurso estejam visíveis, o popup apareça
               // sobre a cópia que está sendo apontada.
               while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
                 coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
               }
-  
+
               // Faz a chamada à API de reversão do OpenStreetMap para obter o endereço
               fetch(`https://nominatim.openstreetmap.org/reverse?lat=${coordinates[1]}&lon=${coordinates[0]}&format=json`)
                 .then(response => response.json())
@@ -265,7 +298,7 @@ map.on("load", () => {
                 })
                 .catch(error => console.error("Error fetching address:", error));
             });
-  
+
             // Quando o mouse sai de um ponto na camada...
             map.on("mouseleave", tabela + "_within", function () {
               map.getCanvas().style.cursor = "";
@@ -274,7 +307,7 @@ map.on("load", () => {
                 closeCurrentPopup(); // Fecha o popup atual
               }, 2000);
             });
-  
+
             // Quando o mouse entra em um ponto na camada...
             map.on("mouseenter", tabela, function (e) {
               closeCurrentPopup(); // Fecha o popup atual
@@ -282,24 +315,24 @@ map.on("load", () => {
                 clearTimeout(closePopupTimeout);
                 closePopupTimeout = null;
               }
-  
+
               // Muda o estilo do cursor como um indicador de interface do usuário.
               map.getCanvas().style.cursor = "pointer";
-  
+
               // Copia a matriz de coordenadas.
               const coordinates = e.features[0].geometry.coordinates.slice();
               const nome = e.features[0].properties.nome ? e.features[0].properties.nome : 'Desconhecido';
-  
+
               // Construa a URL do Google Maps Street View com as coordenadas do ponto
               var streetViewUrl = `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${coordinates[1]},${coordinates[0]}`;
-  
+
               // Garante que se o mapa estiver ampliado de tal forma que várias
               // cópias do recurso estejam visíveis, o popup apareça
               // sobre a cópia que está sendo apontada.
               while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
                 coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
               }
-  
+
               // Faz a chamada à API de reversão do OpenStreetMap para obter o endereço
               fetch(`https://nominatim.openstreetmap.org/reverse?lat=${coordinates[1]}&lon=${coordinates[0]}&format=json`)
                 .then(response => response.json())
@@ -323,7 +356,7 @@ map.on("load", () => {
                 })
                 .catch(error => console.error("Error fetching address:", error));
             });
-  
+
             // Quando o mouse sai de um ponto na camada...
             map.on("mouseleave", tabela, function () {
               map.getCanvas().style.cursor = "";
@@ -337,7 +370,7 @@ map.on("load", () => {
         .catch((error) => console.error("Error:", error)); // Regista qualquer erro que ocorra
     });
   }
-  
+
 
 
 
@@ -637,7 +670,7 @@ map.on("load", () => {
     ],
     tileSize: 256,
   });
-
+ 
   map.addLayer({
     id: "batimetria5m",
     type: "raster",
@@ -651,7 +684,7 @@ map.on("load", () => {
     ],
     tileSize: 256,
   });
-
+ 
   map.addLayer({
     id: "batimetria25m",
     type: "raster",
@@ -696,35 +729,6 @@ document
       map.setConfigProperty("basemap", this.id, this.checked);
     });
   });
-
-function updateContourOptions() {
-  // Obtenha os elementos selecionados
-  var contourTypeElement = document.getElementById("contourType");
-  var contourElement = document.getElementById("contour");
-
-  // Limpe as opções existentes
-  contourElement.innerHTML = "";
-
-  // Verifique o tipo de métrica selecionada e adicione as opções apropriadas
-  if (contourTypeElement.value === "minutes") {
-    // Adicione opções para minutos
-    var options = ["5", "10", "15", "20", "25", "30"];
-  } else {
-    // Adicione opções para metros
-    var options = ["1000", "2000", "3000", "4000", "5000"];
-  }
-
-  // Adicione as opções ao elemento de seleção de contorno
-  options.forEach(function (optionValue) {
-    var optionElement = document.createElement("option");
-    optionElement.value = optionValue;
-    optionElement.text = optionValue;
-    contourElement.add(optionElement);
-  });
-}
-
-// Chame a função uma vez para preencher as opções iniciais
-updateContourOptions();
 
 function toggleSidebar() {
   const sidebar = document.getElementById("sidebar");
@@ -771,8 +775,17 @@ function addOrUpdateSource(sourceId, data) {
   }
 }
 
+// Variável para verificar se o utilizador já clicou no mapa
+var mapClicked = false;
+
 // Função para calcular a isócrona
 function calculateIsochrone() {
+  // Se nenhum ponto foi clicado ainda, retorne
+  if (mapClicked == false) {
+    console.log("Clique no mapa para selecionar o ponto antes de calcular a isócrona.");
+    return;
+  }
+
   // Restaure os dados originais para todas as tabelas
   for (const [tabela, data] of Object.entries(originalPointsData)) {
     // Verifique se a fonte de dados já está adicionada
@@ -791,18 +804,29 @@ function calculateIsochrone() {
   // Obtenha as coordenadas do último ponto clicado
   var coordinates = lastClickedPoint;
 
-  // Obtenha os elementos selecionados
-  var routingProfileElement = document.getElementById("routingProfile");
-  var contourTypeElement = document.getElementById("contourType");
-  var contourElement = document.getElementById("contour");
+  // Obtenha os elementos selecionados dinamicamente
+  var selectedVehicle = document.querySelector('.veiculos .option.selected');
+  var routingProfile = selectedVehicle ? selectedVehicle.getAttribute('data-value') : null;
 
-  // Obtenha os valores dos elementos selecionados
-  var routingProfile = routingProfileElement.value;
-  var contourType = contourTypeElement.value;
-  var contour = contourElement.value;
+  var selectedMetric = document.querySelector('.metrica .option.selected');
+  var contourType = selectedMetric ? selectedMetric.getAttribute('data-value') : null;
+
+  var sliderValue = document.getElementById("myRange").value;
+  var contour;
+
+  // Determine o valor de contour com base no tipo de métrica selecionada
+  if (contourType === 'minutes') {
+    contour = valuesMinutos[sliderValue];
+  } else if (contourType === 'meters') {
+    contour = valuesMetros[sliderValue];
+  } else {
+    contour = ''; // Ou outro valor padrão apropriado ao seu caso
+  }
 
   // Construa a URL da API do Mapbox Isochrone
   var apiUrl = `https://api.mapbox.com/isochrone/v1/mapbox/${routingProfile}/${coordinates.lng}%2C${coordinates.lat}?contours_${contourType}=${contour}&polygons=true&denoise=1&access_token=pk.eyJ1Ijoic2RhbmllbHNpbHZhIiwiYSI6ImNsdmY0bTUwNDAzbWwyamw4NjUwMW5paTUifQ.0MAtfqLmatOkT_NjHAo9Ag`;
+
+  console.log(`Isócrona - veículo: ${routingProfile}, métrica: ${contourType}, quantidade: ${contour}`);
 
   // Se a camada de isócrona já existir, remova-a
   if (map.getLayer("isochrone")) {
@@ -888,6 +912,8 @@ function calculateIsochrone() {
 
 // Quando o usuário clica no mapa...
 map.on("click", function (e) {
+  mapClicked = true;
+
   // Atualize o último ponto clicado
   lastClickedPoint = e.lngLat;
 
@@ -901,6 +927,115 @@ map.on("click", function (e) {
   // Calcule a isócrona
   calculateIsochrone();
 });
+
+var slider = document.getElementById("myRange");
+var output = document.getElementById("demo");
+var sliderContainer = document.getElementById("sliderContainer");
+
+// Define os valores possíveis e seus correspondentes textuais para minutos e metros
+var valuesMinutos = {
+  1: "5",
+  2: "10",
+  3: "15",
+  4: "20",
+  5: "25",
+  6: "30"
+};
+
+var valuesMetros = {
+  1: "1000",
+  2: "2000",
+  3: "3000",
+  4: "4000",
+  5: "5000"
+};
+
+// Inicializa o valor inicial
+output.innerHTML = valuesMinutos[slider.value];
+
+// Atualiza o valor mostrado conforme o slider é movido
+slider.oninput = function () {
+  updateSliderValue();
+};
+
+// Função para atualizar o valor do slider e recalcular a isócrona
+function updateSliderValue() {
+  var selectedMetric = document.querySelector('.metrica .option.selected');
+  var contourType = selectedMetric ? selectedMetric.getAttribute('data-value') : null;
+
+  if (contourType === 'minutes') {
+    output.innerHTML = valuesMinutos[slider.value];
+  } else if (contourType === 'meters') {
+    output.innerHTML = valuesMetros[slider.value];
+  }
+
+  calculateIsochrone();
+}
+
+// Função para selecionar a métrica (Minutos ou Metros)
+function selectMetric(metricType) {
+  // Atualiza visualmente a seleção
+  document.querySelectorAll('.metrica .option').forEach(option => {
+    if (option.getAttribute('data-value') === metricType) {
+      option.classList.add('selected');
+    } else {
+      option.classList.remove('selected');
+    }
+  });
+
+  // Atualiza os valores do slider com base na métrica selecionada
+  if (metricType === 'minutes') {
+    slider.setAttribute('max', 6); // Define o máximo como 6 para minutos
+    output.innerHTML = valuesMinutos[slider.value];
+  } else {
+    slider.setAttribute('max', 5); // Define o máximo como 5 para metros
+    output.innerHTML = valuesMetros[slider.value];
+  }
+
+  // Mostra o slidecontainer ao selecionar minutos ou metros
+  sliderContainer.style.display = 'block';
+
+  // Atualiza o valor do slider
+  updateSliderValue();
+
+  calculateIsochrone();
+}
+
+function selectOption(element, inputId, value) {
+  console.log("Element clicked:", element);
+  console.log("Input ID:", inputId);
+  console.log("Value to set:", value);
+
+  const input = document.getElementById(value);
+  console.log("Input element found:", input);
+
+  const container = element.parentElement;
+
+  // Verifica se o elemento clicado já está selecionado
+  if (element.classList.contains('selected')) {
+    element.classList.remove('selected');
+    if (input) {
+      input.value = ''; // Limpa o valor do input se encontrado
+    } else {
+      console.warn("Input element not found with ID:", inputId);
+    }
+  } else {
+    // Deseleciona todas as outras opções dentro do mesmo container
+    container.querySelectorAll('.option').forEach(option => {
+      option.classList.remove('selected');
+    });
+
+    // Seleciona o elemento clicado
+    element.classList.add('selected');
+    if (input) {
+      input.value = value; // Define o valor do input como o valor selecionado se encontrado
+    } else {
+      console.warn("Input element not found with ID:", inputId);
+    }
+  }
+
+  calculateIsochrone();
+}
 
 // Função para limpar todas as isócronas do mapa
 function limparIsocronas() {
@@ -1590,16 +1725,4 @@ const refreshLayersAfterClear = () => {
   tabelas.forEach((tabela) => {
     recreateLayer(tabela, originalPointsData[tabela]);
   });
-};
-
-window.onload = function () {
-  // Obtenha os elementos selecionados
-  var routingProfileElement = document.getElementById("routingProfile");
-  var contourTypeElement = document.getElementById("contourType");
-  var contourElement = document.getElementById("contour");
-
-  // Quando as opções são alteradas...
-  routingProfileElement.addEventListener("change", calculateIsochrone);
-  contourTypeElement.addEventListener("change", calculateIsochrone);
-  contourElement.addEventListener("change", calculateIsochrone);
 };

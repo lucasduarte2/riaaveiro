@@ -1,0 +1,286 @@
+Sweet Carly
+sweetcarly
+Invisível
+PSIG
+
+Daniii — Hoje às 18:28
+mas esse é só 1
+acho que é doutro sitio
+kerion2 — Hoje às 18:28
+o outro vai ate ao porto
+Daniii — Hoje às 18:28
+sim, mas começa em aveiro
+Cravo — Hoje às 18:29
+https://natural.pt/protected-areas/reserva-natural-dunas-sao-jacinto/pathways/trilho-de-descoberta-da-natureza?locale=pt
+NATURAL.PT
+À descoberta das áreas protegidas.
+Imagem
+Daniii — Hoje às 18:30
+mano
+sem querer
+acabei de encontrar 40 percursos nauticos
+kerion2 — Hoje às 18:30
+yh
+Cravo — Hoje às 18:30
+nauticos? xD
+kerion2 — Hoje às 18:31
+tb vi na grande rota da ria de aveiro
+Daniii — Hoje às 18:31
+sim, nauticos
+https://granderota.riadeaveiro.pt/grande-rota-ria-aveiro/percursos-nauticos/percurso-d/
+Percurso D
+        
+        
+        
+        - R...
+https://granderota.riadeaveiro.pt/grande-rota-ria-aveiro/percursos-nauticos/percurso-c/
+Percurso C
+        
+        
+        
+        - R...
+https://granderota.riadeaveiro.pt/grande-rota-ria-aveiro/percursos-nauticos/percurso-b/
+Percurso B
+        
+        
+        
+        - R...
+https://granderota.riadeaveiro.pt/grande-rota-ria-aveiro/percursos-nauticos/percurso/
+Percurso A
+        
+        
+        
+        - R...
+https://granderota.riadeaveiro.pt/grande-rota-ria-aveiro/percursos-nauticos/percurso-e/
+Percurso E
+        
+        
+        
+        - R...
+https://granderota.riadeaveiro.pt/grande-rota-ria-aveiro/percursos-nauticos/percurso-f/
+Percurso F
+        
+        
+        
+        - R...
+https://granderota.riadeaveiro.pt/grande-rota-ria-aveiro/percursos-nauticos/percurso-g/
+Percurso G
+        
+        
+        
+        - R...
+kerion2 — Hoje às 18:31
+@Daniii
+nao mandes assim
+Daniii — Hoje às 18:31
+https://granderota.riadeaveiro.pt/grande-rota-ria-aveiro/percursos-nauticos/percurso-h/
+Percurso H
+        
+        
+        
+        - R...
+https://granderota.riadeaveiro.pt/grande-rota-ria-aveiro/percursos-nauticos/percurso-i/
+Percurso I
+        
+        
+        
+        - R...
+https://granderota.riadeaveiro.pt/grande-rota-ria-aveiro/percursos-nauticos/percurso-j/
+Percurso J
+        
+        
+        
+        - R...
+kerion2 — Hoje às 18:31
+manda o do index
+Daniii — Hoje às 18:31
+https://granderota.riadeaveiro.pt/grande-rota-ria-aveiro/percursos-nauticos/percurso-k/
+Percurso K
+        
+        
+        
+        - R...
+https://granderota.riadeaveiro.pt/grande-rota-ria-aveiro/percursos-nauticos/percurso-l/
+Percurso L
+        
+        
+        
+        - R...
+estes sao de canoa
+kerion2 — Hoje às 18:31
+manda o do index
+em vez de mandares um a um
+Daniii — Hoje às 18:32
+https://granderota.riadeaveiro.pt/grande-rota-ria-aveiro/percursos-nauticos/
+Percursos Náuticos
+        
+        
+        
+   ...
+Daniii
+ fixou 
+uma mensagem
+ neste canal. Ver todas as 
+mensagens fixadas
+.
+ — Hoje às 18:32
+Daniii — Hoje às 18:33
+nao encontro o da natureza @kerion2 tenta transformar o geom em kilometros
+e mostra a distancia
+kerion2 — Hoje às 18:33
+nao e preciso ja tenho
+vou meter isto na base de dadso
+Daniii — Hoje às 18:33
+ok ok
+mas olha que sao 2
+tem 2 row
+kerion2 — Hoje às 18:33
+sim
+Daniii — Hoje às 18:33
+eu quando acabar de lanchar vou ja meter os nauticos todos na BD
+commo é que fazemos no layer switcher? 1 nova classe so para percursos nauticos?
+Cravo — Hoje às 18:35
+hmm pertence a atividades
+Daniii — Hoje às 18:36
+sim sim
+a cena é
+Cravo — Hoje às 18:36
+n sao 40
+Daniii — Hoje às 18:36
+eu tava a gozar lol
+Cravo — Hoje às 18:36
+são 12 percursos
+Daniii — Hoje às 18:36
+a cena é que a ideia inicial do projeto era as cenas nauticas e esses percursos sao mm de canoa
+dai estar a perguntar
+se faziamos uma classe a parte
+Cravo — Hoje às 18:36
+sim faz sentido
+kerion2 — Hoje às 18:36
+faz uma a parte
+esses e q fazem msm sentido meter
+Daniii — Hoje às 18:37
+ya ya
+Cravo — Hoje às 18:37
+ja os vou tentar meter na base de dados
+kerion2 — Hoje às 18:37
+@Sweet Carly 
+BEGIN;
+
+ALTER TABLE public.percurso_salreu
+ADD COLUMN Nome_do_Percurso TEXT,
+ADD COLUMN Distancia_Km TEXT,
+ADD COLUMN Duracao_Estimada TEXT,
+ADD COLUMN Ambito TEXT,
+ADD COLUMN Grau_Dificuldade TEXT,
+ADD COLUMN Epoca_Aconselhada TEXT;
+
+COMMIT;
+Daniii — Hoje às 18:38
+eu posso fazer isso ja @Cravo
+tou mm a acabar
+Cravo — Hoje às 18:38
+ok
+kerion2
+ fixou 
+uma mensagem
+ neste canal. Ver todas as 
+mensagens fixadas
+.
+ — Hoje às 18:39
+Daniii — Hoje às 18:44
+Imagem
+kerion2 — Hoje às 18:53
+Imagem
+Sweet Carly — Hoje às 18:53
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Animate map camera around a point</title>
+<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+Expandir
+message.txt
+3 KB
+Daniii — Hoje às 18:55
+map.rotateTo((timestamp / 200) % 360, { duration: 0 }); 
+Cravo — Hoje às 18:58
+https://natural.pt/protected-areas/reserva-natural-dunas-sao-jacinto/pathways/sao-jacinto-estuario-douro-beira-mar?locale=pt
+NATURAL.PT
+À descoberta das áreas protegidas.
+Imagem
+Daniii — Hoje às 18:59
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Animate map camera around a point</title>
+<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+Expandir
+message.txt
+4 KB
+﻿
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Animate map camera around a point</title>
+<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+<link href="https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.css" rel="stylesheet">
+<script src="https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.js"></script>
+<style>
+body { margin: 0; padding: 0; }
+#map { position: absolute; top: 0; bottom: 0; width: 100%; }
+</style>
+</head>
+<body>
+<div id="map"></div>
+<script>
+	// TO MAKE THE MAP APPEAR YOU MUST
+	// ADD YOUR ACCESS TOKEN FROM
+	// https://account.mapbox.com
+	mapboxgl.accessToken = 'pk.eyJ1Ijoic2RhbmllbHNpbHZhIiwiYSI6ImNsdmY0bTUwNDAzbWwyamw4NjUwMW5paTUifQ.0MAtfqLmatOkT_NjHAo9Ag';
+    const map = new mapboxgl.Map({
+        container: 'map',
+        // Choose from Mapbox's core styles, or make your own style with Mapbox Studio
+        style: 'mapbox://styles/mapbox/light-v11',
+        center: [-87.62712, 41.89033],
+        zoom: 15.5,
+        pitch: 45
+    });
+
+    let isRotating = true;
+    let lastInteractionTime = Date.now();
+
+    function rotateCamera(timestamp) {
+        // clamp the rotation between 0 -360 degrees
+        // Divide timestamp by 200 to slow rotation to ~5 degrees / sec
+        if (isRotating) {
+            map.rotateTo((timestamp / 200) % 360, { duration: 0 });
+        }
+        // Request the next frame of the animation.
+        requestAnimationFrame(rotateCamera);
+    }
+
+    map.on('load', () => {
+        // Start the animation.
+        rotateCamera(0);
+    });
+
+    // Add event listeners for user interactions
+    map.on('mousedown', () => {
+        isRotating = false;
+        lastInteractionTime = Date.now();
+    });
+
+    map.on('mouseup', () => {
+        setTimeout(() => {
+            if (Date.now() - lastInteractionTime >= 5000) {
+                isRotating = true;
+            }
+        }, 5000);
+    });
+</script>
+
+</body>
+</html>
