@@ -918,7 +918,82 @@ function limparIsocronas() {
   // Limpar os campos de pesquisa de moradas
   document.getElementById("addressInputA").value = "";
   document.getElementById("addressInputB").value = "";
+  document.getElementById("addressInputIntermedio").value = "";
   document.getElementById("addressInputWeather").value = "";
+}
+
+var weatherMarker;
+var openWeatherMapApiKey = "c2d56cde527ab835895db4be206e6c9d";
+
+var popup_tempo; // Mantenha uma referência ao popup atual aqui
+var isMarkerBeingDragged = false;
+
+document.getElementById("addWeatherPoint").addEventListener("click", function () {
+  if (weatherMarker) weatherMarker.remove();
+
+  var center = map.getCenter();
+
+  weatherMarker = new mapboxgl.Marker({ color: "purple", draggable: true })
+    .setLngLat(center)
+    .addTo(map)
+    .on("dragend", function () {
+      fetchWeatherData(weatherMarker.getLngLat());
+    });
+
+  // Fetch weather data immediately after adding the marker
+  fetchWeatherData(center);
+});
+
+function fetchWeatherData(lngLat) {
+  isMarkerBeingDragged = true;
+
+  // Construa a URL da API do OpenWeatherMap
+  var apiUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lngLat.lat}&lon=${lngLat.lng}&appid=${openWeatherMapApiKey}`;
+
+  // Faça uma solicitação para a API do OpenWeatherMap
+  fetch(apiUrl)
+    .then((response) => response.json())
+    .then((data) => {
+      // Os dados meteorológicos estão agora no objeto de dados
+      var temperature = data.main.temp - 273.15; // Converta a temperatura de Kelvin para Celsius
+      var feelsLike = data.main.feels_like - 273.15; // Converta a sensação térmica de Kelvin para Celsius
+      var tempMin = data.main.temp_min - 273.15; // Converta a temperatura mínima de Kelvin para Celsius
+      var tempMax = data.main.temp_max - 273.15; // Converta a temperatura máxima de Kelvin para Celsius
+      var humidity = data.main.humidity; // Humidade
+      var seaLevel = data.main.sea_level; // Nível do mar
+      var windSpeed = data.wind.speed * 3.6; // Converta a velocidade do vento de m/s para km/h
+      var weatherIcon = data.weather[0].icon; // Obtenha o ícone do tempo
+
+      // Construa a URL do ícone do tempo
+      var weatherIconUrl = `http://openweathermap.org/img/w/${weatherIcon}.png`;
+
+      // Remova o popup_tempo existente, se houver
+      if (popup_tempo) {
+        popup_tempo.remove();
+      }
+
+      // Agora você pode adicionar um popup_tempo ao mapa na localização clicada com as informações meteorológicas
+      popup_tempo = new mapboxgl.Popup()
+        .setLngLat(lngLat)
+        .setHTML(
+          `<h6>Informações meteorológicas</h6>
+          <img src="${weatherIconUrl}" alt="Ícone do tempo" width="100" height="100">
+          <p>Temperatura: ${temperature.toFixed(2)} °C</p>
+          <p>Sensação térmica: ${feelsLike.toFixed(2)} °C</p>
+          <p>Temperatura mínima: ${tempMin.toFixed(2)} °C</p>
+          <p>Temperatura máxima: ${tempMax.toFixed(2)} °C</p>
+          <p>Humidade: ${humidity} %</p>
+          <p>Pressão atmosférica: ${seaLevel} hPa</p>
+          <p>Velocidade do vento: ${windSpeed.toFixed(2)} km/h</p>`
+        )
+        .addTo(map);
+      isMarkerBeingDragged = false;
+      popup_tempo.on("close", function () {
+        if (weatherMarker && !isMarkerBeingDragged) {
+          weatherMarker.remove();
+        }
+      });
+    });
 }
 
 var markerA, markerB, markerIntermedio;
@@ -1008,6 +1083,15 @@ function addAutocompleteAndSearch(inputId, markerColor, map) {
           markerIntermedio = new mapboxgl.Marker({ color: markerColor, draggable: true })
             .setLngLat(coords)
             .addTo(map);
+        } else if (inputId === "addressInputWeather") {
+          if (weatherMarker) weatherMarker.remove();
+          weatherMarker = new mapboxgl.Marker({ color: markerColor, draggable: true })
+            .setLngLat(coords)
+            .addTo(map)
+            .on("dragend", function () {
+              fetchWeatherData(weatherMarker.getLngLat());
+            });
+          fetchWeatherData(coords); // Fetch weather data immediately after adding the marker
         }
       }
     });
@@ -1023,6 +1107,8 @@ addAutocompleteAndSearch("addressInputB", "blue", map);
 // Adiciona autocomplete e busca para o campo do Ponto Intermédio
 addAutocompleteAndSearch("addressInputIntermedio", "orange", map);
 
+// Adiciona autocomplete e busca para o campo do Ponto Meteorológico
+addAutocompleteAndSearch("addressInputWeather", "purple", map);
 
 var route;
 var lineIds = [];
@@ -1410,141 +1496,6 @@ document.querySelectorAll(".class-title").forEach((title) => {
     event.target.parentNode.classList.toggle("active");
   });
 });
-
-var weatherMarker;
-var openWeatherMapApiKey = "c2d56cde527ab835895db4be206e6c9d";
-
-var popup_tempo; // Mantenha uma referência ao popup atual aqui
-var isMarkerBeingDragged = false;
-
-document
-  .getElementById("addWeatherPoint")
-  .addEventListener("click", function () {
-    if (weatherMarker) weatherMarker.remove();
-
-    var center = map.getCenter();
-
-    weatherMarker = new mapboxgl.Marker({ color: "purple", draggable: true })
-      .setLngLat(center)
-      .addTo(map)
-      .on("dragend", function () {
-        fetchWeatherData();
-      });
-
-    // Fetch weather data immediately after adding the marker
-    fetchWeatherData();
-
-    // Função para adicionar o autocomplete e a busca de endereço
-    function addAutocompleteAndSearch(inputId, markerColor, map) {
-      $(function () {
-        $(`#${inputId}`).autocomplete({
-          source: function (request, response) {
-            const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(request.term)}.json?access_token=${mapboxgl.accessToken}&autocomplete=true`;
-
-            axios.get(url)
-              .then(res => {
-                // Filtra as moradas dentro dos limites do mapa
-                const featuresWithinBounds = res.data.features.filter(feature => {
-                  const coords = feature.geometry.coordinates;
-                  const lngLat = mapboxgl.LngLat.convert(coords);
-                  return lngLat.lng >= -9.6 && lngLat.lng <= -8.45 && lngLat.lat >= 40.4 && lngLat.lat <= 41;
-                });
-
-                response(featuresWithinBounds.map(feature => ({
-                  label: feature.place_name,
-                  value: feature.place_name,
-                  feature: feature
-                })));
-              })
-              .catch(err => {
-                console.error(err);
-                response([]);
-              });
-          },
-          minLength: 2,
-          select: function (event, ui) {
-            const coords = ui.item.feature.geometry.coordinates;
-            const description = ui.item.feature.place_name;
-
-            // Centralize o mapa na localização
-            map.flyTo({
-              center: coords,
-              zoom: 15
-            });
-
-            // Adiciona o marcador correspondente ao campo de busca
-            if (inputId === "addressInputWeather") {
-              if (weatherMarker) weatherMarker.remove();
-              weatherMarker = new mapboxgl.Marker({ color: markerColor, draggable: true })
-                .setLngLat(coords)
-                .addTo(map)
-                .on("dragend", function () {
-                  fetchWeatherData();
-                });
-              fetchWeatherData(); // Fetch weather data immediately after adding the marker
-            }
-          }
-        });
-      });
-    }
-
-    // Adiciona autocomplete e busca para o campo do Ponto Meteorológico
-    addAutocompleteAndSearch("addressInputWeather", "purple", map);
-
-    function fetchWeatherData() {
-      isMarkerBeingDragged = true;
-      var lngLat = weatherMarker.getLngLat();
-
-      // Construa a URL da API do OpenWeatherMap
-      var apiUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lngLat.lat}&lon=${lngLat.lng}&appid=${openWeatherMapApiKey}`;
-
-      // Faça uma solicitação para a API do OpenWeatherMap
-      fetch(apiUrl)
-        .then((response) => response.json())
-        .then((data) => {
-          // Os dados meteorológicos estão agora no objeto de dados
-          // Você pode acessar as informações que deseja exibir assim:
-          var temperature = data.main.temp - 273.15; // Converta a temperatura de Kelvin para Celsius
-          var feelsLike = data.main.feels_like - 273.15; // Converta a sensação térmica de Kelvin para Celsius
-          var tempMin = data.main.temp_min - 273.15; // Converta a temperatura mínima de Kelvin para Celsius
-          var tempMax = data.main.temp_max - 273.15; // Converta a temperatura máxima de Kelvin para Celsius
-          var humidity = data.main.humidity; // Humidade
-          var seaLevel = data.main.sea_level; // Nível do mar
-          var windSpeed = data.wind.speed * 3.6; // Converta a velocidade do vento de m/s para km/h
-          var weatherIcon = data.weather[0].icon; // Obtenha o ícone do tempo
-
-          // Construa a URL do ícone do tempo
-          var weatherIconUrl = `http://openweathermap.org/img/w/${weatherIcon}.png`;
-
-          // Remova o popup_tempo existente, se houver
-          if (popup_tempo) {
-            popup_tempo.remove();
-          }
-
-          // Agora você pode adicionar um popup_tempo ao mapa na localização clicada com as informações meteorológicas
-          popup_tempo = new mapboxgl.Popup()
-            .setLngLat(lngLat)
-            .setHTML(
-              `<h6>Informações meteorológicas</h6>
-                    <img src="${weatherIconUrl}" alt="Ícone do tempo" width="100" height="100">
-                    <p>Temperatura: ${temperature.toFixed(2)} °C</p>
-                    <p>Sensação térmica: ${feelsLike.toFixed(2)} °C</p>
-                    <p>Temperatura mínima: ${tempMin.toFixed(2)} °C</p>
-                    <p>Temperatura máxima: ${tempMax.toFixed(2)} °C</p>
-                    <p>Humidade: ${humidity} %</p>
-                    <p>Pressão atmosférica: ${seaLevel} hPa</p>
-                    <p>Velocidade do vento: ${windSpeed.toFixed(2)} km/h</p>`
-            )
-            .addTo(map);
-          isMarkerBeingDragged = false;
-          popup_tempo.on("close", function () {
-            if (weatherMarker && !isMarkerBeingDragged) {
-              weatherMarker.remove();
-            }
-          });
-        });
-    }
-  });
 
 function limparTudo() {
   // Limpe as isócronas
