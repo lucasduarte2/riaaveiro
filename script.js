@@ -385,50 +385,210 @@ map.on("load", () => {
     "percurso_veiros"
   ];
 
+  function createPopupHTML(properties) {
+
+    // Constrói e retorna o HTML para o popup com base nas propriedades do percurso
+
+    return `
+
+      <div>
+
+        <h4>${properties.Nome_do_Percurso}</h4>
+
+        <p><b>Distância:</b> ${properties.Distancia_Km}</p>
+
+        <p><b>Duração Estimada:</b> ${properties.Duracao_Estimada}</p>
+
+        <p><b>Âmbito:</b> ${properties.Ambito}</p>
+
+        <p><b>Grau de Dificuldade:</b> ${properties.Grau_Dificuldade}</p>
+
+        <p><b>Época Aconselhada:</b> ${properties.Epoca_Aconselhada}</p>
+
+      </div>
+
+    `;
+
+  }
+
+  function createPopupHTML_Nauticos(properties) {
+
+    // Constrói e retorna o HTML para o popup com base nas propriedades do percurso
+
+    return `
+
+      <div>
+
+        <h4>${properties.Nome_do_Percurso}</h4>
+
+        <p><b>Distância:</b> ${properties.Distancia_Km}</p>
+
+        <p><b>Grau de Dificuldade:</b> ${properties.Grau_Dificuldade}</p>
+
+        <p><b>Tipologia:</b> ${properties.Tipologia}</p>
+
+        <p><b>Duração Estimada:</b> ${properties.Duracao_Estimada}</p>
+
+        <p><b>Ponto de entrada:</b> ${properties.Ponto_Entrada}</p>
+
+        <p><b>Ponto de saída:</b> ${properties.Ponto_Saida}</p>
+
+
+      </div>
+
+    `;
+
+  }
+
+  let currentPopup = null; // Variável para armazenar o popup atual
+
+  // Objeto mapeando os percursos às suas cores
+
+  const coresDosPercursos = {
+
+    "percurso_azul": "#0000FF", // Azul
+
+    "percurso_dourado": "#FFD700", // Dourado
+
+    "percurso_verde": "#008000", // Verde
+
+    "percurso_natureza": "#2E8B57", // Um verde mais natural
+
+    "percurso_salreu": "#ADD8E6", // Um azul claro, por exemplo
+
+    "percurso_fermela": "#FFC0CB", // Rosa, apenas como exemplo
+
+    "percurso_pardilho": "#A52A2A", // Marrom, apenas como exemplo
+
+    "percurso_veiros": "#FFFF00", // Amarelo, apenas como exemplo
+  };
+
+  const coresDosPercursosNauticos = {
+
+    "percurso_a": "#FF69B4",
+    "percurso_b": "#FF69B4",
+    "percurso_c": "#FF69B4",
+    "percurso_d": "#FF69B4",
+    "percurso_e": "#FF69B4",
+    "percurso_f": "#FF69B4",
+    "percurso_g": "#FF69B4",
+    "percurso_h": "#FF69B4",
+    "percurso_i": "#FF69B4",
+    "percurso_j": "#FF69B4",
+    "percurso_k": "#FF69B4",
+    "percurso_l": "#FF69B4",
+  };
+
+
   percursos.forEach(function (percurso) {
+
     fetch(`percursos.php?tabela=${percurso}`)
+
       .then((response) => response.json()) // Converte a resposta em JSON
+
       .then((data) => {
+
         // Adiciona os dados do percurso ao mapa como uma nova fonte
+
         map.addSource(percurso, {
+
           type: "geojson",
+
           data: data,
+
         });
 
+
+
         // Adiciona uma nova camada ao mapa para renderizar o percurso
+
         map.addLayer({
+
           id: percurso,
-          type: "line", // Tipo de geometria do percurso, pode ser 'line' ou 'fill', dependendo do que você tem no banco de dados
+
+          type: "line",
+
           source: percurso,
+
           layout: {
+
             "line-join": "round",
+
             "line-cap": "round",
+
             visibility: "none",
+
           },
+
           paint: {
-            "line-color":
-              percurso === "percurso_natureza"
-                ? "#76B041" // Verde claro para Percurso Natureza
-                : percurso === "percurso_dourado"
-                  ? "#FFD700" // Dourado para Percurso Dourado
-                  : percurso === "percurso_azul"
-                    ? "#007BFF" // Azul para Percurso Azul
-                    : percurso === "percurso_verde"
-                      ? "#006400" // Verde escuro para Percurso Verde
-                      : percurso === "percurso_salreu"
-                        ? "#E9967A" // Salmão para Percurso Salreu
-                        : percurso === "percurso_fermela"
-                          ? "#8A2BE2" // Azul violeta para Percurso Fermelã
-                          : percurso === "percurso_pardilho"
-                            ? "#DEB887" // Marrom claro para Percurso Pardilhó
-                            : percurso === "percurso_veiros"
-                              ? "#FF4500" // Laranja avermelhado para Percurso Veiros
-                              : "#000000", // Preto como cor padrão, caso nenhum percurso corresponda
-            "line-width": 3, // Largura da linha
+
+            "line-color": coresDosPercursos[percurso], // Define a cor da linha com base no mapeamento
+
+            "line-width": 5, // Exemplo de largura da linha
+
           },
+
         });
-      })
-      .catch((error) => console.error("Error:", error)); // Registra qualquer erro que ocorra
+
+
+
+        // Adiciona evento para exibir popup quando o mouse entra na camada do percurso
+
+        map.on('mouseenter', percurso, function (e) {
+
+          // Certifique-se de que as propriedades do percurso estão presentes
+
+          if (e.features.length > 0) {
+
+            var feature = e.features[0];
+
+            // Cria o HTML para o popup com base nas propriedades do percurso
+
+            var popupHTML = createPopupHTML(feature.properties);
+
+
+
+            // Fecha o popup atual se existir
+
+            if (currentPopup) {
+
+              currentPopup.remove();
+
+            }
+
+
+
+            // Cria e exibe o popup
+
+            currentPopup = new mapboxgl.Popup()
+
+              .setLngLat(e.lngLat)
+
+              .setHTML(popupHTML)
+
+              .addTo(map);
+
+          }
+
+        });
+
+
+
+        // Adiciona evento para ocultar o popup quando o mouse sai da camada do percurso
+
+        map.on('mouseleave', percurso, function () {
+
+          map.getCanvas().style.cursor = '';
+
+          if (currentPopup) {
+
+            currentPopup.remove();
+
+            currentPopup = null; // Reseta a variável currentPopup
+
+          }
+        });
+      });
   });
 
   var percursos_nauticos = [
@@ -467,37 +627,73 @@ map.on("load", () => {
             visibility: "none",
           },
           paint: {
-            "line-color":
-              percurso_nautico === "percurso_a"
-                ? "#FF69B4" // Rosa choque para Percurso A
-                : percurso_nautico === "percurso_b"
-                  ? "#FF69B4" // Rosa choque para Percurso A
-                  : percurso_nautico === "percurso_c"
-                    ? "#FF69B4" // Rosa choque para Percurso A
-                    : percurso_nautico === "percurso_d"
-                      ? "#FF69B4" // Rosa choque para Percurso A
-                      : percurso_nautico === "percurso_e"
-                        ? "#FF69B4" // Rosa choque para Percurso A
-                        : percurso_nautico === "percurso_f"
-                          ? "#FF69B4" // Rosa choque para Percurso A
-                          : percurso_nautico === "percurso_g"
-                            ? "#FF69B4" // Rosa choque para Percurso A
-                            : percurso_nautico === "percurso_h"
-                              ? "#FF69B4" // Rosa choque para Percurso A
-                              : percurso_nautico === "percurso_i"
-                                ? "#FF69B4" // Rosa choque para Percurso A
-                                : percurso_nautico === "percurso_j"
-                                  ? "#FF69B4" // Rosa choque para Percurso A
-                                  : percurso_nautico === "percurso_k"
-                                    ? "#FF69B4" // Rosa choque para Percurso A
-                                    : percurso_nautico === "percurso_l"
-                                      ? "#FF69B4" // Rosa choque para Percurso A
-                                      : "#000000", // Preto como cor padrão, caso nenhum percurso corresponda
-            "line-width": 3, // Largura da linha
+
+            "line-color": coresDosPercursosNauticos[percurso_nautico], // Define a cor da linha com base no mapeamento
+
+            "line-width": 5, // Exemplo de largura da linha
+
           },
         });
-      })
-      .catch((error) => console.error("Error:", error)); // Registra qualquer erro que ocorra
+
+
+
+        // Adiciona evento para exibir popup quando o mouse entra na camada do percurso
+
+        map.on('mouseenter', percurso_nautico, function (e) {
+
+          // Certifique-se de que as propriedades do percurso estão presentes
+
+          if (e.features.length > 0) {
+
+            var feature = e.features[0];
+
+            // Cria o HTML para o popup com base nas propriedades do percurso
+
+            var popupHTML = createPopupHTML_Nauticos(feature.properties);
+
+
+
+            // Fecha o popup atual se existir
+
+            if (currentPopup) {
+
+              currentPopup.remove();
+
+            }
+
+
+
+            // Cria e exibe o popup
+
+            currentPopup = new mapboxgl.Popup()
+
+              .setLngLat(e.lngLat)
+
+              .setHTML(popupHTML)
+
+              .addTo(map);
+
+          }
+
+        });
+
+
+
+        // Adiciona evento para ocultar o popup quando o mouse sai da camada do percurso
+
+        map.on('mouseleave', percurso_nautico, function () {
+
+          map.getCanvas().style.cursor = '';
+
+          if (currentPopup) {
+
+            currentPopup.remove();
+
+            currentPopup = null; // Reseta a variável currentPopup
+
+          }
+        });
+      });
   });
 
   // Adiciona as camadas ao mapa quando o mapa é carregado pela primeira vez.

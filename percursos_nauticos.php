@@ -48,8 +48,8 @@ while ($row = pg_fetch_assoc($result)) {
         'Grau_Dificuldade' => $row['grau_dificuldade'],
         'Tipologia' => $row['tipologia'],
         'Duracao_Estimada' => $row['duracao_estimada'],
-        'Ponto Entrada' => $row['ponto_entrada'],
-        'Ponto Saida' => $row['ponto_saida']
+        'Ponto_Entrada' => $row['ponto_entrada'],
+        'Ponto_Saida' => $row['ponto_saida']
     );
 
     $feature = array(
