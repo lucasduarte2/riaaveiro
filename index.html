@@ -69,11 +69,6 @@
           <br />
           <h4>Opções de routing</h4>
           <label>Veiculo: </label>
-<!--           <select id="routingProfile" name="routingProfile">
-            <option value="driving-traffic">Carro</option>
-            <option value="walking">A pé</option>
-            <option value="cycling">Bicicleta</option>
-          </select> -->
           <div class="veiculos" id="vehicleOptions">
             <div class="option" data-value="driving-traffic" onclick="selectOption(this, 'routingProfile', 'driving-traffic')">
               <img src="./imagens/carro.png" alt="Carro"/>
@@ -89,14 +84,6 @@
 
         <fieldset class="select-fieldset">
           <label>Tipo de métrica:</label>
-<!--           <select
-            id="contourType"
-            name="contourType"
-            onchange="updateContourOptions()"
-          >
-            <option value="minutes">Minutos</option>
-            <option value="meters">Metros</option>
-          </select> -->
          <div class="metrica" id="metricOptions">
             <div class="option" data-value="minutes" onclick="selectMetric('minutes')">
               <label>Minutos</label>
@@ -113,8 +100,6 @@
             <input type="range" min="1" max="6" value="1" class="slider" id="myRange">
             <p>Value: <span id="demo"></span></p>
           </div>
-<!--           <select id="contour" name="contour">
-          </select> -->
         </fieldset>
         
         <br />
@@ -231,6 +216,11 @@
           <br>
           <div id="Batimetrias" class="layer-class">
             <a class="class-title" onclick="toggleArrow(this)">Batimetrias <span class="fa fa-arrow-down"></span></a>
+            <div class="layers"></div>
+          </div>
+          <br>
+          <div id="PercursosNauticos" class="layer-class">
+            <a class="class-title" onclick="toggleArrow(this)">Percursos Náuticos <span class="fa fa-arrow-down"></span></a>
             <div class="layers"></div>
           </div>
         </div>
