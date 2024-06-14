@@ -182,7 +182,7 @@ map.on("load", () => {
     }
   });
 
-  function createPopupHTML(tabela, nome, addressHTML, streetViewUrl) {
+  function createPopupHTMLPI(tabela, nome, addressHTML, streetViewUrl) {
     return `
       <h6><b>Tipo:</b> ${tabela}</h6>
       <p><b>Nome:</b> ${nome}</p>
@@ -292,7 +292,7 @@ map.on("load", () => {
                   // com base no recurso encontrado.
                   popup
                     .setLngLat(coordinates)
-                    .setHTML(createPopupHTML(tabela, nome, addressHTML, streetViewUrl))
+                    .setHTML(createPopupHTMLPI(tabela, nome, addressHTML, streetViewUrl))
                     .addTo(map);
                   currentPopup = popup; // Armazena o popup atual
                 })
@@ -350,7 +350,7 @@ map.on("load", () => {
                   // com base no recurso encontrado.
                   popup
                     .setLngLat(coordinates)
-                    .setHTML(createPopupHTML(tabela, nome, addressHTML, streetViewUrl))
+                    .setHTML(createPopupHTMLPI(tabela, nome, addressHTML, streetViewUrl))
                     .addTo(map);
                   currentPopup = popup;
                 })
