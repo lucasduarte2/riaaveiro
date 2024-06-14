@@ -21,10 +21,11 @@ $query = "SELECT id,
                  ST_AsGeoJSON(geom) AS geom,
                  nome_do_percurso,
                  distancia_km,
-                 duracao_estimada,
-                 ambito,
                  grau_dificuldade,
-                 epoca_aconselhada 
+                 tipologia,
+                 duracao_estimada,
+                 ponto_entrada,
+                 ponto_saida
           FROM $tabela";
 $result = pg_query($conn, $query);
 
@@ -44,10 +45,11 @@ while ($row = pg_fetch_assoc($result)) {
         'id' => $row['id'],
         'Nome_do_Percurso' => $row['nome_do_percurso'],
         'Distancia_Km' => $row['distancia_km'],
-        'Duracao_Estimada' => $row['duracao_estimada'],
-        'Ambito' => $row['ambito'],
         'Grau_Dificuldade' => $row['grau_dificuldade'],
-        'Epoca_Aconselhada' => $row['epoca_aconselhada']
+        'Tipologia' => $row['tipologia'],
+        'Duracao_Estimada' => $row['duracao_estimada'],
+        'Ponto Entrada' => $row['ponto_entrada'],
+        'Ponto Saida' => $row['ponto_saida']
     );
 
     $feature = array(

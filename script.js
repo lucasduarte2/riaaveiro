@@ -379,10 +379,14 @@ map.on("load", () => {
     "percurso_dourado",
     "percurso_natureza",
     "percurso_verde",
+    "percurso_salreu",
+    "percurso_fermela",
+    "percurso_pardilho",
+    "percurso_veiros"
   ];
 
   percursos.forEach(function (percurso) {
-    fetch(`https://www.gis4cloud.com/grupo4_ptas2024/percursos.php?tabela=${percurso}`)
+    fetch(`percursos.php?tabela=${percurso}`)
       .then((response) => response.json()) // Converte a resposta em JSON
       .then((data) => {
         // Adiciona os dados do percurso ao mapa como uma nova fonte
@@ -403,13 +407,92 @@ map.on("load", () => {
           },
           paint: {
             "line-color":
-              percurso === "percurso_azul"
-                ? "#0000FF"
+              percurso === "percurso_natureza"
+                ? "#76B041" // Verde claro para Percurso Natureza
                 : percurso === "percurso_dourado"
-                  ? "#FFD700"
-                  : percurso === "percurso_natureza"
-                    ? "#A47551"
-                    : "#008000", // Cor do percurso
+                  ? "#FFD700" // Dourado para Percurso Dourado
+                  : percurso === "percurso_azul"
+                    ? "#007BFF" // Azul para Percurso Azul
+                    : percurso === "percurso_verde"
+                      ? "#006400" // Verde escuro para Percurso Verde
+                      : percurso === "percurso_salreu"
+                        ? "#E9967A" // Salmão para Percurso Salreu
+                        : percurso === "percurso_fermela"
+                          ? "#8A2BE2" // Azul violeta para Percurso Fermelã
+                          : percurso === "percurso_pardilho"
+                            ? "#DEB887" // Marrom claro para Percurso Pardilhó
+                            : percurso === "percurso_veiros"
+                              ? "#FF4500" // Laranja avermelhado para Percurso Veiros
+                              : "#000000", // Preto como cor padrão, caso nenhum percurso corresponda
+            "line-width": 3, // Largura da linha
+          },
+        });
+      })
+      .catch((error) => console.error("Error:", error)); // Registra qualquer erro que ocorra
+  });
+
+  var percursos_nauticos = [
+    "percurso_a",
+    "percurso_b",
+    "percurso_c",
+    "percurso_d",
+    "percurso_e",
+    "percurso_f",
+    "percurso_g",
+    "percurso_h",
+    "percurso_i",
+    "percurso_j",
+    "percurso_k",
+    "percurso_l",
+  ];
+
+  percursos_nauticos.forEach(function (percurso_nautico) {
+    fetch(`percursos_nauticos.php?tabela=${percurso_nautico}`)
+      .then((response) => response.json()) // Converte a resposta em JSON
+      .then((data) => {
+        // Adiciona os dados do percurso ao mapa como uma nova fonte
+        map.addSource(percurso_nautico, {
+          type: "geojson",
+          data: data,
+        });
+
+        // Adiciona uma nova camada ao mapa para renderizar o percurso
+        map.addLayer({
+          id: percurso_nautico,
+          type: "line", // Tipo de geometria do percurso, pode ser 'line' ou 'fill', dependendo do que você tem no banco de dados
+          source: percurso_nautico,
+          layout: {
+            "line-join": "round",
+            "line-cap": "round",
+            visibility: "none",
+          },
+          paint: {
+            "line-color":
+              percurso_nautico === "percurso_a"
+                ? "#FF69B4" // Rosa choque para Percurso A
+                : percurso_nautico === "percurso_b"
+                  ? "#FF69B4" // Rosa choque para Percurso A
+                  : percurso_nautico === "percurso_c"
+                    ? "#FF69B4" // Rosa choque para Percurso A
+                    : percurso_nautico === "percurso_d"
+                      ? "#FF69B4" // Rosa choque para Percurso A
+                      : percurso_nautico === "percurso_e"
+                        ? "#FF69B4" // Rosa choque para Percurso A
+                        : percurso_nautico === "percurso_f"
+                          ? "#FF69B4" // Rosa choque para Percurso A
+                          : percurso_nautico === "percurso_g"
+                            ? "#FF69B4" // Rosa choque para Percurso A
+                            : percurso_nautico === "percurso_h"
+                              ? "#FF69B4" // Rosa choque para Percurso A
+                              : percurso_nautico === "percurso_i"
+                                ? "#FF69B4" // Rosa choque para Percurso A
+                                : percurso_nautico === "percurso_j"
+                                  ? "#FF69B4" // Rosa choque para Percurso A
+                                  : percurso_nautico === "percurso_k"
+                                    ? "#FF69B4" // Rosa choque para Percurso A
+                                    : percurso_nautico === "percurso_l"
+                                      ? "#FF69B4" // Rosa choque para Percurso A
+                                      : "#000000", // Preto como cor padrão, caso nenhum percurso corresponda
             "line-width": 3, // Largura da linha
           },
         });
@@ -460,7 +543,25 @@ map.on("load", () => {
       "percurso_dourado",
       "percurso_verde",
       "percurso_natureza",
+      "percurso_salreu",
+      "percurso_fermela",
+      "percurso_pardilho",
+      "percurso_veiros"
     ],
+    PercursosNauticos: [
+      "percurso_a",
+      "percurso_b",
+      "percurso_c",
+      "percurso_d",
+      "percurso_e",
+      "percurso_f",
+      "percurso_g",
+      "percurso_h",
+      "percurso_i",
+      "percurso_j",
+      "percurso_k",
+      "percurso_l"
+    ]
   };
 
   const layerNames = {
@@ -486,6 +587,22 @@ map.on("load", () => {
     percurso_dourado: "Percurso Dourado",
     percurso_natureza: "Percurso Natureza",
     percurso_verde: "Percurso Verde",
+    percurso_salreu: "Percurso Salreu",
+    percurso_fermela: "Percurso Fermelã",
+    percurso_pardilho: "Percurso Pardilhó",
+    percurso_veiros: "Percurso Veiros",
+    percurso_a: "Percurso A",
+    percurso_b: "Percurso B",
+    percurso_c: "Percurso C",
+    percurso_d: "Percurso D",
+    percurso_e: "Percurso E",
+    percurso_f: "Percurso F",
+    percurso_g: "Percurso G",
+    percurso_h: "Percurso H",
+    percurso_i: "Percurso I",
+    percurso_j: "Percurso J",
+    percurso_k: "Percurso K",
+    percurso_l: "Percurso L",
     point_porto: "Porto",
     point_praias: "Praias",
     restaurantes: "Restaurantes",
@@ -670,7 +787,7 @@ map.on("load", () => {
     ],
     tileSize: 256,
   });
- 
+
   map.addLayer({
     id: "batimetria5m",
     type: "raster",
