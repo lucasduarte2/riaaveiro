@@ -157,10 +157,11 @@ map.on("load", () => {
       <p><a href="${streetViewUrl}" target="_blank">Ver no Google Street View</a></p>
     `;
   }
-
+  
   function addLayers() {
     let currentPopup = null; // Variável para armazenar o popup atual
-
+    let closePopupTimeout = null; // Variável para armazenar o timeout
+  
     tabelas.forEach((tabela) => {
       // Busca os dados da tabela
       fetch(`https://gis4cloud.com/grupo4_ptas2024/bd.php?tabela=${tabela}`)
@@ -177,7 +178,7 @@ map.on("load", () => {
             type: "geojson",
             data: data,
           });
-
+  
           // Carrega a imagem do ícone
           map.loadImage(getLayerImage(tabela), function (error, image) {
             if (error) {
@@ -185,10 +186,10 @@ map.on("load", () => {
               // Handle errors gracefully
               return;
             }
-
+  
             // Adiciona a imagem ao mapa
             map.addImage(tabela, image);
-
+  
             // Adiciona uma nova camada ao mapa usando os dados e a imagem
             map.addLayer({
               id: tabela,
@@ -201,13 +202,13 @@ map.on("load", () => {
                 visibility: "none",
               },
             });
-
+  
             // Cria um popup, mas não o adiciona ao mapa ainda.
             const popup = new mapboxgl.Popup({
               closeButton: true, // Adiciona o botão de fechar
               closeOnClick: false,
             });
-
+  
             // Função para fechar o popup atual se existir
             function closeCurrentPopup() {
               if (currentPopup) {
@@ -215,28 +216,32 @@ map.on("load", () => {
                 currentPopup = null;
               }
             }
-
+  
             // Quando o mouse entra em um ponto na camada dentro da isocrona...
             map.on("mouseenter", tabela + "_within", function (e) {
               closeCurrentPopup(); // Fecha o popup atual
-
+              if (closePopupTimeout) {
+                clearTimeout(closePopupTimeout);
+                closePopupTimeout = null;
+              }
+  
               // Muda o estilo do cursor como um indicador de interface do usuário.
               map.getCanvas().style.cursor = "pointer";
-
+  
               // Copia a matriz de coordenadas.
               const coordinates = e.features[0].geometry.coordinates.slice();
               const nome = e.features[0].properties.nome ? e.features[0].properties.nome : 'Desconhecido';
-
+  
               // Construa a URL do Google Maps Street View com as coordenadas do ponto
               var streetViewUrl = `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${coordinates[1]},${coordinates[0]}`;
-
+  
               // Garante que se o mapa estiver ampliado de tal forma que várias
               // cópias do recurso estejam visíveis, o popup apareça
               // sobre a cópia que está sendo apontada.
               while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
                 coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
               }
-
+  
               // Faz a chamada à API de reversão do OpenStreetMap para obter o endereço
               fetch(`https://nominatim.openstreetmap.org/reverse?lat=${coordinates[1]}&lon=${coordinates[0]}&format=json`)
                 .then(response => response.json())
@@ -260,34 +265,41 @@ map.on("load", () => {
                 })
                 .catch(error => console.error("Error fetching address:", error));
             });
-
+  
             // Quando o mouse sai de um ponto na camada...
             map.on("mouseleave", tabela + "_within", function () {
               map.getCanvas().style.cursor = "";
-              closeCurrentPopup(); // Fecha o popup atual
+              // Define o temporizador para fechar o popup após 2 segundos
+              closePopupTimeout = setTimeout(() => {
+                closeCurrentPopup(); // Fecha o popup atual
+              }, 2000);
             });
-
+  
             // Quando o mouse entra em um ponto na camada...
             map.on("mouseenter", tabela, function (e) {
               closeCurrentPopup(); // Fecha o popup atual
-
+              if (closePopupTimeout) {
+                clearTimeout(closePopupTimeout);
+                closePopupTimeout = null;
+              }
+  
               // Muda o estilo do cursor como um indicador de interface do usuário.
               map.getCanvas().style.cursor = "pointer";
-
+  
               // Copia a matriz de coordenadas.
               const coordinates = e.features[0].geometry.coordinates.slice();
               const nome = e.features[0].properties.nome ? e.features[0].properties.nome : 'Desconhecido';
-
+  
               // Construa a URL do Google Maps Street View com as coordenadas do ponto
               var streetViewUrl = `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${coordinates[1]},${coordinates[0]}`;
-
+  
               // Garante que se o mapa estiver ampliado de tal forma que várias
               // cópias do recurso estejam visíveis, o popup apareça
               // sobre a cópia que está sendo apontada.
               while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
                 coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
               }
-
+  
               // Faz a chamada à API de reversão do OpenStreetMap para obter o endereço
               fetch(`https://nominatim.openstreetmap.org/reverse?lat=${coordinates[1]}&lon=${coordinates[0]}&format=json`)
                 .then(response => response.json())
@@ -311,19 +323,21 @@ map.on("load", () => {
                 })
                 .catch(error => console.error("Error fetching address:", error));
             });
-
+  
             // Quando o mouse sai de um ponto na camada...
             map.on("mouseleave", tabela, function () {
               map.getCanvas().style.cursor = "";
-              closeCurrentPopup(); // Fecha o popup atual
+              // Define o temporizador para fechar o popup após 2 segundos
+              closePopupTimeout = setTimeout(() => {
+                closeCurrentPopup(); // Fecha o popup atual
+              }, 2000);
             });
           });
         })
         .catch((error) => console.error("Error:", error)); // Regista qualquer erro que ocorra
     });
   }
-
-
+  
 
 
 
