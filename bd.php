@@ -1,7 +1,6 @@
 <?php
 function getGeoJSON($tabela)
 {
-
     // Verificar se a tabela é 'spatial_ref_sys' e pular
     if ($tabela === 'spatial_ref_sys') {
         return json_encode(
@@ -29,7 +28,10 @@ function getGeoJSON($tabela)
         die("Erro ao conectar à base de dados.");
     }
 
-    $query = "SELECT lat, lng, nome, imgurl FROM " . $tabela . ";";
+    $query = "SELECT lat, lng, nome, imgurl" . 
+        ($tabela === 'ondas' ? ", velocidadevento, alturaonda, direcaovento, swellaltura, swellperiodo, swelldirecao" : "") . 
+        " FROM " . $tabela . ";";
+    
     $result = pg_query($conn, $query);
     if (!$result) {
         die("Erro ao executar a consulta SQL.");
@@ -39,8 +41,22 @@ function getGeoJSON($tabela)
         'type' => 'FeatureCollection',
         'features' => array()
     );
-    // Dentro do loop que processa os resultados da sua consulta SQL e constrói o GeoJSON
+
     while ($row = pg_fetch_assoc($result)) {
+        $properties = array(
+            'nome' => $row['nome'],
+            'imgurl' => $row['imgurl']
+        );
+
+        if ($tabela === 'ondas') {
+            $properties['velocidadevento'] = $row['velocidadevento'];
+            $properties['alturaonda'] = $row['alturaonda'];
+            $properties['direcaovento'] = $row['direcaovento'];
+            $properties['swellaltura'] = $row['swellaltura'];
+            $properties['swellperiodo'] = $row['swellperiodo'];
+            $properties['swelldirecao'] = $row['swelldirecao'];
+        }
+
         $feature = array(
             'type' => 'Feature',
             'geometry' => array(
@@ -50,11 +66,9 @@ function getGeoJSON($tabela)
                     floatval($row['lat'])
                 )
             ),
-            'properties' => array(
-                'nome' => $row['nome'], // Adicionando o nome aqui
-                'imgurl' => $row['imgurl']
-            )
+            'properties' => $properties
         );
+        
         array_push($geojson['features'], $feature);
     }
 

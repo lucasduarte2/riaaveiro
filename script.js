@@ -245,7 +245,19 @@ map.on("load", () => {
     }
   });
  */
-  function createPopupHTMLPI(tabela, nome, addressHTML, streetViewUrl, imgurl) {
+  function createPopupHTMLPI(tabela, nome, addressHTML, streetViewUrl, imgurl, extraInfo = {}) {
+    let extraHTML = '';
+    if (tabela === 'ondas') {
+      extraHTML = `
+        <p><b>Velocidade do Vento:</b> ${extraInfo.velocidadevento ? extraInfo.velocidadevento : 'Desconhecido'}</p>
+        <p><b>Altura da Onda:</b> ${extraInfo.alturaonda ? extraInfo.alturaonda : 'Desconhecido'}</p>
+        <p><b>Direção do Vento:</b> ${extraInfo.direcaovento ? extraInfo.direcaovento : 'Desconhecido'}</p>
+        <p><b>Swell Altura:</b> ${extraInfo.swellaltura ? extraInfo.swellaltura : 'Desconhecido'}</p>
+        <p><b>Swell Período:</b> ${extraInfo.swellperiodo ? extraInfo.swellperiodo : 'Desconhecido'}</p>
+        <p><b>Swell Direção:</b> ${extraInfo.swelldirecao ? extraInfo.swelldirecao : 'Desconhecido'}</p>
+      `;
+    }
+  
     return `
       <h6><b>Tipo:</b> ${tabela}</h6>
         <p>
@@ -253,6 +265,7 @@ map.on("load", () => {
         </p>
       <p><b>Nome:</b> ${nome}</p>
       ${addressHTML}
+      ${extraHTML}
       <p><a href="${streetViewUrl}" target="_blank">Ver no Google Street View</a></p>
       <p><button id="add_PI_to_Route">Adicionar à rota</button><p>
     `;
@@ -331,7 +344,7 @@ map.on("load", () => {
               // Copia a matriz de coordenadas.
               const coordinates = e.features[0].geometry.coordinates.slice();
               const nome = e.features[0].properties.nome ? e.features[0].properties.nome : 'Desconhecido';
-              const imgurl = e.features[0].properties.imgurl ? e.features[0].properties.nome : 'Imagem desconhecida';
+              const imgurl = e.features[0].properties.imgurl ? e.features[0].properties.imgurl : 'Imagem desconhecida';
               // Construa a URL do Google Maps Street View com as coordenadas do ponto
               var streetViewUrl = `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${coordinates[1]},${coordinates[0]}`;
 
@@ -387,10 +400,10 @@ map.on("load", () => {
                 clearTimeout(closePopupTimeout);
                 closePopupTimeout = null;
               }
-
+              console.log(e.features[0].properties);
               // Muda o estilo do cursor como um indicador de interface do usuário.
               map.getCanvas().style.cursor = "pointer";
-
+              const properties = e.features[0].properties;
               // Copia a matriz de coordenadas.
               const coordinates = e.features[0].geometry.coordinates.slice();
               const nome = e.features[0].properties.nome ? e.features[0].properties.nome : 'Desconhecido';
@@ -398,6 +411,20 @@ map.on("load", () => {
               // Construa a URL do Google Maps Street View com as coordenadas do ponto
               var streetViewUrl = `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${coordinates[1]},${coordinates[0]}`;
 
+
+              // Verifica se a tabela é 'ondas' e extrai informações adicionais se verdadeiro
+  let extraInfo = {};
+  if(tabela === 'ondas') {
+    extraInfo = {
+      velocidadevento: e.features[0].properties.velocidadevento,
+      alturaonda: e.features[0].properties.alturaonda,
+      direcaovento: e.features[0].properties.direcaovento,
+      swellaltura: e.features[0].properties.swellaltura,
+      swellperiodo: e.features[0].properties.swellperiodo,
+      swelldirecao: e.features[0].properties.swelldirecao,
+    };
+    console.log(extraInfo);
+  }
               // Garante que se o mapa estiver ampliado de tal forma que várias
               // cópias do recurso estejam visíveis, o popup apareça
               // sobre a cópia que está sendo apontada.
@@ -421,10 +448,10 @@ map.on("load", () => {
                   // Preenche o popup e define suas coordenadas
                   // com base no recurso encontrado.
                   popup
-                    .setLngLat(coordinates)
-                    .setHTML(createPopupHTMLPI(tabela, nome, addressHTML, streetViewUrl, imgurl))
-                    .addTo(map);
-                  currentPopup = popup;
+                  .setLngLat(coordinates)
+                  .setHTML(createPopupHTMLPI(tabela, nome, addressHTML, streetViewUrl, imgurl, extraInfo))
+                  .addTo(map);
+                currentPopup = popup;
 
                   // Adiciona o manipulador de eventos para o botão "Adicionar à rota"
                   document.getElementById("add_PI_to_Route").addEventListener("click", function () {
