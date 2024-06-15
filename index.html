@@ -42,145 +42,150 @@
       <img src="https://gis4cloud.pt/geoserver/wms?service=WMS&request=GetLegendGraphic&format=image/png&layer=grupo4_ptas2024:Aveiro" alt="Legenda da camada WMS">
     </div>
     <div id="sidebar" class="sidebar">
+      <div class="sidebar-toggle" onclick="toggleSidebar()">
+        <span class="arrow-icon">&raquo;</span>
+      </div>
       <div class="sidebar-content">
-        <br />
-        <fieldset class="select-fieldset">
-          <h4>Definiçoes visuais</h4>
-          <label>Selecionar período do dia</label>
-          <select id="lightPreset" name="lightPreset">
-            <option value="dawn">Amanhecer</option>
-            <option value="day">Dia</option>
-            <option value="dusk" selected="">Anoitecer</option>
-            <option value="night">Noite</option>
-          </select>
-        </fieldset>
-        <fieldset>
-          <label for="selectAll">Mostrar legendas do mapa</label>
-          <input
-            type="checkbox"
-            id="selectAll"
-            checked=""
-            onclick="toggleCheckboxes(this)"
-          />
-        </fieldset>
+        <div class="tabs">
+          <div class="tab active" data-tab="visual-settings">Definições Visuais</div>
+          <div class="tab" data-tab="routing-options">Opções de Routing</div>
+          <div class="tab" data-tab="weather-settings">Meteorologia</div>
+        </div>
 
-        <br />
-        <fieldset class="select-fieldset">
-          <br />
-          <h4>Opções de routing</h4>
-          <label>Veiculo: </label>
-          <div class="veiculos" id="vehicleOptions">
-            <div class="option" data-value="driving-traffic" onclick="selectOption(this, 'routingProfile', 'driving-traffic')">
-              <img src="./imagens/carro.png" alt="Carro"/>
-            </div>
-            <div class="option" data-value="walking" onclick="selectOption(this, 'routingProfile', 'walking')">
-              <img src="./imagens/walking.png" alt="A pé"/>
-            </div>
-            <div class="option" data-value="cycling" onclick="selectOption(this, 'routingProfile', 'cycling')">
-              <img src="./imagens/bicicleta.png" alt="Bicicleta"/>
-            </div>
-            <input type="hidden" id="routingProfile" value="walking">
-          </div>
-        </fieldset>
-
-        <fieldset class="select-fieldset">
-          <label>Tipo de métrica:</label>
-         <div class="metrica" id="metricOptions">
-            <div class="option" data-value="minutes" onclick="selectMetric('minutes')">
-              <label>Minutos</label>
-            </div>
-            <div class="option" data-value="meters" onclick="selectMetric('meters')">
-              <label>Metros</label>
-            </div>
-          </div>   
-        </fieldset>
-
-        <fieldset class="select-fieldset">
-          <label>Quantidade:</label>
-          <div class="slidecontainer" id="sliderContainer">
-            <input type="range" min="1" max="6" value="1" class="slider" id="myRange">
-            <p>Value: <span id="demo"></span></p>
-          </div>
-        </fieldset>
-        
-        <br />
-        <fieldset class="select-fieldset">
+        <div id="visual-settings" class="tab-content active">
           <fieldset class="select-fieldset">
-            <button id="addPointA">Adicionar ponto A</button>
-            <input type="text" id="addressInputA" style="width: 100%; margin-top: 5px;" placeholder="Digite a localização do ponto A" />
-          </fieldset>
-
-          <fieldset class="select-fieldset">
-            <button id="addPointB">Adicionar ponto B</button>
-            <input type="text" id="addressInputB" style="width: 100%; margin-top: 5px;" placeholder="Digite a localização do ponto B" />
-          </fieldset>
-
-          <fieldset class="select-fieldset">
-            <button id="addPointIntermedio" style="display: none;">Adicionar ponto intermédio</button>
-            <input type="text" id="addressInputIntermedio" style="width: 100%; margin-top: 5px; display: none;" placeholder="Digite a localização do ponto intermédio" />
-          </fieldset>
-
-          <fieldset class="select-fieldset">
-            <label id="selectedCategoryLabel" for="selectedCategory" style="display: none;">Selecione a categoria de pontos de interesse:</label>
-            <select id="selectedCategory" style="display: none;">
-              <option value="">Categorias:</option>
-              <option value="point_alojamento_local">Alojamento Local</option>
-              <option value="aluguer_bicicletas">Aluguer de Bicicletas</option>
-              <option value="aluguer_carros">Aluguer de Carros</option>
-              <option value="arte_xavega">Arte Xávega</option>
-              <option value="aves">Observação de Aves</option>
-              <option value="bancos">Bancos</option>
-              <option value="bombas_gasolina">Bombas de Gasolina</option>
-              <option value="estacao">Estação</option>
-              <option value="farmacias">Farmácias</option>
-              <option value="hospitais">Hospitais</option>
-              <option value="kitesurf">Kitesurf</option>
-              <option value="local_ferry">Ferry Local</option>
-              <option value="point_marinas_docas">Marinas e Docas</option>
-              <option value="multibanco">Multibanco</option>
-              <option value="natacao_pontoprofessora">Natação</option>
-              <option value="point_nucleos_pesca">Núcleos de Pesca</option>
-              <option value="ondas">Ondas</option>
-              <option value="paragensautocarro">Paragens de Autocarro</option>
-              <option value="percurso_azul">Percurso Azul</option>
-              <option value="percurso_dourado">Percurso Dourado</option>
-              <option value="percurso_natureza">Percurso Natureza</option>
-              <option value="percurso_verde">Percurso Verde</option>
-              <option value="point_porto">Porto</option>
-              <option value="point_praias">Praias</option>
-              <option value="restaurantes">Restaurantes</option>
-              <option value="point_surf">Surf</option>
-              <option value="terminal_ferry">Terminal de Ferry</option>
-              <option value="salinas">Salinas</option>
-              <option value="voleipraia">Vólei de Praia</option>
+            <h4>Definiçoes visuais</h4>
+            <label>Selecionar período do dia</label>
+            <select id="lightPreset" name="lightPreset">
+              <option value="dawn">Amanhecer</option>
+              <option value="day">Dia</option>
+              <option value="dusk" selected="">Anoitecer</option>
+              <option value="night">Noite</option>
             </select>
           </fieldset>
-
-          <button id="calculateRouteButton">Calcular</button>
-          <div class="overlay">
-            <button id="replay" style="display: none;">Replay Animation</button>
-          </div>
-        </fieldset>
-
-        <div
-          id="sidebar-toggle"
-          class="sidebar-toggle"
-          onclick="toggleSidebar()"
-        >
-          <span class="arrow-icon">&raquo;</span>
+        
+          <fieldset>
+            <label for="selectAll">Mostrar legendas do mapa</label>
+            <input
+              type="checkbox"
+              id="selectAll"
+              checked=""
+              onclick="toggleCheckboxes(this)"
+            />
+          </fieldset>
         </div>
-        <br />
-        <button type="button" class="btn btn-warning" onclick="limparTudo()">
-          Limpar
-        </button>
-        <br /><br />
-        <fieldset>
-          <h4>Meteorologia</h4>
-          <button id="addWeatherPoint">Adicionar ponto meteorológico</button>
-          <input type="text" id="addressInputWeather" style="width: 100%; margin-top: 5px;" placeholder="Digite a localização do ponto meteorológico" />
-        </fieldset>
 
-        <br /><br />
+        <div id="routing-options" class="tab-content">
+          <fieldset class="select-fieldset">
+            <br />
+            <h4>Opções de routing</h4>
+            <label>Veiculo: </label>
+            <div class="veiculos" id="vehicleOptions">
+              <div class="option" data-value="driving-traffic" onclick="selectOption(this, 'routingProfile', 'driving-traffic')">
+                <img src="./imagens/carro.png" alt="Carro"/>
+              </div>
+              <div class="option" data-value="walking" onclick="selectOption(this, 'routingProfile', 'walking')">
+                <img src="./imagens/walking.png" alt="A pé"/>
+              </div>
+              <div class="option" data-value="cycling" onclick="selectOption(this, 'routingProfile', 'cycling')">
+                <img src="./imagens/bicicleta.png" alt="Bicicleta"/>
+              </div>
+              <input type="hidden" id="routingProfile" value="walking">
+            </div>
+          </fieldset>
+
+          <fieldset class="select-fieldset">
+            <label>Tipo de métrica:</label>
+          <div class="metrica" id="metricOptions">
+              <div class="option" data-value="minutes" onclick="selectMetric('minutes')">
+                <label>Minutos</label>
+              </div>
+              <div class="option" data-value="meters" onclick="selectMetric('meters')">
+                <label>Metros</label>
+              </div>
+            </div>   
+          </fieldset>
+
+          <fieldset class="select-fieldset">
+            <label>Quantidade:</label>
+            <div class="slidecontainer" id="sliderContainer">
+              <input type="range" min="1" max="6" value="1" class="slider" id="myRange">
+              <p>Value: <span id="demo"></span></p>
+            </div>
+          </fieldset>
+          
+          <br />
+          <fieldset class="select-fieldset">
+            <fieldset class="select-fieldset">
+              <button id="addPointA">Adicionar ponto A</button>
+              <input type="text" id="addressInputA" style="width: 100%; margin-top: 5px;" placeholder="Digite a localização do ponto A" />
+            </fieldset>
+
+            <fieldset class="select-fieldset">
+              <button id="addPointB">Adicionar ponto B</button>
+              <input type="text" id="addressInputB" style="width: 100%; margin-top: 5px;" placeholder="Digite a localização do ponto B" />
+            </fieldset>
+
+            <fieldset class="select-fieldset">
+              <button id="addPointIntermedio" style="display: none;">Adicionar ponto intermédio</button>
+              <input type="text" id="addressInputIntermedio" style="width: 100%; margin-top: 5px; display: none;" placeholder="Digite a localização do ponto intermédio" />
+            </fieldset>
+
+            <fieldset class="select-fieldset">
+              <label id="selectedCategoryLabel" for="selectedCategory" style="display: none;">Selecione a categoria de pontos de interesse:</label>
+              <select id="selectedCategory" style="display: none;">
+                <option value="">Categorias:</option>
+                <option value="point_alojamento_local">Alojamento Local</option>
+                <option value="aluguer_bicicletas">Aluguer de Bicicletas</option>
+                <option value="aluguer_carros">Aluguer de Carros</option>
+                <option value="arte_xavega">Arte Xávega</option>
+                <option value="aves">Observação de Aves</option>
+                <option value="bancos">Bancos</option>
+                <option value="bombas_gasolina">Bombas de Gasolina</option>
+                <option value="estacao">Estação</option>
+                <option value="farmacias">Farmácias</option>
+                <option value="hospitais">Hospitais</option>
+                <option value="kitesurf">Kitesurf</option>
+                <option value="local_ferry">Ferry Local</option>
+                <option value="point_marinas_docas">Marinas e Docas</option>
+                <option value="multibanco">Multibanco</option>
+                <option value="natacao_pontoprofessora">Natação</option>
+                <option value="point_nucleos_pesca">Núcleos de Pesca</option>
+                <option value="ondas">Ondas</option>
+                <option value="paragensautocarro">Paragens de Autocarro</option>
+                <option value="percurso_azul">Percurso Azul</option>
+                <option value="percurso_dourado">Percurso Dourado</option>
+                <option value="percurso_natureza">Percurso Natureza</option>
+                <option value="percurso_verde">Percurso Verde</option>
+                <option value="point_porto">Porto</option>
+                <option value="point_praias">Praias</option>
+                <option value="restaurantes">Restaurantes</option>
+                <option value="point_surf">Surf</option>
+                <option value="terminal_ferry">Terminal de Ferry</option>
+                <option value="salinas">Salinas</option>
+                <option value="voleipraia">Vólei de Praia</option>
+              </select>
+            </fieldset>
+
+            <button id="calculateRouteButton">Calcular</button>
+            <div class="overlay">
+              <button id="replay" style="display: none;">Replay Animation</button>
+            </div>
+          </fieldset>
+
+          <br />
+          <button type="button" class="btn btn-warning" onclick="limparTudo()">
+            Limpar
+          </button>
+        </div>
+        
+        <div id="weather-settings" class="tab-content">
+          <fieldset>
+            <h4>Meteorologia</h4>
+            <button id="addWeatherPoint">Adicionar ponto meteorológico</button>
+            <input type="text" id="addressInputWeather" style="width: 100%; margin-top: 5px;" placeholder="Digite a localização do ponto meteorológico" />
+          </fieldset>
+        </div>
       </div>
     </div>
 

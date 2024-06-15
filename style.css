@@ -35,6 +35,33 @@ body {
   transition: background-color 0.3s ease;
 }
 
+/* Estilos das tabs */
+.tabs {
+  display: flex;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+.tab {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-bottom: none;
+  margin-right: 5px;
+  background: #f1f1f1;
+}
+.tab-content {
+  display: none;
+  border: 1px solid #ccc;
+  padding: 10px;
+  background: #fff;
+}
+.tab.active {
+  background: #fff;
+  border-bottom: 1px solid #fff;
+}
+.tab-content.active {
+  display: block;
+}
+
 .veiculos {
   display: flex;
   justify-content: space-between;
@@ -122,7 +149,7 @@ body {
   position: absolute;
   top: 0;
   left: 0;
-  width: 300px;
+  width: 400px;
   height: 100%;
   background-color: #f8f8f8;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
@@ -130,7 +157,7 @@ body {
   padding: 20px;
   box-sizing: border-box;
   transition: transform 0.3s ease-in-out;
-  transform: translateX(-300px);
+  transform: translateX(-400px);
   border-top-right-radius: 10px;
   border-bottom-right-radius: 10px;
 }
@@ -178,7 +205,7 @@ body {
 .sidebar-toggle {
   position: absolute;
   top: 20px;
-  left: 300px; /* Ajuste conforme necessário */
+  left: 400px; /* Ajuste conforme necessário */
   width: 40px;
   height: 40px;
   background-color: #007bff;
