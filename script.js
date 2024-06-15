@@ -37,6 +37,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
 });
 
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab, .tab-content').forEach(el => el.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById(tab.getAttribute('data-tab')).classList.add('active');
+  });
+});
 
 // Define a chave de acesso do Mapbox
 mapboxgl.accessToken =
@@ -238,9 +245,12 @@ map.on("load", () => {
     }
   });
 
-  function createPopupHTMLPI(tabela, nome, addressHTML, streetViewUrl) {
+  function createPopupHTMLPI(tabela, nome, addressHTML, streetViewUrl, imgurl) {
     return `
       <h6><b>Tipo:</b> ${tabela}</h6>
+        <p>
+        <img src="${imgurl}" alt="Imagem" width="200px" height="150px"/>
+        </p>
       <p><b>Nome:</b> ${nome}</p>
       ${addressHTML}
       <p><a href="${streetViewUrl}" target="_blank">Ver no Google Street View</a></p>
@@ -254,7 +264,7 @@ map.on("load", () => {
 
     tabelas.forEach((tabela) => {
       // Busca os dados da tabela
-      fetch(`https://gis4cloud.com/grupo4_ptas2024/bd.php?tabela=${tabela}`)
+      fetch(`bd.php?tabela=${tabela}`)
         .then((response) => {
           if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
@@ -321,7 +331,7 @@ map.on("load", () => {
               // Copia a matriz de coordenadas.
               const coordinates = e.features[0].geometry.coordinates.slice();
               const nome = e.features[0].properties.nome ? e.features[0].properties.nome : 'Desconhecido';
-
+              const imgurl = e.features[0].properties.imgurl ? e.features[0].properties.nome : 'Imagem desconhecida';
               // Construa a URL do Google Maps Street View com as coordenadas do ponto
               var streetViewUrl = `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${coordinates[1]},${coordinates[0]}`;
 
@@ -349,7 +359,7 @@ map.on("load", () => {
                   // com base no recurso encontrado.
                   popup
                     .setLngLat(coordinates)
-                    .setHTML(createPopupHTMLPI(tabela, nome, addressHTML, streetViewUrl))
+                    .setHTML(createPopupHTMLPI(tabela, nome, addressHTML, streetViewUrl, imgurl))
                     .addTo(map);
                   currentPopup = popup; // Armazena o popup atual
 
@@ -384,7 +394,7 @@ map.on("load", () => {
               // Copia a matriz de coordenadas.
               const coordinates = e.features[0].geometry.coordinates.slice();
               const nome = e.features[0].properties.nome ? e.features[0].properties.nome : 'Desconhecido';
-
+              const imgurl = e.features[0].properties.imgurl ? e.features[0].properties.imgurl : 'Imagem desconhecida';
               // Construa a URL do Google Maps Street View com as coordenadas do ponto
               var streetViewUrl = `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${coordinates[1]},${coordinates[0]}`;
 
@@ -412,7 +422,7 @@ map.on("load", () => {
                   // com base no recurso encontrado.
                   popup
                     .setLngLat(coordinates)
-                    .setHTML(createPopupHTMLPI(tabela, nome, addressHTML, streetViewUrl))
+                    .setHTML(createPopupHTMLPI(tabela, nome, addressHTML, streetViewUrl, imgurl))
                     .addTo(map);
                   currentPopup = popup;
 
@@ -449,7 +459,8 @@ map.on("load", () => {
     "percurso_salreu",
     "percurso_fermela",
     "percurso_pardilho",
-    "percurso_veiros"
+    "percurso_veiros",
+    "percurso_btt",
   ];
 
   function createPopupHTML(properties) {
@@ -461,7 +472,9 @@ map.on("load", () => {
       <div>
 
         <h4>${properties.Nome_do_Percurso}</h4>
-
+        <p>
+        <img src="${properties.imgurl}" alt="Imagem" width="200px" height="150px"/>
+        </p>
         <p><b>Distância:</b> ${properties.Distancia_Km}</p>
 
         <p><b>Duração Estimada:</b> ${properties.Duracao_Estimada}</p>
@@ -477,7 +490,6 @@ map.on("load", () => {
     `;
 
   }
-
   function createPopupHTML_Nauticos(properties) {
 
     // Constrói e retorna o HTML para o popup com base nas propriedades do percurso
@@ -528,6 +540,8 @@ map.on("load", () => {
     "percurso_pardilho": "#A52A2A", // Marrom, apenas como exemplo
 
     "percurso_veiros": "#FFFF00", // Amarelo, apenas como exemplo
+
+    "percurso_btt": "#FFA500", // Laranja, apenas como exemplo
   };
 
   const coresDosPercursosNauticos = {
@@ -809,7 +823,8 @@ map.on("load", () => {
       "percurso_salreu",
       "percurso_fermela",
       "percurso_pardilho",
-      "percurso_veiros"
+      "percurso_veiros",
+      "percurso_btt",
     ],
     PercursosNauticos: [
       "percurso_a",
@@ -854,6 +869,7 @@ map.on("load", () => {
     percurso_fermela: "Percurso Fermelã",
     percurso_pardilho: "Percurso Pardilhó",
     percurso_veiros: "Percurso Veiros",
+    percurso_btt: "Percurso BTT",
     percurso_a: "Percurso A",
     percurso_b: "Percurso B",
     percurso_c: "Percurso C",
@@ -1075,23 +1091,44 @@ map.on("load", () => {
 
 // Quando o estilo do mapa terminar de carregar...
 map.on("style.load", () => {
-  // Define a propriedade "lightPreset" do mapa para "dawn"
+  // Define a propriedade "lightPreset" do mapa para "dusk"
   map.setConfigProperty("basemap", "lightPreset", "dusk");
 });
 
-// Quando o valor do elemento "lightPreset" mudar...
-document.getElementById("lightPreset").addEventListener("change", function () {
-  // Atualiza a propriedade "lightPreset" do mapa para o novo valor
-  map.setConfigProperty("basemap", "lightPreset", this.value);
-});
+// Função para selecionar o período do dia
+function selectPeriod(periodType) {
+  // Verifica se o período já está selecionado
+  const isSelected = document.querySelector(`.periods .option[data-value="${periodType}"]`).classList.contains('selected');
 
-// Define os IDs das configurações
-const configIds = [
-  "showPlaceLabels",
-  "showPointOfInterestLabels",
-  "showRoadLabels",
-  "showTransitLabels",
-];
+  // Se o período já estiver selecionado, não faz nada
+  if (isSelected) {
+    return;
+  }
+
+  // Remove a seleção de todos os períodos
+  document.querySelectorAll('.periods .option').forEach(option => {
+    option.classList.remove('selected');
+  });
+
+  // Adiciona a seleção apenas ao período clicado
+  document.querySelector(`.periods .option[data-value="${periodType}"]`).classList.add('selected');
+
+  document.querySelectorAll('.periods .option').forEach(option => {
+    if (option.getAttribute('data-value') === periodType) {
+      option.classList.add('selected');
+    }
+
+    if (periodType === 'dawn') {
+      map.setConfigProperty("basemap", "lightPreset", "dawn");
+    } else if (periodType === 'day') {
+      map.setConfigProperty("basemap", "lightPreset", "day");
+    } else if (periodType === 'dusk') {
+      map.setConfigProperty("basemap", "lightPreset", "dusk");
+    } else if (periodType === 'night') {
+      map.setConfigProperty("basemap", "lightPreset", "night");
+    }
+  });
+}
 
 // Quando o estado do elemento "selectAll" mudar...
 document.getElementById("selectAll").addEventListener("change", function () {
@@ -1109,6 +1146,14 @@ document
       map.setConfigProperty("basemap", this.id, this.checked);
     });
   });
+
+// Define os IDs das configurações
+const configIds = [
+  "showPlaceLabels",
+  "showPointOfInterestLabels",
+  "showRoadLabels",
+  "showTransitLabels",
+];
 
 function toggleSidebar() {
   const sidebar = document.getElementById("sidebar");
@@ -1693,7 +1738,7 @@ function addAutocompleteAndSearch(inputId, markerColor, map) {
             .on("dragend", function () {
               fetchWeatherData(weatherMarker.getLngLat());
             });
-          fetchWeatherData(coords); // Fetch weather data immediately after adding the marker
+          fetchWeatherData(weatherMarker.getLngLat()); // Fetch weather data immediately after adding the marker
         }
       }
     });
@@ -1847,7 +1892,7 @@ function calculateRoute() {
 
       // Se uma categoria de ponto de interesse estiver selecionada, busque os pontos de interesse
       if (selectedCategory) {
-        fetch(`https://gis4cloud.com/grupo4_ptas2024/bd.php?tabela=${selectedCategory}`)
+        fetch(`bd.php?tabela=${selectedCategory}`)
           .then((response) => {
             if (!response.ok) {
               throw new Error(`Erro na requisição de pontos de interesse: ${response.status}`);

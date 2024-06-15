@@ -3,7 +3,7 @@
 $conn = pg_connect("host=www.gis4cloud.com dbname=grupo4_ptas2024 user=grupo4_ptas2024 password=riaaveiro2024");
 
 if (!$conn) {
-    echo "Erro ao conectar ao banco de dados.";
+    echo "Erro ao conectar a base de dados.";
     exit;
 }
 
@@ -24,7 +24,8 @@ $query = "SELECT id,
                  duracao_estimada,
                  ambito,
                  grau_dificuldade,
-                 epoca_aconselhada 
+                 epoca_aconselhada,
+                 imgUrl 
           FROM $tabela";
 $result = pg_query($conn, $query);
 
@@ -47,7 +48,8 @@ while ($row = pg_fetch_assoc($result)) {
         'Duracao_Estimada' => $row['duracao_estimada'],
         'Ambito' => $row['ambito'],
         'Grau_Dificuldade' => $row['grau_dificuldade'],
-        'Epoca_Aconselhada' => $row['epoca_aconselhada']
+        'Epoca_Aconselhada' => $row['epoca_aconselhada'],
+        'imgurl' => $row['imgurl']
     );
 
     $feature = array(

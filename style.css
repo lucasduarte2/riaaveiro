@@ -40,24 +40,31 @@ body {
   display: flex;
   cursor: pointer;
   margin-bottom: 10px;
+  justify-content: space-between;
 }
+
 .tab {
   padding: 10px;
   border: 1px solid #ccc;
-  border-bottom: none;
-  margin-right: 5px;
-  background: #f1f1f1;
+  width: 100px;
+  height: 75px;
+  background-size: 60px 60px;
+  background-position: center;
+  background-repeat: no-repeat;
+  box-sizing: border-box;
 }
+
 .tab-content {
   display: none;
   border: 1px solid #ccc;
   padding: 10px;
   background: #fff;
 }
+
 .tab.active {
-  background: #fff;
-  border-bottom: 1px solid #fff;
+  border: 2px solid #007bff;
 }
+
 .tab-content.active {
   display: block;
 }
@@ -69,6 +76,18 @@ body {
 }
 
 .metrica {
+  display: flex;
+  justify-content: space-between;
+  border: 2px solid #000;
+}
+
+.periods {
+  display: flex;
+  justify-content: space-between;
+  border: 2px solid #000;
+}
+
+.mapLabels {
   display: flex;
   justify-content: space-between;
   border: 2px solid #000;

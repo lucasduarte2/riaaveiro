@@ -29,7 +29,7 @@ function getGeoJSON($tabela)
         die("Erro ao conectar à base de dados.");
     }
 
-    $query = "SELECT lat, lng, nome FROM " . $tabela . ";";
+    $query = "SELECT lat, lng, nome, imgurl FROM " . $tabela . ";";
     $result = pg_query($conn, $query);
     if (!$result) {
         die("Erro ao executar a consulta SQL.");
@@ -51,7 +51,8 @@ function getGeoJSON($tabela)
                 )
             ),
             'properties' => array(
-                'nome' => $row['nome'] // Adicionando o nome aqui
+                'nome' => $row['nome'], // Adicionando o nome aqui
+                'imgurl' => $row['imgurl']
             )
         );
         array_push($geojson['features'], $feature);
