@@ -172,7 +172,7 @@ const tabelas = [
   "point_marinas_docas",
   "multibanco",
   "natacao_pontoprofessora",
-  "point_nucleos_pesca",
+  "nucleos_pesca",
   "ondas",
   "paragensautocarro",
   "percurso_azul",
@@ -180,7 +180,7 @@ const tabelas = [
   "percurso_natureza",
   "percurso_verde",
   "point_porto",
-  "point_praias",
+  "praias",
   "restaurantes",
   /* "ria_aveiro", */
   "point_surf",
@@ -208,7 +208,7 @@ map.on("load", () => {
     'star-intensity': 0.8
   })
 
-  // Nova camada WMS
+  /* // Nova camada WMS
   map.addSource('batimetria25mLayer', {
     'type': 'raster',
     'tiles': [
@@ -244,7 +244,7 @@ map.on("load", () => {
       'raster-opacity': 0
     }
   });
-
+ */
   function createPopupHTMLPI(tabela, nome, addressHTML, streetViewUrl, imgurl) {
     return `
       <h6><b>Tipo:</b> ${tabela}</h6>
@@ -541,7 +541,7 @@ map.on("load", () => {
 
     "percurso_veiros": "#FFFF00", // Amarelo, apenas como exemplo
 
-    "percurso_btt": "#FFA500", // Laranja, apenas como exemplo
+    "percurso_btt": "#FFA500" // Laranja, apenas como exemplo
   };
 
   const coresDosPercursosNauticos = {
@@ -795,9 +795,9 @@ map.on("load", () => {
       "arte_xavega",
       "aves",
       "point_marinas_docas",
-      "point_nucleos_pesca",
+      "nucleos_pesca",
       "point_porto",
-      "point_praias",
+      "praias",
       "salinas",
     ],
     Serviços: [
@@ -824,7 +824,7 @@ map.on("load", () => {
       "percurso_fermela",
       "percurso_pardilho",
       "percurso_veiros",
-      "percurso_btt",
+      "percurso_btt"
     ],
     PercursosNauticos: [
       "percurso_a",
@@ -858,7 +858,7 @@ map.on("load", () => {
     point_marinas_docas: "Marinas e Docas",
     multibanco: "Multibanco",
     natacao_pontoprofessora: "Natação",
-    point_nucleos_pesca: "Núcleos de Pesca",
+    nucleos_pesca: "Núcleos de Pesca",
     ondas: "Ondas",
     paragensautocarro: "Paragens de Autocarro",
     percurso_azul: "Percurso Azul",
@@ -883,7 +883,7 @@ map.on("load", () => {
     percurso_k: "Percurso K",
     percurso_l: "Percurso L",
     point_porto: "Porto",
-    point_praias: "Praias",
+    praias: "Praias",
     restaurantes: "Restaurantes",
     point_surf: "Surf",
     terminal_ferry: "Terminal de Ferry",
@@ -1027,7 +1027,7 @@ map.on("load", () => {
         return "imagens/multibanco.png";
       case "natacao_pontoprofessora":
         return "imagens/natacao_pontoprofessora.png";
-      case "point_nucleos_pesca":
+      case "nucleos_pesca":
         return "imagens/nucleos_pesca.png";
       case "ondas":
         return "imagens/ondas.png";
@@ -1043,7 +1043,7 @@ map.on("load", () => {
         return "imagens/percurso_verde.png"; */
       case "point_porto":
         return "imagens/porto.png";
-      case "point_praias":
+      case "praias":
         return "imagens/praias.png";
       case "restaurantes":
         return "imagens/restaurantes.png";
