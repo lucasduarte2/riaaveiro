@@ -238,9 +238,12 @@ map.on("load", () => {
     }
   });
 
-  function createPopupHTMLPI(tabela, nome, addressHTML, streetViewUrl) {
+  function createPopupHTMLPI(tabela, nome, addressHTML, streetViewUrl, imgurl) {
     return `
       <h6><b>Tipo:</b> ${tabela}</h6>
+        <p>
+        <img src="${imgurl}" alt="Imagem" width="200px" height="150px"/>
+        </p>
       <p><b>Nome:</b> ${nome}</p>
       ${addressHTML}
       <p><a href="${streetViewUrl}" target="_blank">Ver no Google Street View</a></p>
@@ -254,7 +257,7 @@ map.on("load", () => {
 
     tabelas.forEach((tabela) => {
       // Busca os dados da tabela
-      fetch(`https://gis4cloud.com/grupo4_ptas2024/bd.php?tabela=${tabela}`)
+      fetch(`bd.php?tabela=${tabela}`)
         .then((response) => {
           if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
@@ -321,7 +324,7 @@ map.on("load", () => {
               // Copia a matriz de coordenadas.
               const coordinates = e.features[0].geometry.coordinates.slice();
               const nome = e.features[0].properties.nome ? e.features[0].properties.nome : 'Desconhecido';
-
+              const imgurl = e.features[0].properties.imgurl ? e.features[0].properties.nome : 'Imagem desconhecida';
               // Construa a URL do Google Maps Street View com as coordenadas do ponto
               var streetViewUrl = `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${coordinates[1]},${coordinates[0]}`;
 
@@ -349,7 +352,7 @@ map.on("load", () => {
                   // com base no recurso encontrado.
                   popup
                     .setLngLat(coordinates)
-                    .setHTML(createPopupHTMLPI(tabela, nome, addressHTML, streetViewUrl))
+                    .setHTML(createPopupHTMLPI(tabela, nome, addressHTML, streetViewUrl, imgurl))
                     .addTo(map);
                   currentPopup = popup; // Armazena o popup atual
 
@@ -384,7 +387,7 @@ map.on("load", () => {
               // Copia a matriz de coordenadas.
               const coordinates = e.features[0].geometry.coordinates.slice();
               const nome = e.features[0].properties.nome ? e.features[0].properties.nome : 'Desconhecido';
-
+              const imgurl = e.features[0].properties.imgurl ? e.features[0].properties.imgurl : 'Imagem desconhecida';
               // Construa a URL do Google Maps Street View com as coordenadas do ponto
               var streetViewUrl = `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${coordinates[1]},${coordinates[0]}`;
 
@@ -412,7 +415,7 @@ map.on("load", () => {
                   // com base no recurso encontrado.
                   popup
                     .setLngLat(coordinates)
-                    .setHTML(createPopupHTMLPI(tabela, nome, addressHTML, streetViewUrl))
+                    .setHTML(createPopupHTMLPI(tabela, nome, addressHTML, streetViewUrl, imgurl))
                     .addTo(map);
                   currentPopup = popup;
 
@@ -461,7 +464,9 @@ map.on("load", () => {
       <div>
 
         <h4>${properties.Nome_do_Percurso}</h4>
-
+        <p>
+        <img src="${properties.imgurl}" alt="Imagem" width="200px" height="150px"/>
+        </p>
         <p><b>Distância:</b> ${properties.Distancia_Km}</p>
 
         <p><b>Duração Estimada:</b> ${properties.Duracao_Estimada}</p>
@@ -477,7 +482,6 @@ map.on("load", () => {
     `;
 
   }
-
   function createPopupHTML_Nauticos(properties) {
 
     // Constrói e retorna o HTML para o popup com base nas propriedades do percurso
@@ -1847,7 +1851,7 @@ function calculateRoute() {
 
       // Se uma categoria de ponto de interesse estiver selecionada, busque os pontos de interesse
       if (selectedCategory) {
-        fetch(`https://gis4cloud.com/grupo4_ptas2024/bd.php?tabela=${selectedCategory}`)
+        fetch(`bd.php?tabela=${selectedCategory}`)
           .then((response) => {
             if (!response.ok) {
               throw new Error(`Erro na requisição de pontos de interesse: ${response.status}`);
