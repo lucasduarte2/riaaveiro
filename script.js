@@ -1,6 +1,11 @@
+var markerA, markerB, markerIntermedio, markerAtual, markerPI_maisProximo;
+
 document.addEventListener("DOMContentLoaded", function () {
   var popup = document.getElementById("popupLayers");
   var popup_mapa = document.getElementById("popupOpcoesMapa");
+
+  const defaultProfile = document.getElementById("routingProfile").value;
+  loadSelectedIcon(defaultProfile);
 
   // Exibir o pop-up após 2 segundos
   setTimeout(function () {
@@ -29,6 +34,7 @@ document.addEventListener("DOMContentLoaded", function () {
       popup_mapa.style.display = "none";
     }, 500);
   }, 7000);
+
 });
 
 
@@ -53,17 +59,67 @@ map.addControl(new mapboxgl.ScaleControl(), "bottom-right");
 map.addControl(new mapboxgl.FullscreenControl());
 
 // Add geolocate control to the map.
-map.addControl(
-  new mapboxgl.GeolocateControl({
-    positionOptions: {
-      enableHighAccuracy: true,
-    },
-    // When active the map will receive updates to the device's location as it changes.
-    trackUserLocation: true,
-    // Draw an arrow next to the location dot to indicate which direction the device is heading.
-    showUserHeading: true,
-  })
-);
+const geolocateControl = new mapboxgl.GeolocateControl({
+  positionOptions: {
+    enableHighAccuracy: true,
+  },
+  trackUserLocation: true,
+  showUserHeading: true,
+});
+
+map.addControl(geolocateControl);
+
+geolocateControl.on('geolocate', function (event) {
+  const lng = event.coords.longitude;
+  const lat = event.coords.latitude;
+  const coords = [lng, lat];
+
+  // Se o marcador já existir, movê-lo para a nova localização
+  if (markerAtual) {
+    markerAtual.setLngLat(coords);
+  } else {
+    // Caso contrário, criar um novo marcador
+    const markerColor = 'pink'; // cor do marcador
+    markerAtual = new mapboxgl.Marker({ color: markerColor, draggable: true })
+      .setLngLat(coords)
+      .addTo(map);
+
+    var popupAtual;
+    popupAtual = new mapboxgl.Popup({ offset: 25 })
+      .setLngLat(coords)
+      .setText('Ponto de localização atual')
+      .addTo(map);
+
+    markerAtual.setPopup(popupAtual);
+  }
+
+  calculateRoute();
+});
+
+// Função para remover o marcador
+function removeMarker() {
+  if (markerAtual) {
+    markerAtual.remove();
+    markerAtual = null;
+  }
+
+  calculateRoute();
+}
+
+// Esperar até que o mapa esteja totalmente carregado
+map.on('load', function () {
+  // Adicionar ouvinte de eventos ao controle de geolocalização para detectar desativação
+  const geolocateButton = document.querySelector('.mapboxgl-ctrl-geolocate');
+  if (geolocateButton) {
+    geolocateButton.addEventListener('click', function () {
+      setTimeout(function () {
+        if (geolocateControl._watchState === 'OFF') {
+          removeMarker();
+        }
+      }, 250); // Pequeno atraso para garantir que o estado seja atualizado
+    });
+  }
+});
 
 let isRotating = true;
 let lastInteractionTime = Date.now();
@@ -86,10 +142,10 @@ map.on('mousedown', () => {
 
 map.on('mouseup', () => {
   setTimeout(() => {
-    if (Date.now() - lastInteractionTime >= 5000) {
+    if (Date.now() - lastInteractionTime >= 100000) {
       isRotating = true;
     }
-  }, 5000);
+  }, 100000);
 });
 
 // Define as tabelas que serão usadas
@@ -134,7 +190,7 @@ map.on("load", () => {
   setTimeout(() => {
     isRotating = true;
     rotateCamera(0); // Inicia a animação da rotação
-  }, 5000);
+  }, 100000);
 
   map.setFog({
     'range': [-1, 9],
@@ -188,6 +244,7 @@ map.on("load", () => {
       <p><b>Nome:</b> ${nome}</p>
       ${addressHTML}
       <p><a href="${streetViewUrl}" target="_blank">Ver no Google Street View</a></p>
+      <p><button id="add_PI_to_Route">Adicionar à rota</button><p>
     `;
   }
 
@@ -295,6 +352,11 @@ map.on("load", () => {
                     .setHTML(createPopupHTMLPI(tabela, nome, addressHTML, streetViewUrl))
                     .addTo(map);
                   currentPopup = popup; // Armazena o popup atual
+
+                  // Adiciona o manipulador de eventos para o botão "Adicionar à rota"
+                  document.getElementById("add_PI_to_Route").addEventListener("click", function () {
+                    addToRoute(coordinates);
+                  });
                 })
                 .catch(error => console.error("Error fetching address:", error));
             });
@@ -353,6 +415,11 @@ map.on("load", () => {
                     .setHTML(createPopupHTMLPI(tabela, nome, addressHTML, streetViewUrl))
                     .addTo(map);
                   currentPopup = popup;
+
+                  // Adiciona o manipulador de eventos para o botão "Adicionar à rota"
+                  document.getElementById("add_PI_to_Route").addEventListener("click", function () {
+                    addToRoute(coordinates);
+                  });
                 })
                 .catch(error => console.error("Error fetching address:", error));
             });
@@ -1319,7 +1386,7 @@ function selectOption(element, inputId, value) {
   console.log("Input ID:", inputId);
   console.log("Value to set:", value);
 
-  const input = document.getElementById(value);
+  const input = document.getElementById(inputId);
   console.log("Input element found:", input);
 
   const container = element.parentElement;
@@ -1346,6 +1413,9 @@ function selectOption(element, inputId, value) {
       console.warn("Input element not found with ID:", inputId);
     }
   }
+
+  // Atualize o ícone com base no valor selecionado
+  loadSelectedIcon();
 
   calculateIsochrone();
 }
@@ -1458,8 +1528,6 @@ function fetchWeatherData(lngLat) {
     });
 }
 
-var markerA, markerB, markerIntermedio;
-
 document.getElementById("addPointA").addEventListener("click", function () {
   // Se o marcador A já existir, remova-o
   if (markerA) markerA.remove();
@@ -1468,6 +1536,14 @@ document.getElementById("addPointA").addEventListener("click", function () {
   markerA = new mapboxgl.Marker({ color: "red", draggable: true })
     .setLngLat(map.getCenter())
     .addTo(map);
+
+  var popupA;
+  popupA = new mapboxgl.Popup({ offset: 25 })
+    .setLngLat(map.getCenter())
+    .setText('Ponto A')
+    .addTo(map);
+
+  markerA.setPopup(popupA);
 });
 
 document.getElementById("addPointB").addEventListener("click", function () {
@@ -1478,6 +1554,14 @@ document.getElementById("addPointB").addEventListener("click", function () {
   markerB = new mapboxgl.Marker({ color: "blue", draggable: true })
     .setLngLat(map.getCenter())
     .addTo(map);
+
+  var popupB;
+  popupB = new mapboxgl.Popup({ offset: 25 })
+    .setLngLat(map.getCenter())
+    .setText('Ponto B')
+    .addTo(map);
+
+  markerB.setPopup(popupB);
 });
 
 document.getElementById("addPointIntermedio").addEventListener("click", function () {
@@ -1488,7 +1572,38 @@ document.getElementById("addPointIntermedio").addEventListener("click", function
   markerIntermedio = new mapboxgl.Marker({ color: "orange", draggable: true })
     .setLngLat(map.getCenter())
     .addTo(map);
+
+  var popupIntermedio;
+  popupIntermedio = new mapboxgl.Popup({ offset: 25 })
+    .setLngLat(map.getCenter())
+    .setText('Ponto Intermédio')
+    .addTo(map);
+
+  markerIntermedio.setPopup(popupIntermedio);
+
+  calculateRoute();
 });
+
+var markerPI = null; // Variável para armazenar o marcador do ponto de interesse
+
+function addToRoute(coordinates) {
+  if (markerPI) markerPI.remove();
+
+  // Adiciona um novo marcador para o ponto de interesse
+  markerPI = new mapboxgl.Marker({ color: 'green' })
+    .setLngLat(coordinates)
+    .addTo(map);
+
+  var popupPI_escolhido;
+  popupPI_escolhido = new mapboxgl.Popup({ offset: 25 })
+    .setLngLat(coordinates)
+    .setText('Ponto de interesse escolhido')
+    .addTo(map);
+
+  markerPI.setPopup(popupPI_escolhido);
+
+  calculateRoute(); // Recalcula a rota incluindo o novo ponto de interesse
+}
 
 
 // Função para adicionar o autocomplete e a busca de endereço
@@ -1535,16 +1650,41 @@ function addAutocompleteAndSearch(inputId, markerColor, map) {
           markerA = new mapboxgl.Marker({ color: markerColor, draggable: true })
             .setLngLat(coords)
             .addTo(map);
+
+          var popupA;
+          popupA = new mapboxgl.Popup({ offset: 25 })
+            .setLngLat(coords)
+            .setText('Ponto A')
+            .addTo(map);
+
+          markerA.setPopup(popupA);
         } else if (inputId === "addressInputB") {
           if (markerB) markerB.remove();
           markerB = new mapboxgl.Marker({ color: markerColor, draggable: true })
             .setLngLat(coords)
             .addTo(map);
+
+          var popupB;
+          popupB = new mapboxgl.Popup({ offset: 25 })
+            .setLngLat(coords)
+            .setText('Ponto B')
+            .addTo(map);
+
+          markerB.setPopup(popupB);
         } else if (inputId === "addressInputIntermedio") {
           if (markerIntermedio) markerIntermedio.remove();
           markerIntermedio = new mapboxgl.Marker({ color: markerColor, draggable: true })
             .setLngLat(coords)
             .addTo(map);
+
+          var popupIntermedio;
+          popupIntermedio = new mapboxgl.Popup({ offset: 25 })
+            .setLngLat(coords)
+            .setText('Ponto Intermédio')
+            .addTo(map);
+
+          markerIntermedio.setPopup(popupIntermedio);
+          calculateRoute();
         } else if (inputId === "addressInputWeather") {
           if (weatherMarker) weatherMarker.remove();
           weatherMarker = new mapboxgl.Marker({ color: markerColor, draggable: true })
@@ -1582,7 +1722,9 @@ function calculateRoute() {
 
   var pointA = markerA.getLngLat();
   var pointB = markerB.getLngLat();
+  var pointAtual = markerAtual ? markerAtual.getLngLat() : null; // Verifique se o ponto de localização atual está definido
   var pointIntermedio = markerIntermedio ? markerIntermedio.getLngLat() : null; // Verifique se o ponto intermédio está definido
+  var pointPI = markerPI ? markerPI.getLngLat() : null; // Verifique se o ponto de interesse está definido
   var selectedCategory = document.getElementById("selectedCategory").value; // Obtém a categoria de ponto de interesse selecionada
 
   // Converta as coordenadas para um formato que a API de roteamento possa entender
@@ -1591,6 +1733,15 @@ function calculateRoute() {
   // Se o ponto intermédio estiver definido, inclua-o nas coordenadas
   if (pointIntermedio) {
     coordinates += `;${pointIntermedio.lng},${pointIntermedio.lat}`;
+  }
+
+  // Se o ponto de interesse estiver definido, inclua-o nas coordenadas
+  if (pointPI) {
+    coordinates += `;${pointPI.lng},${pointPI.lat}`;
+  }
+
+  if (pointAtual) {
+    coordinates += `;${pointAtual.lng},${pointAtual.lat}`;
   }
 
   coordinates += `;${pointB.lng},${pointB.lat}`;
@@ -1723,6 +1874,16 @@ function calculateRoute() {
               if (pointIntermedio) {
                 coordinates += `;${pointIntermedio.lng},${pointIntermedio.lat}`;
               }
+
+              // Se o ponto de interesse estiver definido, inclua-o nas coordenadas
+              if (pointPI) {
+                coordinates += `;${pointPI.lng},${pointPI.lat}`;
+              }
+
+              if (pointAtual) {
+                coordinates += `;${pointAtual.lng},${pointAtual.lat}`;
+              }
+
               coordinates += `;${nearestPointOfInterest.point.geometry.coordinates[0]},${nearestPointOfInterest.point.geometry.coordinates[1]};${pointB.lng},${pointB.lat}`;
 
               apiUrl = `https://api.mapbox.com/directions/v5/mapbox/driving/${coordinates}?geometries=geojson&access_token=${mapboxgl.accessToken}`;
@@ -1768,6 +1929,25 @@ function calculateRoute() {
                   });
 
                   animateAlongRoute(newRoute);
+
+                  // Adicione um marcador para o ponto de interesse mais próximo (markerPI_maisProximo)
+                  if (markerPI_maisProximo) {
+                    markerPI_maisProximo.remove(); // Remova o marcador anterior, se existir
+                  } else {
+                    markerPI_maisProximo = new mapboxgl.Marker({
+                      color: "black" // Cor preta
+                    })
+                      .setLngLat(nearestPointOfInterest.point.geometry.coordinates)
+                      .addTo(map);
+
+                    var popupMaisProximo;
+                    popupMaisProximo = new mapboxgl.Popup({ offset: 25 })
+                      .setLngLat(nearestPointOfInterest.point.geometry.coordinates)
+                      .setText('Ponto da categoria de ponto de interesse mais próximo')
+                      .addTo(map);
+
+                    markerPI_maisProximo.setPopup(popupMaisProximo);
+                  }
                 })
                 .catch((error) => {
                   console.error(error);
@@ -1779,11 +1959,9 @@ function calculateRoute() {
           });
       }
 
-      // Exibe o botão "Adicionar ponto intermédio" e o campo de entrada do ponto intermédio
       document.getElementById("addPointIntermedio").style.display = "block";
       document.getElementById("addressInputIntermedio").style.display = "block";
 
-      // Exibe o botão "Selecionar ponto de interesse"
       document.getElementById("selectedCategory").style.display = "block";
       document.getElementById("selectedCategoryLabel").style.display = "block";
     })
@@ -1844,6 +2022,7 @@ function animateAlongRoute(route) {
 
   function loadSelectedIcon() {
     const selectedProfile = document.getElementById("routingProfile").value;
+    console.log("perfil selecionado: ", selectedProfile);
     let imageUrl;
 
     switch (selectedProfile) {
@@ -1922,7 +2101,12 @@ function animateAlongRoute(route) {
   });
 
   // Add event listener to the routing profile select
-  document.getElementById("routingProfile").addEventListener("change", loadSelectedIcon);
+  document.getElementById("routingProfile").addEventListener("change", function () {
+    const selectedValue = this.value; // Obtém o valor do perfil selecionado
+    console.log("Selected value:", selectedValue);
+
+    selectOption(this, "routingProfile", selectedValue);
+  });
 }
 
 // Cria um popup, mas não o adiciona ao mapa ainda.
@@ -1967,6 +2151,9 @@ function limparTudo() {
   if (markerA) markerA.remove();
   if (markerB) markerB.remove();
   if (markerIntermedio) markerIntermedio.remove();
+  if (markerPI) markerPI.remove();
+  if (markerAtual) markerAtual.remove();
+  if (markerPI_maisProximo) markerPI_maisProximo.remove();
 
   // Remova a rota, se existir
   if (map.getLayer("route")) {
@@ -1990,6 +2177,9 @@ function limparTudo() {
   markerA = null;
   markerB = null;
   markerIntermedio = null;
+  markerPI = null;
+  markerAtual = null;
+  markerPI_maisProximo = null;
   weatherMarker = null;
   popup = null;
 
