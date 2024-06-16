@@ -513,3 +513,12 @@ body {
   from {top:-300px; opacity:0}
   to {top:0; opacity:1}
 }
+
+.liveCamsInfo__left-list {
+  margin: 0px 0px 0px;
+  margin-inline-start: auto;
+  margin-inline-end: auto;
+  padding: 0px 0px 0px 0px;
+  border-bottom-right-radius: 15px;
+  border-top-right-radius: 15px;
+}
