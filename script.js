@@ -295,12 +295,38 @@ map.on("load", () => {
     } else if (tabela === 'barra') {
       estacao = `
         <img src="${imgurl}" alt="Imagem" width="200px" height="150px"/>
-        <p><button id="estacao-barra">Ver Informações</button></p>
+        <p><button class="btnPraias" id="estacao-barra">Ver Informações</button></p>
       `;
       // Retorne apenas o conteúdo específico para 'barra'
       return `
         <h6><b>Tipo:</b> ${tabela}</h6>
         ${estacao}
+      `;
+    }else if (tabela === 'praias' && nome === 'Praia da Barra'){
+      extraHTML = `
+        <p><button class="btnPraias" id="praia-barra">Ver Praia</button></p>
+      `;
+  
+   }else if (tabela === 'praias' && nome === 'Praia da Furadouro'){
+      extraHTML = `
+        <p><button class="btnPraias" id="praia-furadouro">Ver Praia</button></p>
+      `;
+
+    } else if (tabela === 'praias' && nome === 'Praia da Torreira'){
+      extraHTML = `
+        <p><button class="btnPraias" id="praia-torreira">Ver Praia</button></p>
+      `;
+    } else if (tabela === 'praias' && nome === 'Praia da Costa Nova'){
+      extraHTML = `
+        <p><button class="btnPraias" id="praia-costa-nova">Ver Praia</button></p>
+      `;
+    } else if (tabela === 'praias' && nome === 'Praia da Vagueira'){
+      extraHTML = `
+        <p><button class="btnPraias" id="praia-vagueira">Ver Praia</button></p>
+      `;
+    } else if (tabela === 'praias' && nome === 'Praia de Mira'){
+      extraHTML = `
+        <p><button class="btnPraias" id="praia-mira">Ver Praia</button></p>
       `;
     }
 
@@ -315,8 +341,8 @@ map.on("load", () => {
         </p>
       <p><b>Nome:</b> ${nome}</p>
       ${addressHTML}
-      ${extraHTML}
       <p><a href="${streetViewUrl}" target="_blank">Ver no Google Street View</a></p>
+      ${extraHTML}
       <p><button id="add_PI_to_Route">Adicionar à rota</button></p>
     `;
   }
@@ -343,7 +369,8 @@ map.on("load", () => {
   loadStream('video3', 'https://video-auth1.iol.pt/beachcam/barra/playlist.m3u8');
   loadStream('video4', 'https://video-auth1.iol.pt/beachcam/torreira/playlist.m3u8');
   loadStream('video5', 'https://video-auth1.iol.pt/beachcam/vagueiracasablanca/playlist.m3u8');
-
+  loadStream('video6', 'https://video-auth1.iol.pt/beachcam/furadouro/playlist.m3u8');
+  loadStream('video7', 'https://video-auth1.iol.pt/beachcam/bcmira/playlist.m3u8');
 
   function addLayers() {
     let currentPopup = null; // Variável para armazenar o popup atual
