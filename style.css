@@ -300,7 +300,7 @@ body {
 
 .sidebarLayers {
   position: absolute;
-  top: 20%;
+  top: 25%;
   right: -300px;
   width: 300px;
   height: 80%;
@@ -317,14 +317,17 @@ body {
 
 .sidebarLayers.show {
   transform: translateX(0px);
-  right: 0; 
-  
+  right: 0;
+}
+
+.sidebarLayers.show + .sidebarLayers-toggle {
+  top: 10px; /* Ajuste conforme necessário */
 }
 
 .sidebarLayers-toggle {
   position: absolute;
-  top: 0px;
-  right: 305px;
+  top: 10px;
+  right: 300px;
   width: 40px;
   height: 40px;
   background-color: #007bff;
@@ -336,7 +339,6 @@ body {
   transition: background-color 0.3s ease;
   border-bottom-left-radius: 8px;
   border-top-left-radius: 8px;
-  border-top-right-radius: 8px;
 }
 
 .sidebarLayers-content {
