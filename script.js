@@ -5,9 +5,6 @@ document.addEventListener("DOMContentLoaded", function () {
   var popup = document.getElementById("popupLayers");
   var popup_mapa = document.getElementById("popupOpcoesMapa");
 
-  const defaultProfile = document.getElementById("routingProfile").value;
-  loadSelectedIcon(defaultProfile);
-
   // Exibir o pop-up após 2 segundos
   setTimeout(function () {
     popup.style.display = "block";
@@ -250,7 +247,7 @@ map.on("load", () => {
   function createPopupHTMLPI(tabela, nome, addressHTML, streetViewUrl, imgurl, extraInfo = {}) {
     let extraHTML = '';
     let estacao = '';
-  
+
     if (tabela === 'ondas') {
       extraHTML = `
         <p><b>Velocidade do Vento:</b> ${extraInfo.velocidadevento ? extraInfo.velocidadevento : 'Desconhecido'}</p>
@@ -271,7 +268,7 @@ map.on("load", () => {
         ${estacao}
       `;
     }
-    
+
     // Conteúdo padrão para outros tipos de tabelas
     return `
       <h6><b>Tipo:</b> ${tabela}</h6>
@@ -289,25 +286,25 @@ map.on("load", () => {
   function loadStream(videoElementId, streamUrl) {
     var video = document.getElementById(videoElementId);
     if (Hls.isSupported()) {
-        var hls = new Hls();
-        hls.loadSource(streamUrl);
-        hls.attachMedia(video);
-        hls.on(Hls.Events.MANIFEST_PARSED, function() {
-            video.play();
-        });
+      var hls = new Hls();
+      hls.loadSource(streamUrl);
+      hls.attachMedia(video);
+      hls.on(Hls.Events.MANIFEST_PARSED, function () {
+        video.play();
+      });
     } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-        video.src = streamUrl;
-        video.addEventListener('canplay', function() {
-            video.play();
-        });
+      video.src = streamUrl;
+      video.addEventListener('canplay', function () {
+        video.play();
+      });
     }
-}
+  }
 
 
-loadStream('video2', 'https://video-auth1.iol.pt/beachcam/costanova/playlist.m3u8');
-loadStream('video3', 'https://video-auth1.iol.pt/beachcam/barra/playlist.m3u8');
-loadStream('video4', 'https://video-auth1.iol.pt/beachcam/torreira/playlist.m3u8');
-loadStream('video5', 'https://video-auth1.iol.pt/beachcam/vagueiracasablanca/playlist.m3u8');
+  loadStream('video2', 'https://video-auth1.iol.pt/beachcam/costanova/playlist.m3u8');
+  loadStream('video3', 'https://video-auth1.iol.pt/beachcam/barra/playlist.m3u8');
+  loadStream('video4', 'https://video-auth1.iol.pt/beachcam/torreira/playlist.m3u8');
+  loadStream('video5', 'https://video-auth1.iol.pt/beachcam/vagueiracasablanca/playlist.m3u8');
 
 
   function addLayers() {
@@ -452,18 +449,18 @@ loadStream('video5', 'https://video-auth1.iol.pt/beachcam/vagueiracasablanca/pla
 
 
               // Verifica se a tabela é 'ondas' e extrai informações adicionais se verdadeiro
-  let extraInfo = {};
-  if(tabela === 'ondas') {
-    extraInfo = {
-      velocidadevento: e.features[0].properties.velocidadevento,
-      alturaonda: e.features[0].properties.alturaonda,
-      direcaovento: e.features[0].properties.direcaovento,
-      swellaltura: e.features[0].properties.swellaltura,
-      swellperiodo: e.features[0].properties.swellperiodo,
-      swelldirecao: e.features[0].properties.swelldirecao,
-    };
-    console.log(extraInfo);
-  }
+              let extraInfo = {};
+              if (tabela === 'ondas') {
+                extraInfo = {
+                  velocidadevento: e.features[0].properties.velocidadevento,
+                  alturaonda: e.features[0].properties.alturaonda,
+                  direcaovento: e.features[0].properties.direcaovento,
+                  swellaltura: e.features[0].properties.swellaltura,
+                  swellperiodo: e.features[0].properties.swellperiodo,
+                  swelldirecao: e.features[0].properties.swelldirecao,
+                };
+                console.log(extraInfo);
+              }
               // Garante que se o mapa estiver ampliado de tal forma que várias
               // cópias do recurso estejam visíveis, o popup apareça
               // sobre a cópia que está sendo apontada.
@@ -487,10 +484,10 @@ loadStream('video5', 'https://video-auth1.iol.pt/beachcam/vagueiracasablanca/pla
                   // Preenche o popup e define suas coordenadas
                   // com base no recurso encontrado.
                   popup
-                  .setLngLat(coordinates)
-                  .setHTML(createPopupHTMLPI(tabela, nome, addressHTML, streetViewUrl, imgurl, extraInfo))
-                  .addTo(map);
-                currentPopup = popup;
+                    .setLngLat(coordinates)
+                    .setHTML(createPopupHTMLPI(tabela, nome, addressHTML, streetViewUrl, imgurl, extraInfo))
+                    .addTo(map);
+                  currentPopup = popup;
 
                   // Adiciona o manipulador de eventos para o botão "Adicionar à rota"
                   document.getElementById("add_PI_to_Route").addEventListener("click", function () {
@@ -1113,8 +1110,8 @@ loadStream('video5', 'https://video-auth1.iol.pt/beachcam/vagueiracasablanca/pla
         return "imagens/porto.png";
       case "praias":
         return "imagens/praias.png";
-        case "barra":
-          return "imagens/windsign.png";
+      case "barra":
+        return "imagens/windsign.png";
       case "restaurantes":
         return "imagens/restaurantes.png";
       /*       case "ria_aveiro":
@@ -1529,9 +1526,6 @@ function selectOption(element, inputId, value) {
     }
   }
 
-  // Atualize o ícone com base no valor selecionado
-  loadSelectedIcon();
-
   calculateIsochrone();
 }
 
@@ -1861,7 +1855,9 @@ function calculateRoute() {
 
   coordinates += `;${pointB.lng},${pointB.lat}`;
 
-  var apiUrl = `https://api.mapbox.com/directions/v5/mapbox/driving/${coordinates}?geometries=geojson&access_token=${mapboxgl.accessToken}`;
+  var profile = document.getElementById('routingProfile').value;
+  var language = 'pt';
+  var apiUrl = `https://api.mapbox.com/directions/v5/mapbox/${profile}/${coordinates}?steps=true&geometries=geojson&language=${language}&access_token=${mapboxgl.accessToken}`;
 
   // Remova todas as linhas antigas do mapa
   lineIds.forEach((lineId) => {
@@ -1881,6 +1877,14 @@ function calculateRoute() {
       return response.json();
     })
     .then((data) => {
+      console.log("Dados da rota:", data);
+
+      // Verifique se há etapas de direção disponíveis
+      if (!data.routes || !data.routes[0] || !data.routes[0].legs || !data.routes[0].legs[0] || !data.routes[0].legs[0].steps) {
+        console.warn("Não há direções disponíveis para esta rota.");
+        return;
+      }
+
       // A resposta da API de roteamento incluirá uma rota que você pode adicionar ao mapa
       var route = data.routes[0].geometry;
 
@@ -1960,6 +1964,94 @@ function calculateRoute() {
 
       animateAlongRoute(route);
 
+      // Variável global para armazenar o pop-up atual
+      var currentPopup = null;
+
+      // Função para formatar a duração da viagem
+      function formatTripDuration(durationInMinutes) {
+        if (durationInMinutes >= 60) {
+          var hours = Math.floor(durationInMinutes / 60);
+          var minutes = durationInMinutes % 60;
+          return `${hours}h${minutes > 0 ? minutes + 'min' : ''}`;
+        } else {
+          return `${durationInMinutes} minutos`;
+        }
+      }
+
+      // Função para formatar a distância da viagem
+      function formatTripDistance(distanceInMeters) {
+        if (distanceInMeters >= 1000) {
+          var distanceInKm = (distanceInMeters / 1000).toFixed(1);
+          return `${distanceInKm} km`;
+        } else {
+          return `${distanceInMeters} metros`;
+        }
+      }
+
+      // Função para criar o conteúdo HTML do pop-up da rota
+      function createPopupHTMLRoute(tripDuration, tripDistance, directions) {
+        var popupContent = `
+                            <div class="route-popup">
+                              <p><strong>Duração da viagem:</strong> ${tripDuration}</p>
+                              <p><strong>Distância da viagem:</strong> ${tripDistance}</p>
+                              <ol style="max-height: 300px; overflow-y: auto;">`;
+
+        directions.forEach((step, index) => {
+          popupContent += `<li>${step.maneuver.instruction}</li>`;
+        });
+
+        popupContent += `</ol></div>`;
+
+        return popupContent;
+      }
+
+      // Função para mostrar o pop-up no mapa
+      function showRoutePopup(popupHTML, coordinates) {
+        // Fechar pop-up anterior, se existir
+        if (currentPopup) {
+          currentPopup.remove();
+        }
+
+        // Criar novo pop-up
+        currentPopup = new mapboxgl.Popup({
+          closeButton: true,
+          closeOnClick: false,
+          offset: 25
+        })
+          .setLngLat(coordinates)
+          .setHTML(popupHTML)
+          .addTo(map);
+
+        // Alterar o cursor para indicar interatividade
+        map.getCanvas().style.cursor = 'pointer';
+      }
+
+      // Evento de movimento do mouse sobre a rota
+      map.on("mousemove", "route", function (e) {
+        var tripDurationInMinutes = Math.round(data.routes[0].duration / 60); // Duração da viagem em minutos
+        var tripDistanceInMeters = Math.round(data.routes[0].distance); // Distância da viagem em metros
+        var directions = data.routes[0].legs[0].steps; // Array de passos da rota
+
+        var formattedTripDuration = formatTripDuration(tripDurationInMinutes);
+        var formattedTripDistance = formatTripDistance(tripDistanceInMeters);
+
+        var popupHTML = createPopupHTMLRoute(formattedTripDuration, formattedTripDistance, directions);
+
+        var coordinates = e.lngLat;
+
+        showRoutePopup(popupHTML, coordinates);
+      });
+
+      // Evento para o botão de fechar pop-up
+      document.addEventListener('click', function (event) {
+        if (event.target.classList.contains('mapboxgl-popup-close-button')) {
+          if (currentPopup) {
+            currentPopup.remove();
+            currentPopup = null; // Limpar a referência
+          }
+        }
+      });
+
       // Se uma categoria de ponto de interesse estiver selecionada, busque os pontos de interesse
       if (selectedCategory) {
         fetch(`https://gis4cloud.com/grupo4_ptas2024/bd.php?tabela=${selectedCategory}`)
@@ -2001,7 +2093,7 @@ function calculateRoute() {
 
               coordinates += `;${nearestPointOfInterest.point.geometry.coordinates[0]},${nearestPointOfInterest.point.geometry.coordinates[1]};${pointB.lng},${pointB.lat}`;
 
-              apiUrl = `https://api.mapbox.com/directions/v5/mapbox/driving/${coordinates}?geometries=geojson&access_token=${mapboxgl.accessToken}`;
+              apiUrl = `https://api.mapbox.com/directions/v5/mapbox/${profile}/${coordinates}?steps=true&geometries=geojson&language=${language}&access_token=${mapboxgl.accessToken}`;
 
               fetch(apiUrl)
                 .then((response) => {
@@ -2011,6 +2103,14 @@ function calculateRoute() {
                   return response.json();
                 })
                 .then((data) => {
+                  console.log("Dados da rota recalculada:", data);
+
+                  // Verifique se há etapas de direção disponíveis
+                  if (!data.routes || !data.routes[0] || !data.routes[0].legs || !data.routes[0].legs[0] || !data.routes[0].legs[0].steps) {
+                    console.warn("Não há direções disponíveis para esta rota recalculada.");
+                    return;
+                  }
+
                   // A resposta da API de roteamento incluirá a nova rota que você pode adicionar ao mapa
                   var newRoute = data.routes[0].geometry;
 
@@ -2063,6 +2163,94 @@ function calculateRoute() {
 
                     markerPI_maisProximo.setPopup(popupMaisProximo);
                   }
+
+                  // Variável global para armazenar o pop-up atual
+                  var currentPopup = null;
+
+                  // Função para formatar a duração da viagem
+                  function formatTripDuration(durationInMinutes) {
+                    if (durationInMinutes >= 60) {
+                      var hours = Math.floor(durationInMinutes / 60);
+                      var minutes = durationInMinutes % 60;
+                      return `${hours}h${minutes > 0 ? minutes + 'min' : ''}`;
+                    } else {
+                      return `${durationInMinutes} minutos`;
+                    }
+                  }
+
+                  // Função para formatar a distância da viagem
+                  function formatTripDistance(distanceInMeters) {
+                    if (distanceInMeters >= 1000) {
+                      var distanceInKm = (distanceInMeters / 1000).toFixed(1);
+                      return `${distanceInKm} km`;
+                    } else {
+                      return `${distanceInMeters} metros`;
+                    }
+                  }
+
+                  // Função para criar o conteúdo HTML do pop-up da rota
+                  function createPopupHTMLRoute(tripDuration, tripDistance, directions) {
+                    var popupContent = `
+                                        <div class="route-popup">
+                                          <p><strong>Duração da viagem:</strong> ${tripDuration}</p>
+                                          <p><strong>Distância da viagem:</strong> ${tripDistance}</p>
+                                          <ol style="max-height: 300px; overflow-y: auto;">`;
+
+                    directions.forEach((step, index) => {
+                      popupContent += `<li>${step.maneuver.instruction}</li>`;
+                    });
+
+                    popupContent += `</ol></div>`;
+
+                    return popupContent;
+                  }
+
+                  // Função para mostrar o pop-up no mapa
+                  function showRoutePopup(popupHTML, coordinates) {
+                    // Fechar pop-up anterior, se existir
+                    if (currentPopup) {
+                      currentPopup.remove();
+                    }
+
+                    // Criar novo pop-up
+                    currentPopup = new mapboxgl.Popup({
+                      closeButton: true,
+                      closeOnClick: false,
+                      offset: 25
+                    })
+                      .setLngLat(coordinates)
+                      .setHTML(popupHTML)
+                      .addTo(map);
+
+                    // Alterar o cursor para indicar interatividade
+                    map.getCanvas().style.cursor = 'pointer';
+                  }
+
+                  // Evento de movimento do mouse sobre a rota
+                  map.on("mousemove", "route", function (e) {
+                    var tripDurationInMinutes = Math.round(data.routes[0].duration / 60); // Duração da viagem em minutos
+                    var tripDistanceInMeters = Math.round(data.routes[0].distance); // Distância da viagem em metros
+                    var directions = data.routes[0].legs[0].steps; // Array de passos da rota
+
+                    var formattedTripDuration = formatTripDuration(tripDurationInMinutes);
+                    var formattedTripDistance = formatTripDistance(tripDistanceInMeters);
+
+                    var popupHTML = createPopupHTMLRoute(formattedTripDuration, formattedTripDistance, directions);
+
+                    var coordinates = e.lngLat;
+
+                    showRoutePopup(popupHTML, coordinates);
+                  });
+
+                  // Evento para o botão de fechar pop-up
+                  document.addEventListener('click', function (event) {
+                    if (event.target.classList.contains('mapboxgl-popup-close-button')) {
+                      if (currentPopup) {
+                        currentPopup.remove();
+                        currentPopup = null; // Limpar a referência
+                      }
+                    }
+                  });
                 })
                 .catch((error) => {
                   console.error(error);
@@ -2084,6 +2272,7 @@ function calculateRoute() {
       console.error(error);
     });
 }
+
 
 function animateAlongRoute(route) {
   // Calculate the total length of the route
@@ -2223,30 +2412,6 @@ function animateAlongRoute(route) {
     selectOption(this, "routingProfile", selectedValue);
   });
 }
-
-// Cria um popup, mas não o adiciona ao mapa ainda.
-var popup = new mapboxgl.Popup({
-  closeButton: false,
-  closeOnClick: false,
-});
-
-map.on("mousemove", "route", function (e) {
-  // Verifique se a distância está definida antes de tentar acessar toFixed
-  if (route.properties.distance) {
-    var routeDistance = route.properties.distance.toFixed(2);
-    var distance = lineDistance.toFixed(2);
-
-    // Atualiza a posição e o texto do popup
-    popup
-      .setLngLat(e.lngLat)
-      .setText(`Distância: ${routeDistance}m + ~${distance}m`)
-      .addTo(map);
-  }
-});
-
-map.on("mouseleave", "route", function () {
-  popup.remove();
-});
 
 document
   .getElementById("calculateRouteButton")
