@@ -29,7 +29,7 @@ function getGeoJSON($tabela)
     }
 
     $query = "SELECT lat, lng, nome, imgurl" . 
-        ($tabela === 'ondas' ? ", velocidadevento, alturaonda, direcaovento, swellaltura, swellperiodo, swelldirecao" : "") . 
+        ($tabela === 'ondas' ? ", velocidadevento, alturaonda, direcaovento, swellaltura, swellperiodo, swelldirecao, mare_high_tides" : "") . 
         " FROM " . $tabela . ";";
     
     $result = pg_query($conn, $query);
@@ -55,6 +55,26 @@ function getGeoJSON($tabela)
             $properties['swellaltura'] = $row['swellaltura'];
             $properties['swellperiodo'] = $row['swellperiodo'];
             $properties['swelldirecao'] = $row['swelldirecao'];
+            
+            // Correção: Decodificação correta do JSON antes de processar
+            $mare_high_tides = json_decode($row['mare_high_tides'], true);
+
+                       // Processar cada horário para extrair e formatar apenas a hora
+                       $horas_mare = array_map(function($datetime) {
+                        // Converter a string de data/hora em um objeto DateTime
+                        $date = new DateTime($datetime);
+                        // Formatar para obter apenas a hora e minuto (HH:MM)
+                        return $date->format('H:i');
+                    }, $mare_high_tides);
+        
+                    // Limitar o array resultante às duas primeiras horas
+                    $primeiras_duas_horas = array_slice($horas_mare, 0, 2);
+        
+                    // Alteração: Unir as duas primeiras horas com " | " para a exibição
+                    $formato_mare = implode(" | ", $primeiras_duas_horas);
+        
+                    // Adicionar as duas primeiras horas de volta às propriedades, agora em um único string
+                    $properties['mare_high_tides'] = $formato_mare;
         }
 
         $feature = array(
@@ -74,6 +94,7 @@ function getGeoJSON($tabela)
 
     pg_close($conn);
 
+    // Escrever os dados atualizados no arquivo de cache
     file_put_contents($cacheFile, json_encode($geojson));
 
     return json_encode($geojson);

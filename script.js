@@ -304,6 +304,7 @@ map.on("load", () => {
         <p><b>Swell Altura:</b> ${extraInfo.swellaltura ? extraInfo.swellaltura : 'Desconhecido'}</p>
         <p><b>Swell Período:</b> ${extraInfo.swellperiodo ? extraInfo.swellperiodo : 'Desconhecido'}</p>
         <p><b>Swell Direção:</b> ${extraInfo.swelldirecao ? extraInfo.swelldirecao : 'Desconhecido'}</p>
+        <p><b>Maré: </b> ${extraInfo.mare_high_tides ? extraInfo.mare_high_tides : 'Desconhecido'}</p>
       `;
     } else if (tabela === 'barra') {
       estacao = `
@@ -391,7 +392,8 @@ map.on("load", () => {
 
     tabelas.forEach((tabela) => {
       // Busca os dados da tabela
-      fetch(`https://gis4cloud.com/grupo4_ptas2024/bd.php?tabela=${tabela}`)
+      //https://gis4cloud.com/grupo4_ptas2024/
+      fetch(`bd.php?tabela=${tabela}`)
         .then((response) => {
           if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
@@ -536,6 +538,7 @@ map.on("load", () => {
                   swellaltura: e.features[0].properties.swellaltura,
                   swellperiodo: e.features[0].properties.swellperiodo,
                   swelldirecao: e.features[0].properties.swelldirecao,
+                  mare_high_tides: e.features[0].properties.mare_high_tides,
                 };
                 console.log(extraInfo);
               }
@@ -2131,10 +2134,10 @@ function calculateRoute() {
           }
         }
       });
-
+      //https://gis4cloud.com/grupo4_ptas2024/
       // Se uma categoria de ponto de interesse estiver selecionada, busque os pontos de interesse
       if (selectedCategory) {
-        fetch(`https://gis4cloud.com/grupo4_ptas2024/bd.php?tabela=${selectedCategory}`)
+        fetch(`bd.php?tabela=${selectedCategory}`)
           .then((response) => {
             if (!response.ok) {
               throw new Error(`Erro na requisição de pontos de interesse: ${response.status}`);
