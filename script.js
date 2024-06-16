@@ -188,6 +188,41 @@ const tabelas = [
   "barra",
 ];
 
+// Mapeamento de nomes amigáveis
+const nomesTratados = {
+  "point_alojamento_local": "Alojamento Local",
+  "aluguer_bicicletas": "Aluguer de Bicicletas",
+  "aluguer_carros": "Aluguer de Carros",
+  "arte_xavega": "Arte Xávega",
+  "aves": "Observação de Aves",
+  "bancos": "Banco",
+  "bombas_gasolina": "Bomba de Gasolina",
+  "estacao": "Estação",
+  "farmacias": "Farmácia",
+  "hospitais": "Hospital",
+  "kitesurf": "Kitesurf",
+  "local_ferry": "Local de Ferry",
+  "point_marinas_docas": "Marinas e Docas",
+  "multibanco": "Multibanco",
+  "natacao_pontoprofessora": "Natação",
+  "nucleos_pesca": "Núcleo de Pesca",
+  "ondas": "Onda",
+  "paragensautocarro": "Paragem de autocarro",
+  "percurso_azul": "Percurso Azul",
+  "percurso_dourado": "Percurso Dourado",
+  "percurso_natureza": "Percurso Natureza",
+  "percurso_verde": "Percurso Verde",
+  "point_porto": "Porto",
+  "praias": "Praia",
+  "restaurantes": "Restaurante",
+  /* "ria_aveiro": "Ria de Aveiro", // Comentado, então não incluído */
+  "point_surf": "Surf",
+  "terminal_ferry": "Terminal de Ferry",
+  "salinas": "Salina",
+  "voleipraia": "Volei de Praia",
+  "barra": "Barra"
+};
+
 var originalPointsData = {};
 
 // Quando o mapa terminar de carregar...
@@ -269,9 +304,12 @@ map.on("load", () => {
       `;
     }
 
+    // Obter o nome amigável da tabela
+    const nomeTratado = nomesTratados[tabela] || tabela;
+
     // Conteúdo padrão para outros tipos de tabelas
     return `
-      <h6><b>Tipo:</b> ${tabela}</h6>
+      <h6><b>Tipo:</b> ${nomeTratado}</h6>
         <p>
         <img src="${imgurl}" alt="Imagem" width="200px" height="150px"/>
         </p>
@@ -2164,6 +2202,9 @@ function calculateRoute() {
                     markerPI_maisProximo.setPopup(popupMaisProximo);
                   }
 
+                  // Log de depuração para os steps da rota
+                  console.log("Passos da nova rota:", data.routes[0].legs[0].steps);
+
                   // Variável global para armazenar o pop-up atual
                   var currentPopup = null;
 
@@ -2451,7 +2492,11 @@ function limparTudo() {
   lineIds = [];
 
   if (weatherMarker) weatherMarker.remove();
-  if (popup) popup.remove();
+
+  // Oculta a imagem do ícone ao invés de removê-la
+  if (map.getLayer("point")) {
+    map.setLayoutProperty('point', 'visibility', 'none');
+  }
 
   // Redefina os marcadores e a rota
   markerA = null;
@@ -2467,9 +2512,6 @@ function limparTudo() {
     closeButton: false,
     closeOnClick: false,
   });
-
-  // Remove imagem do ícone
-  map.removeImage('icon');
 
   // Esconde o botão "Replay Animation"
   document.getElementById("replay").style.display = "none";
