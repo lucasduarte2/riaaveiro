@@ -25,7 +25,8 @@ $query = "SELECT id,
                  tipologia,
                  duracao_estimada,
                  ponto_entrada,
-                 ponto_saida
+                 ponto_saida,
+                 icon
           FROM $tabela";
 $result = pg_query($conn, $query);
 
@@ -49,7 +50,8 @@ while ($row = pg_fetch_assoc($result)) {
         'Tipologia' => $row['tipologia'],
         'Duracao_Estimada' => $row['duracao_estimada'],
         'Ponto_Entrada' => $row['ponto_entrada'],
-        'Ponto_Saida' => $row['ponto_saida']
+        'Ponto_Saida' => $row['ponto_saida'],
+        'icon' => $row['icon']
     );
 
     $feature = array(

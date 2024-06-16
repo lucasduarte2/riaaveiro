@@ -1,6 +1,19 @@
 var markerA, markerB, markerIntermedio, markerAtual, markerPI_maisProximo;
 
+function callPhpFile() {
+  fetch('mares.php')
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Erro na rede');
+      }
+    })
+    .catch(error => {
+      console.error('Erro ao chamar o arquivo PHP:', error);
+    });
+}
+
 document.addEventListener("DOMContentLoaded", function () {
+  callPhpFile();
 
   var popup = document.getElementById("popupLayers");
   var popup_mapa = document.getElementById("popupOpcoesMapa");
@@ -625,6 +638,8 @@ map.on("load", () => {
     return `
 
       <div>
+
+        <p><img src="${properties.icon}" alt="Imagem" width="200px" height="150px"/></p>
 
         <h4>${properties.Nome_do_Percurso}</h4>
 
