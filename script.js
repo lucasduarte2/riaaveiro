@@ -1,6 +1,7 @@
 var markerA, markerB, markerIntermedio, markerAtual, markerPI_maisProximo;
 
 document.addEventListener("DOMContentLoaded", function () {
+
   var popup = document.getElementById("popupLayers");
   var popup_mapa = document.getElementById("popupOpcoesMapa");
 
@@ -187,6 +188,7 @@ const tabelas = [
   "terminal_ferry",
   "salinas",
   "voleipraia",
+  "barra",
 ];
 
 var originalPointsData = {};
@@ -247,6 +249,8 @@ map.on("load", () => {
  */
   function createPopupHTMLPI(tabela, nome, addressHTML, streetViewUrl, imgurl, extraInfo = {}) {
     let extraHTML = '';
+    let estacao = '';
+  
     if (tabela === 'ondas') {
       extraHTML = `
         <p><b>Velocidade do Vento:</b> ${extraInfo.velocidadevento ? extraInfo.velocidadevento : 'Desconhecido'}</p>
@@ -256,8 +260,19 @@ map.on("load", () => {
         <p><b>Swell Período:</b> ${extraInfo.swellperiodo ? extraInfo.swellperiodo : 'Desconhecido'}</p>
         <p><b>Swell Direção:</b> ${extraInfo.swelldirecao ? extraInfo.swelldirecao : 'Desconhecido'}</p>
       `;
+    } else if (tabela === 'barra') {
+      estacao = `
+        <img src="${imgurl}" alt="Imagem" width="200px" height="150px"/>
+        <p><button id="estacao-barra">Ver Informações</button></p>
+      `;
+      // Retorne apenas o conteúdo específico para 'barra'
+      return `
+        <h6><b>Tipo:</b> ${tabela}</h6>
+        ${estacao}
+      `;
     }
-  
+    
+    // Conteúdo padrão para outros tipos de tabelas
     return `
       <h6><b>Tipo:</b> ${tabela}</h6>
         <p>
@@ -267,9 +282,33 @@ map.on("load", () => {
       ${addressHTML}
       ${extraHTML}
       <p><a href="${streetViewUrl}" target="_blank">Ver no Google Street View</a></p>
-      <p><button id="add_PI_to_Route">Adicionar à rota</button><p>
+      <p><button id="add_PI_to_Route">Adicionar à rota</button></p>
     `;
   }
+
+  function loadStream(videoElementId, streamUrl) {
+    var video = document.getElementById(videoElementId);
+    if (Hls.isSupported()) {
+        var hls = new Hls();
+        hls.loadSource(streamUrl);
+        hls.attachMedia(video);
+        hls.on(Hls.Events.MANIFEST_PARSED, function() {
+            video.play();
+        });
+    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+        video.src = streamUrl;
+        video.addEventListener('canplay', function() {
+            video.play();
+        });
+    }
+}
+
+
+loadStream('video2', 'https://video-auth1.iol.pt/beachcam/costanova/playlist.m3u8');
+loadStream('video3', 'https://video-auth1.iol.pt/beachcam/barra/playlist.m3u8');
+loadStream('video4', 'https://video-auth1.iol.pt/beachcam/torreira/playlist.m3u8');
+loadStream('video5', 'https://video-auth1.iol.pt/beachcam/vagueiracasablanca/playlist.m3u8');
+
 
   function addLayers() {
     let currentPopup = null; // Variável para armazenar o popup atual
@@ -825,6 +864,7 @@ map.on("load", () => {
       "nucleos_pesca",
       "point_porto",
       "praias",
+      "barra",
       "salinas",
     ],
     Serviços: [
@@ -911,6 +951,7 @@ map.on("load", () => {
     percurso_l: "Percurso L",
     point_porto: "Porto",
     praias: "Praias",
+    barra: "Estação Meteorológica",
     restaurantes: "Restaurantes",
     point_surf: "Surf",
     terminal_ferry: "Terminal de Ferry",
@@ -1072,6 +1113,8 @@ map.on("load", () => {
         return "imagens/porto.png";
       case "praias":
         return "imagens/praias.png";
+        case "barra":
+          return "imagens/windsign.png";
       case "restaurantes":
         return "imagens/restaurantes.png";
       /*       case "ria_aveiro":
