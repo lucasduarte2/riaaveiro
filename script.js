@@ -277,7 +277,7 @@ map.on("load", () => {
 
     tabelas.forEach((tabela) => {
       // Busca os dados da tabela
-      fetch(`bd.php?tabela=${tabela}`)
+      fetch(`https://gis4cloud.com/grupo4_ptas2024/bd.php?tabela=${tabela}`)
         .then((response) => {
           if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
@@ -590,7 +590,7 @@ map.on("load", () => {
 
   percursos.forEach(function (percurso) {
 
-    fetch(`percursos.php?tabela=${percurso}`)
+    fetch(`https://gis4cloud.com/grupo4_ptas2024/percursos.php?tabela=${percurso}`)
 
       .then((response) => response.json()) // Converte a resposta em JSON
 
@@ -715,7 +715,7 @@ map.on("load", () => {
   ];
 
   percursos_nauticos.forEach(function (percurso_nautico) {
-    fetch(`percursos_nauticos.php?tabela=${percurso_nautico}`)
+    fetch(`https://gis4cloud.com/grupo4_ptas2024/percursos_nauticos.php?tabela=${percurso_nautico}`)
       .then((response) => response.json()) // Converte a resposta em JSON
       .then((data) => {
         // Adiciona os dados do percurso ao mapa como uma nova fonte
@@ -1919,7 +1919,7 @@ function calculateRoute() {
 
       // Se uma categoria de ponto de interesse estiver selecionada, busque os pontos de interesse
       if (selectedCategory) {
-        fetch(`bd.php?tabela=${selectedCategory}`)
+        fetch(`https://gis4cloud.com/grupo4_ptas2024/bd.php?tabela=${selectedCategory}`)
           .then((response) => {
             if (!response.ok) {
               throw new Error(`Erro na requisição de pontos de interesse: ${response.status}`);
