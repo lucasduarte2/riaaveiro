@@ -687,7 +687,66 @@ map.on("load", () => {
     });
   }
 
+  function addHeatMap() {
+    tabelas.forEach((tabela) => {
+      // Busca os dados da tabela
+      //https://gis4cloud.com/grupo4_ptas2024/
+      fetch(`bd.php?tabela=${tabela}`)
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          return response.json(); // Assuming the response is JSON
+        })
+        .then((data) => {
+          // Verifica se já existe uma fonte com o ID 'heatmap-data-{tabela}'
+          const sourceId = `heatmap-data-${tabela}`;
+          const layerId = `heatmap-layer-${tabela}`;
 
+          if (!map.getSource(sourceId)) {
+            // Adiciona a fonte 'heatmap-data' ao mapa
+            map.addSource(sourceId, {
+              type: 'geojson',
+              data: data
+            });
+
+            // Adiciona a camada 'heatmap-layer' ao mapa
+            map.addLayer({
+              'id': layerId,
+              'type': 'heatmap',
+              'source': sourceId,
+            });
+          }
+        })
+    });
+  }
+
+  // Função para remover o heatmap
+  function removeHeatMap() {
+    tabelas.forEach((tabela) => {
+      const sourceId = `heatmap-data-${tabela}`;
+      const layerId = `heatmap-layer-${tabela}`;
+
+      // Remove a camada do heatmap
+      if (map.getLayer(layerId)) {
+        map.removeLayer(layerId);
+      }
+
+      // Remove a fonte de dados do heatmap
+      if (map.getSource(sourceId)) {
+        map.removeSource(sourceId);
+      }
+    });
+  }
+
+  // Adiciona um event listener para o checkbox do heatmap
+  document.getElementById("heatmap").addEventListener("change", function () {
+    if (this.checked) {
+      addHeatMap();
+    } else {
+      removeHeatMap();
+    }
+  });
 
 
   var percursos = [
