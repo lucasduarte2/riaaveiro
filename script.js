@@ -295,6 +295,12 @@ map.on("load", () => {
   function createPopupHTMLPI(tabela, nome, addressHTML, streetViewUrl, imgurl, extraInfo = {}) {
     let extraHTML = '';
     let estacao = '';
+    let imagemHTML = '';
+
+    // Verifica se o imgurl é diferente do URL específico antes de adicionar ao HTML
+    if (imgurl !== "https://upload.wikimedia.org/wikipedia/commons/d/d1/Image_not_available.png") {
+        imagemHTML = `<p><img src="${imgurl}" alt="Imagem" width="200px" height="150px"/></p>`;
+    }
 
     if (tabela === 'ondas') {
       extraHTML = `
@@ -302,7 +308,7 @@ map.on("load", () => {
       `;
     } else if (tabela === 'barra') {
       estacao = `
-        <img src="${imgurl}" alt="Imagem" width="200px" height="150px"/>
+        ${imagemHTML}
         <p><button class="btnPraias" id="estacao-barra">Ver Informações</button></p>
       `;
       // Retorne apenas o conteúdo específico para 'barra'
@@ -344,9 +350,7 @@ map.on("load", () => {
     // Conteúdo padrão para outros tipos de tabelas
     return `
       <h6><b>Tipo:</b> ${nomeTratado}</h6>
-        <p>
-        <img src="${imgurl}" alt="Imagem" width="200px" height="150px"/>
-        </p>
+        ${imagemHTML}
       <p><b>Nome:</b> ${nome}</p>
       ${addressHTML}
       <p><a href="${streetViewUrl}" target="_blank">Ver no Google Street View</a></p>
