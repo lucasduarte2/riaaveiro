@@ -34,6 +34,7 @@
     ></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   </head>
   <body>
     <div id="map"></div>
@@ -891,6 +892,18 @@
       </div>
     </div>
   </div>
+
+  <div id="infoModal" class="modal">
+    <!-- Modal content -->
+    <div class="modal-content2">
+      <span id="closeModal" class="close">×</span>
+      <div id="modalContent">
+        <!-- The extra information will be inserted here -->
+      </div>
+      <canvas id="mareGraph" width="700" height="300"></canvas>
+    </div>
+  </div>
+
 
 <script>
   document.addEventListener('DOMContentLoaded', (event) => {

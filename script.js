@@ -298,13 +298,7 @@ map.on("load", () => {
 
     if (tabela === 'ondas') {
       extraHTML = `
-        <p><b>Velocidade do Vento:</b> ${extraInfo.velocidadevento ? extraInfo.velocidadevento : 'Desconhecido'}</p>
-        <p><b>Altura da Onda:</b> ${extraInfo.alturaonda ? extraInfo.alturaonda : 'Desconhecido'}</p>
-        <p><b>Direção do Vento:</b> ${extraInfo.direcaovento ? extraInfo.direcaovento : 'Desconhecido'}</p>
-        <p><b>Swell Altura:</b> ${extraInfo.swellaltura ? extraInfo.swellaltura : 'Desconhecido'}</p>
-        <p><b>Swell Período:</b> ${extraInfo.swellperiodo ? extraInfo.swellperiodo : 'Desconhecido'}</p>
-        <p><b>Swell Direção:</b> ${extraInfo.swelldirecao ? extraInfo.swelldirecao : 'Desconhecido'}</p>
-        <p><b>Maré: </b> ${extraInfo.mare_high_tides ? extraInfo.mare_high_tides : 'Desconhecido'}</p>
+        <p><button class="btnPraias" id="saber-mais" data-extra-info='${JSON.stringify(extraInfo)}'>Saber mais</button></p>
       `;
     } else if (tabela === 'barra') {
       estacao = `
@@ -316,29 +310,29 @@ map.on("load", () => {
         <h6><b>Tipo:</b> ${tabela}</h6>
         ${estacao}
       `;
-    }else if (tabela === 'praias' && nome === 'Praia da Barra'){
+    } else if (tabela === 'praias' && nome === 'Praia da Barra') {
       extraHTML = `
         <p><button class="btnPraias" id="praia-barra">Ver Praia</button></p>
       `;
-  
-   }else if (tabela === 'praias' && nome === 'Praia da Furadouro'){
+
+    } else if (tabela === 'praias' && nome === 'Praia da Furadouro') {
       extraHTML = `
         <p><button class="btnPraias" id="praia-furadouro">Ver Praia</button></p>
       `;
 
-    } else if (tabela === 'praias' && nome === 'Praia da Torreira'){
+    } else if (tabela === 'praias' && nome === 'Praia da Torreira') {
       extraHTML = `
         <p><button class="btnPraias" id="praia-torreira">Ver Praia</button></p>
       `;
-    } else if (tabela === 'praias' && nome === 'Praia da Costa Nova'){
+    } else if (tabela === 'praias' && nome === 'Praia da Costa Nova') {
       extraHTML = `
         <p><button class="btnPraias" id="praia-costa-nova">Ver Praia</button></p>
       `;
-    } else if (tabela === 'praias' && nome === 'Praia da Vagueira'){
+    } else if (tabela === 'praias' && nome === 'Praia da Vagueira') {
       extraHTML = `
         <p><button class="btnPraias" id="praia-vagueira">Ver Praia</button></p>
       `;
-    } else if (tabela === 'praias' && nome === 'Praia de Mira'){
+    } else if (tabela === 'praias' && nome === 'Praia de Mira') {
       extraHTML = `
         <p><button class="btnPraias" id="praia-mira">Ver Praia</button></p>
       `;
@@ -360,6 +354,109 @@ map.on("load", () => {
       <p><button id="add_PI_to_Route">Adicionar à rota</button></p>
     `;
   }
+
+  document.addEventListener('click', function (e) {
+    if (e.target && e.target.id === 'saber-mais') {
+      // Parsear o JSON armazenado no atributo de data
+      let extraInfo = JSON.parse(e.target.getAttribute('data-extra-info'));
+      openModalWithExtraInfo(extraInfo);
+    }
+  });
+
+
+  function openModalWithExtraInfo(extraInfo) {
+    console.log(extraInfo)
+
+    var mareHeights = JSON.parse(extraInfo.mare_heights);
+
+    var modal = document.getElementById('infoModal');
+
+    // Get the element to display the content in the modal
+    var contentElement = document.getElementById('modalContent');
+
+    var heightsArray = Object.keys(mareHeights.heights).map(function (key) {
+      return mareHeights.heights[key];
+    });
+
+    var timesArray = Object.keys(mareHeights.times).map(function (key) {
+      return mareHeights.times[key];
+    });
+
+    // Agora você tem arrays de alturas e tempos que podem ser usados para criar o gráfico
+    createChart(heightsArray, timesArray);
+
+    // Construct the HTML for the extra information
+    var extraHTML = `
+      <p><b>Velocidade do Vento:</b> ${extraInfo.velocidadevento || 'Desconhecido'}</p>
+      <p><b>Altura da Onda:</b> ${extraInfo.alturaonda || 'Desconhecido'}</p>
+      <p><b>Direção do Vento:</b> ${extraInfo.direcaovento || 'Desconhecido'}</p>
+      <p><b>Altura do 'swell':</b> ${extraInfo.swellaltura || 'Desconhecido'}</p>
+      <p><b>Período do 'swell':</b> ${extraInfo.swellperiodo || 'Desconhecido'}</p>
+      <p><b>Direção do 'swell':</b> ${extraInfo.swelldirecao || 'Desconhecido'}</p>
+      <p><b>Preia-mar:</b> ${extraInfo.mare_high_tides || 'Desconhecido'}</p>
+      <p><b>Baixa-mar:</b> ${extraInfo.mare_low_tides || 'Desconhecido'}</p>
+    `;
+
+    // Set the content of the modal
+    contentElement.innerHTML = extraHTML;
+
+    // Display the modal
+    modal.style.display = 'block';
+  }
+
+  // Defina uma variável fora da função para manter o gráfico
+  var chart;
+
+  function createChart(heights, times) {
+    console.log('heights:', heights);
+    console.log('times:', times);
+
+    // Certifique-se de que ambos 'heights' e 'times' são arrays
+    if (Array.isArray(heights) && Array.isArray(times)) {
+      var ctx = document.getElementById('mareGraph').getContext('2d');
+
+      // Destrua o gráfico existente se ele já existir
+      if (chart) {
+        chart.destroy();
+      }
+
+      // Crie um novo gráfico
+      chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: times,
+          datasets: [{
+            label: 'Altura da Maré (metros)',
+            backgroundColor: 'rgb(255, 99, 132)',
+            borderColor: 'rgb(255, 99, 132)',
+            data: heights,
+          }]
+        },
+        options: {}
+      });
+    } else {
+      console.error('Dados inválidos para criar o gráfico');
+    }
+  }
+
+
+
+
+
+  // Close modal function (assuming you have a close button with id 'closeModal')
+  document.getElementById('closeModal').onclick = function () {
+    var modal = document.getElementById('infoModal');
+    modal.style.display = 'none';
+  }
+
+  // When the user clicks anywhere outside of the modal, close it
+  window.onclick = function (event) {
+    var modal = document.getElementById('infoModal');
+    if (event.target == modal) {
+      modal.style.display = 'none';
+    }
+  }
+
 
   function loadStream(videoElementId, streamUrl) {
     var video = document.getElementById(videoElementId);
@@ -539,6 +636,8 @@ map.on("load", () => {
                   swellperiodo: e.features[0].properties.swellperiodo,
                   swelldirecao: e.features[0].properties.swelldirecao,
                   mare_high_tides: e.features[0].properties.mare_high_tides,
+                  mare_low_tides: e.features[0].properties.mare_low_tides,
+                  mare_heights: e.features[0].properties.mare_heights
                 };
                 console.log(extraInfo);
               }

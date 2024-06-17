@@ -29,7 +29,7 @@ function getGeoJSON($tabela)
     }
 
     $query = "SELECT lat, lng, nome, imgurl" . 
-        ($tabela === 'ondas' ? ", velocidadevento, alturaonda, direcaovento, swellaltura, swellperiodo, swelldirecao, mare_high_tides" : "") . 
+        ($tabela === 'ondas' ? ", velocidadevento, alturaonda, direcaovento, swellaltura, swellperiodo, swelldirecao, mare_high_tides, mare_low_tides, mare_heights" : "") . 
         " FROM " . $tabela . ";";
     
     $result = pg_query($conn, $query);
@@ -56,24 +56,58 @@ function getGeoJSON($tabela)
             $properties['swellperiodo'] = $row['swellperiodo'];
             $properties['swelldirecao'] = $row['swelldirecao'];
             
-            // Correção: Decodificação correta do JSON antes de processar
+            $dataAtual = date('Y-m-d');
+            $mare_heights = json_decode($row['mare_heights'], true);
+            
+            $mare_heights_filtrado = array_filter($mare_heights, function($entry) use ($dataAtual) {
+                // Converte a string de tempo para um objeto DateTime
+                $entryTime = DateTime::createFromFormat('d-m-Y H:i:s', $entry['time']);
+                // Formata a data do objeto DateTime para comparação
+                $entryDate = $entryTime->format('Y-m-d');
+                return $entryDate === $dataAtual;
+            });
+            
+            // Agora vamos extrair os tempos e alturas do array filtrado
+            $times = array_map(function($entry) {
+                $date = new DateTime($entry['time']);
+                return $date->format('H:i');
+            }, $mare_heights_filtrado);
+            
+            $heights = array_map(function($entry) {
+                return $entry['height'];
+            }, $mare_heights_filtrado);
+            
+            $properties['mare_heights'] = array(
+                'heights' => $heights,
+                'times' => $times
+            );
+            
+
+            $mare_low_tides = json_decode($row['mare_low_tides'], true);
+        
+            $horas_mare_baixa = array_map(function($datetime) {
+                $date = new DateTime($datetime);
+                return $date->format('H:i');
+            }, $mare_low_tides);
+    
+            $primeiras_duas_horas_baixa = array_slice($horas_mare_baixa, 0, 2);
+    
+            $formato_mare_baixa = implode(" | ", $primeiras_duas_horas_baixa);
+    
+            $properties['mare_low_tides'] = $formato_mare_baixa;
+        
+
             $mare_high_tides = json_decode($row['mare_high_tides'], true);
 
-                       // Processar cada horário para extrair e formatar apenas a hora
                        $horas_mare = array_map(function($datetime) {
-                        // Converter a string de data/hora em um objeto DateTime
                         $date = new DateTime($datetime);
-                        // Formatar para obter apenas a hora e minuto (HH:MM)
                         return $date->format('H:i');
                     }, $mare_high_tides);
         
-                    // Limitar o array resultante às duas primeiras horas
                     $primeiras_duas_horas = array_slice($horas_mare, 0, 2);
         
-                    // Alteração: Unir as duas primeiras horas com " | " para a exibição
                     $formato_mare = implode(" | ", $primeiras_duas_horas);
         
-                    // Adicionar as duas primeiras horas de volta às propriedades, agora em um único string
                     $properties['mare_high_tides'] = $formato_mare;
         }
 
