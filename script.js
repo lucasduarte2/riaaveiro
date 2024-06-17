@@ -377,8 +377,6 @@ map.on("load", () => {
 
 
   function openModalWithExtraInfo(extraInfo) {
-    console.log(extraInfo)
-
     var mareHeights = JSON.parse(extraInfo.mare_heights);
 
     var modal = document.getElementById('infoModal');
@@ -422,9 +420,6 @@ map.on("load", () => {
   var chart;
 
   function createChart(heights, times) {
-    console.log('heights:', heights);
-    console.log('times:', times);
-
     // Certifique-se de que ambos 'heights' e 'times' são arrays
     if (Array.isArray(heights) && Array.isArray(times)) {
       var ctx = document.getElementById('mareGraph').getContext('2d');
@@ -494,8 +489,6 @@ map.on("load", () => {
           return response.json(); // Assuming the response is JSON
         })
         .then((data) => {
-          // Process the JSON data
-          console.log(`Dados carregados para ${tabela}:`, data);
           map.addSource(tabela, {
             type: "geojson",
             data: data,
@@ -609,7 +602,6 @@ map.on("load", () => {
                 clearTimeout(closePopupTimeout);
                 closePopupTimeout = null;
               }
-              console.log(e.features[0].properties);
               // Muda o estilo do cursor como um indicador de interface do usuário.
               map.getCanvas().style.cursor = "pointer";
               const properties = e.features[0].properties;
@@ -635,7 +627,6 @@ map.on("load", () => {
                   mare_low_tides: e.features[0].properties.mare_low_tides,
                   mare_heights: e.features[0].properties.mare_heights
                 };
-                console.log(extraInfo);
               }
               // Garante que se o mapa estiver ampliado de tal forma que várias
               // cópias do recurso estejam visíveis, o popup apareça
@@ -1527,9 +1518,6 @@ function updateIsochroneColor(periodType) {
   } else {
     color = "#5a3fc0"; // A cor padrão
   }
-
-  console.log(`Atualizando a cor da camada isócrona para: ${color}`); // Adiciona esta linha para imprimir a cor
-
   // Atualize a propriedade 'fill-color' da camada isócrona
   map.setPaintProperty("isochrone", "fill-color", color);
 }
@@ -1648,7 +1636,6 @@ var mapClicked = false;
 function calculateIsochrone() {
   // Se nenhum ponto foi clicado ainda, retorne
   if (mapClicked == false) {
-    console.log("Clique no mapa para selecionar o ponto antes de calcular a isócrona.");
     return;
   }
 
@@ -1656,12 +1643,7 @@ function calculateIsochrone() {
   for (const [tabela, data] of Object.entries(originalPointsData)) {
     // Verifique se a fonte de dados já está adicionada
     if (!map.getSource(tabela)) {
-      /*       console.log(
-        `Fonte de dados ${tabela} não encontrada, tentando adicionar...`
-      ); */
       addOrUpdateSource(tabela, data);
-    } else {
-      /* console.log(`Fonte de dados ${tabela} encontrada.`); */
     }
   }
   // Se nenhum ponto foi clicado ainda, retorne
@@ -1691,8 +1673,6 @@ function calculateIsochrone() {
 
   // Construa a URL da API do Mapbox Isochrone
   var apiUrl = `https://api.mapbox.com/isochrone/v1/mapbox/${routingProfile}/${coordinates.lng}%2C${coordinates.lat}?contours_${contourType}=${contour}&polygons=true&denoise=1&access_token=pk.eyJ1Ijoic2RhbmllbHNpbHZhIiwiYSI6ImNsdmY0bTUwNDAzbWwyamw4NjUwMW5paTUifQ.0MAtfqLmatOkT_NjHAo9Ag`;
-
-  console.log(`Isócrona - veículo: ${routingProfile}, métrica: ${contourType}, quantidade: ${contour}`);
 
   // Se a camada de isócrona já existir, remova-a
   if (map.getLayer("isochrone")) {
@@ -1871,12 +1851,7 @@ function selectMetric(metricType) {
 }
 
 function selectOption(element, inputId, value) {
-  console.log("Element clicked:", element);
-  console.log("Input ID:", inputId);
-  console.log("Value to set:", value);
-
   const input = document.getElementById(inputId);
-  console.log("Input element found:", input);
 
   const container = element.parentElement;
 
@@ -2286,8 +2261,6 @@ function calculateRoute() {
       return response.json();
     })
     .then((data) => {
-      console.log("Dados da rota:", data);
-
       // Verifique se há etapas de direção disponíveis
       if (!data.routes || !data.routes[0] || !data.routes[0].legs || !data.routes[0].legs[0] || !data.routes[0].legs[0].steps) {
         console.warn("Não há direções disponíveis para esta rota.");
@@ -2512,8 +2485,6 @@ function calculateRoute() {
                   return response.json();
                 })
                 .then((data) => {
-                  console.log("Dados da rota recalculada:", data);
-
                   // Verifique se há etapas de direção disponíveis
                   if (!data.routes || !data.routes[0] || !data.routes[0].legs || !data.routes[0].legs[0] || !data.routes[0].legs[0].steps) {
                     console.warn("Não há direções disponíveis para esta rota recalculada.");
@@ -2580,10 +2551,6 @@ function calculateRoute() {
                       }
                     });
                   }
-
-                  // Log de depuração para os steps da rota
-                  console.log("Passos da nova rota:", data.routes[0].legs[0].steps);
-
                   // Variável global para armazenar o pop-up atual
                   var currentPopup = null;
 
@@ -2746,7 +2713,6 @@ function animateAlongRoute(route) {
 
   function loadSelectedIcon() {
     const selectedProfile = document.getElementById("routingProfile").value;
-    console.log("perfil selecionado: ", selectedProfile);
     let imageUrl;
 
     switch (selectedProfile) {
@@ -2827,8 +2793,6 @@ function animateAlongRoute(route) {
   // Add event listener to the routing profile select
   document.getElementById("routingProfile").addEventListener("change", function () {
     const selectedValue = this.value; // Obtém o valor do perfil selecionado
-    console.log("Selected value:", selectedValue);
-
     selectOption(this, "routingProfile", selectedValue);
   });
 }
