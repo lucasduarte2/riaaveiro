@@ -109,6 +109,14 @@ geolocateControl.on('geolocate', function (event) {
       .addTo(map);
 
     markerAtual.setPopup(popupAtual);
+
+    // Adiciona evento de clique ao popup para remover o marcador
+    popupAtual.getElement().addEventListener('click', function () {
+      if (markerAtual) {
+        markerAtual.remove();
+        markerAtual = null;
+      }
+    });
   }
 
   calculateRoute();
@@ -299,7 +307,7 @@ map.on("load", () => {
 
     // Verifica se o imgurl é diferente do URL específico antes de adicionar ao HTML
     if (imgurl !== "https://upload.wikimedia.org/wikipedia/commons/d/d1/Image_not_available.png") {
-        imagemHTML = `<p><img src="${imgurl}" alt="Imagem" width="200px" height="150px"/></p>`;
+      imagemHTML = `<p><img src="${imgurl}" alt="Imagem" width="200px" height="150px"/></p>`;
     }
 
     if (tabela === 'ondas') {
@@ -1839,6 +1847,14 @@ document.getElementById("addPointA").addEventListener("click", function () {
     .addTo(map);
 
   markerA.setPopup(popupA);
+
+  // Adiciona evento de clique ao popup para remover o marcador
+  popupA.getElement().addEventListener('click', function () {
+    if (markerA) {
+      markerA.remove();
+      markerA = null;
+    }
+  });
 });
 
 document.getElementById("addPointB").addEventListener("click", function () {
@@ -1857,6 +1873,14 @@ document.getElementById("addPointB").addEventListener("click", function () {
     .addTo(map);
 
   markerB.setPopup(popupB);
+
+  // Adiciona evento de clique ao popup para remover o marcador
+  popupB.getElement().addEventListener('click', function () {
+    if (markerB) {
+      markerB.remove();
+      markerB = null;
+    }
+  });
 });
 
 document.getElementById("addPointIntermedio").addEventListener("click", function () {
@@ -1875,6 +1899,14 @@ document.getElementById("addPointIntermedio").addEventListener("click", function
     .addTo(map);
 
   markerIntermedio.setPopup(popupIntermedio);
+
+  // Adiciona evento de clique ao popup para remover o marcador
+  popupIntermedio.getElement().addEventListener('click', function () {
+    if (markerIntermedio) {
+      markerIntermedio.remove();
+      markerIntermedio = null;
+    }
+  });
 
   calculateRoute();
 });
@@ -1896,6 +1928,14 @@ function addToRoute(coordinates) {
     .addTo(map);
 
   markerPI.setPopup(popupPI_escolhido);
+
+  // Adiciona evento de clique ao popup para remover o marcador
+  popupPI_escolhido.getElement().addEventListener('click', function () {
+    if (markerPI) {
+      markerPI.remove();
+      markerPI = null;
+    }
+  });
 
   calculateRoute(); // Recalcula a rota incluindo o novo ponto de interesse
 }
@@ -2348,6 +2388,14 @@ function calculateRoute() {
                       .addTo(map);
 
                     markerPI_maisProximo.setPopup(popupMaisProximo);
+
+                    // Adiciona evento de clique ao popup para remover o marcador
+                    popupMaisProximo.getElement().addEventListener('click', function () {
+                      if (markerPI_maisProximo) {
+                        markerPI_maisProximo.remove();
+                        markerPI_maisProximo = null;
+                      }
+                    });
                   }
 
                   // Log de depuração para os steps da rota
