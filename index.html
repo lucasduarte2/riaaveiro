@@ -896,7 +896,6 @@
   <div id="infoModal" class="modal">
     <!-- Modal content -->
     <div class="modal-content2">
-      <span id="closeModal" class="close">×</span>
       <div id="modalContent">
         <!-- The extra information will be inserted here -->
       </div>
@@ -1048,6 +1047,8 @@ document.addEventListener('click', function (e) {
       document.getElementById('modalEstacaoVagueira').style.display = 'none';
     }else if(event.target === document.getElementById('modalEstacaoMira')){
       document.getElementById('modalEstacaoMira').style.display = 'none';
+    } else if(event.target === document.getElementById('infoModal')){
+      document.getElementById('infoModal').style.display = 'none';
     }
   }
 

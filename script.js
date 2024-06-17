@@ -399,6 +399,7 @@ map.on("load", () => {
 
     // Construct the HTML for the extra information
     var extraHTML = `
+      <p><b>Informação sobre o mar:</b></p>
       <p><b>Velocidade do Vento:</b> ${extraInfo.velocidadevento || 'Desconhecido'}</p>
       <p><b>Altura da Onda:</b> ${extraInfo.alturaonda || 'Desconhecido'}</p>
       <p><b>Direção do Vento:</b> ${extraInfo.direcaovento || 'Desconhecido'}</p>
@@ -414,6 +415,7 @@ map.on("load", () => {
 
     // Display the modal
     modal.style.display = 'block';
+    modal.style.display = 'flex';
   }
 
   // Defina uma variável fora da função para manter o gráfico
@@ -439,8 +441,8 @@ map.on("load", () => {
           labels: times,
           datasets: [{
             label: 'Altura da Maré (metros)',
-            backgroundColor: 'rgb(255, 99, 132)',
-            borderColor: 'rgb(255, 99, 132)',
+            backgroundColor: '#0496C7',
+            borderColor: '#0496C7',
             data: heights,
           }]
         },
@@ -448,24 +450,6 @@ map.on("load", () => {
       });
     } else {
       console.error('Dados inválidos para criar o gráfico');
-    }
-  }
-
-
-
-
-
-  // Close modal function (assuming you have a close button with id 'closeModal')
-  document.getElementById('closeModal').onclick = function () {
-    var modal = document.getElementById('infoModal');
-    modal.style.display = 'none';
-  }
-
-  // When the user clicks anywhere outside of the modal, close it
-  window.onclick = function (event) {
-    var modal = document.getElementById('infoModal');
-    if (event.target == modal) {
-      modal.style.display = 'none';
     }
   }
 
@@ -1354,7 +1338,25 @@ map.on("load", () => {
 map.on("style.load", () => {
   // Define a propriedade "lightPreset" do mapa para "dusk"
   map.setConfigProperty("basemap", "lightPreset", "dusk");
+  updateIsochroneColor("dusk");
 });
+
+
+// Função para atualizar a cor da camada isócrona
+function updateIsochroneColor(periodType) {
+  let color;
+  if (periodType === "dusk" || periodType === "night") {
+    color = "#FFE900"; // Uma cor mais clara para melhor visibilidade
+  } else {
+    color = "#5a3fc0"; // A cor padrão
+  }
+
+  console.log("Atualizando a cor da camada isócrona para: ${color}"); // Adiciona esta linha para imprimir a cor
+
+  // Atualize a propriedade 'fill-color' da camada isócrona
+  map.setPaintProperty("isochrone", "fill-color", color);
+}
+
 
 // Função para selecionar o período do dia
 function selectPeriod(periodType) {
@@ -1389,6 +1391,7 @@ function selectPeriod(periodType) {
       map.setConfigProperty("basemap", "lightPreset", "night");
     }
   });
+  updateIsochroneColor(periodType);
 }
 
 // Quando o estado do elemento "selectAll" mudar...
@@ -1541,6 +1544,9 @@ function calculateIsochrone() {
           "fill-opacity": 0.33,
         },
       });
+
+      const periodType = document.querySelector('.periods .option.selected').getAttribute('data-value');
+      updateIsochroneColor(periodType);
 
       // Ajuste o zoom do mapa para caber na isócrona
       var bounds = new mapboxgl.LngLatBounds();
