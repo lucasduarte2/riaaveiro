@@ -15,12 +15,34 @@ body {
 #legend25m {
   background: white;
   padding: 10px;
-  position: absolute;
+  position: relative;
   bottom: 10px;
   left: 10px;
   border: 1px solid #ccc;
   display: none;
-  z-index: 10000; /* Aumentei o valor do z-index aqui */
+  z-index: 10000;
+  width: 175px;
+  float: left;
+}
+
+#legend2m {
+  background: white;
+  padding: 10px;
+  position: relative;
+  bottom: 10px;
+  left: 10px;
+  border: 1px solid #ccc;
+  display: none;
+  z-index: 10001; 
+  width: 175px;
+  float: left;
+  margin-left: 10px;
+}
+
+#legendContainer{
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
 }
 
 .liveCamsInfo__left-listItem {

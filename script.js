@@ -263,7 +263,7 @@ map.on("load", () => {
     'star-intensity': 0.8
   })
 
-  /* // Nova camada WMS
+  // Nova camada WMS
   map.addSource('batimetria25mLayer', {
     'type': 'raster',
     'tiles': [
@@ -286,7 +286,7 @@ map.on("load", () => {
   map.addSource('batimetria2mLayer', {
     'type': 'raster',
     'tiles': [
-      'https://gis4cloud.pt/geoserver/wms?service=WMS&request=GetMap&layers=grupo4_ptas2024:Aveiro%20Batimetria%20Reclassificada&styles=&format=image%2Fpng&transparent=true&version=1.1.1&width=256&height=256&srs=EPSG%3A3857&bbox={bbox-epsg-3857}'
+      'https://gis4cloud.pt/geoserver/wms?service=WMS&request=GetMap&layers=grupo4_ptas2024:AveiroBatimetriaFinal&styles=&format=image%2Fpng&transparent=true&version=1.1.1&width=256&height=256&srs=EPSG%3A3857&bbox={bbox-epsg-3857}'
     ],
     'tileSize': 256
   });
@@ -299,7 +299,7 @@ map.on("load", () => {
       'raster-opacity': 0
     }
   });
- */
+ 
   function createPopupHTMLPI(tabela, nome, addressHTML, streetViewUrl, imgurl, extraInfo = {}) {
     let extraHTML = '';
     let estacao = '';

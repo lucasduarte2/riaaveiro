@@ -38,9 +38,15 @@
   </head>
   <body>
     <div id="map"></div>
-    <div id="legend25m">
-      <h4>Legenda</h4>
-      <img src="https://gis4cloud.pt/geoserver/wms?service=WMS&request=GetLegendGraphic&format=image/png&layer=grupo4_ptas2024:Aveiro" alt="Legenda da camada WMS">
+    <div id="legendContainer">
+      <div id="legend25m">
+        <h4>Legenda 25m</h4>
+        <img src="https://gis4cloud.pt/geoserver/wms?service=WMS&request=GetLegendGraphic&format=image/png&layer=grupo4_ptas2024:Aveiro" alt="Legenda da Batimetria">
+      </div>
+      <div id="legend2m">
+        <h4>Legenda 2m</h4>
+        <img src="https://gis4cloud.pt/geoserver/wms?service=WMS&request=GetLegendGraphic&layer=grupo4_ptas2024:AveiroBatimetriaFinal&format=image/png" alt="Legenda da Batimetria">
+      </div>
     </div>
     <div id="sidebar" class="sidebar">
       <div class="sidebar-toggle" onclick="toggleSidebar()">
