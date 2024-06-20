@@ -117,6 +117,7 @@ body {
   background-position: center;
   background-repeat: no-repeat;
   box-sizing: border-box;
+  border-radius: 50px;
 }
 
 .tab-content {
@@ -124,6 +125,7 @@ body {
   border: 1px solid #ccc;
   padding: 10px;
   background: #fff;
+  border-radius: 15px;
 }
 
 .tab.active {
@@ -138,18 +140,30 @@ body {
   display: flex;
   justify-content: space-between;
   border: 2px solid #000;
+  border-radius: 15px;
+  box-sizing: border-box;
+  padding: 5px;
+  gap: 10px;
 }
 
 .metrica {
   display: flex;
   justify-content: space-between;
   border: 2px solid #000;
+  border-radius: 15px;
+  box-sizing: border-box;
+  padding: 5px;
+  gap: 10px;
 }
 
 .periods {
   display: flex;
   justify-content: space-between;
   border: 2px solid #000;
+  border-radius: 15px;
+  box-sizing: border-box;
+  padding: 5px;
+  gap: 10px;
 }
 
 .mapLabels {
@@ -165,20 +179,32 @@ body {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  border-left: 2px solid #000;
   padding: 10px;
   transition: border-color 0.3s, background-color 0.3s;
-  height: 100%;
+  box-sizing: border-box;
+  border-radius: 10px;
+  border: 2px solid transparent;
 }
 
 .option:first-child {
   border-left: none;
 }
 
-.option img {
-  width: 50px;
-  height: 50px;
+.option img[alt="Carro"] {
+  width: 60px;
+  height: 60px;
 }
+
+.option img[alt="Bicicleta"] {
+  width: 55px;  /* Adjust these values as needed */
+  height: 55px; /* Adjust these values as needed */
+}
+
+.option img[alt="Pe"] {
+  width: 45px;
+  height: 40px;
+}
+
 
 .option label {
   margin-top: 5px;
@@ -186,6 +212,22 @@ body {
 
 .option.selected {
   background-color: #007bff;
+}
+
+#addressInputA {
+  border-radius: 5px;
+}
+
+#addressInputB {
+  border-radius: 5px;
+}
+
+#addressInputIntermedio {
+  border-radius: 5px;
+}
+
+#addressInputWeather {
+  border-radius: 5px;
 }
 
 .slidecontainer {
@@ -215,7 +257,7 @@ body {
   width: 25px;
   height: 25px;
   border-radius: 50%;
-  background: #04AA6D;
+  background: #007bff;
   cursor: pointer;
 }
 
@@ -223,7 +265,7 @@ body {
   width: 25px;
   height: 25px;
   border-radius: 50%;
-  background: #04AA6D;
+  background: #007bff;
   cursor: pointer;
 }
 
