@@ -18,13 +18,11 @@ document.addEventListener("DOMContentLoaded", function () {
   var popup = document.getElementById("popupLayers");
   var popup_mapa = document.getElementById("popupOpcoesMapa");
 
-  // Exibir o pop-up após 2 segundos
   setTimeout(function () {
     popup.style.display = "block";
     popup.style.animation = "slideInFromRight 0.5s ease forwards";
   }, 2000);
 
-  // Ocultar o pop-up após 7 segundos
   setTimeout(function () {
     popup.style.animation = "slideOutToRight 0.5s ease forwards";
     setTimeout(function () {
@@ -32,13 +30,11 @@ document.addEventListener("DOMContentLoaded", function () {
     }, 500);
   }, 7000);
 
-  // Exibir o pop-up após 2 segundos
   setTimeout(function () {
     popup_mapa.style.display = "block";
     popup_mapa.style.animation = "slideInFromLeft 0.5s ease forwards";
   }, 2000);
 
-  // Ocultar o pop-up após 7 segundos
   setTimeout(function () {
     popup_mapa.style.animation = "slideOutToLeft 0.5s ease forwards";
     setTimeout(function () {
@@ -56,27 +52,23 @@ document.querySelectorAll('.tab').forEach(tab => {
   });
 });
 
-// Define a chave de acesso do Mapbox
 mapboxgl.accessToken =
   "pk.eyJ1Ijoic2RhbmllbHNpbHZhIiwiYSI6ImNsdmY0bTUwNDAzbWwyamw4NjUwMW5paTUifQ.0MAtfqLmatOkT_NjHAo9Ag";
 
-// Cria um novo mapa
 const map = new mapboxgl.Map({
-  container: "map", // ID do elemento HTML que irá conter o mapa
-  center: [-8.654168722609962, 40.63221083028599], // Coordenadas do centro inicial do mapa
-  zoom: 16.4, // Nível de zoom inicial
-  pitch: 75, // Ângulo de inclinação inicial
-  bearing: 7.5, // Direção inicial
-  maxBounds: [-9.6, 40.4, -8.45, 41], // Limites máximos do mapa
+  container: "map",
+  center: [-8.654168722609962, 40.63221083028599],
+  zoom: 16.4, 
+  pitch: 75, 
+  bearing: 7.5, 
+  maxBounds: [-9.6, 40.4, -8.45, 41], 
 });
 
-// Add zoom and rotation controls to the map.
 map.addControl(new mapboxgl.NavigationControl());
 map.addControl(new mapboxgl.ScaleControl(), "bottom-right");
 
 map.addControl(new mapboxgl.FullscreenControl());
 
-// Add geolocate control to the map.
 const geolocateControl = new mapboxgl.GeolocateControl({
   positionOptions: {
     enableHighAccuracy: true,
@@ -92,12 +84,11 @@ geolocateControl.on('geolocate', function (event) {
   const lat = event.coords.latitude;
   const coords = [lng, lat];
 
-  // Se o marcador já existir, movê-lo para a nova localização
   if (markerAtual) {
     markerAtual.setLngLat(coords);
   } else {
-    // Caso contrário, criar um novo marcador
-    const markerColor = 'pink'; // cor do marcador
+    
+    const markerColor = 'pink'; 
     markerAtual = new mapboxgl.Marker({ color: markerColor, draggable: true })
       .setLngLat(coords)
       .addTo(map);
@@ -110,7 +101,7 @@ geolocateControl.on('geolocate', function (event) {
 
     markerAtual.setPopup(popupAtual);
 
-    // Adiciona evento de clique ao popup para remover o marcador
+    
     popupAtual.getElement().addEventListener('click', function () {
       if (markerAtual) {
         markerAtual.remove();
@@ -122,7 +113,6 @@ geolocateControl.on('geolocate', function (event) {
   calculateRoute();
 });
 
-// Função para remover o marcador
 function removeMarker() {
   if (markerAtual) {
     markerAtual.remove();
@@ -132,9 +122,7 @@ function removeMarker() {
   calculateRoute();
 }
 
-// Esperar até que o mapa esteja totalmente carregado
 map.on('load', function () {
-  // Adicionar ouvinte de eventos ao controle de geolocalização para detectar desativação
   const geolocateButton = document.querySelector('.mapboxgl-ctrl-geolocate');
   if (geolocateButton) {
     geolocateButton.addEventListener('click', function () {
@@ -142,7 +130,7 @@ map.on('load', function () {
         if (geolocateControl._watchState === 'OFF') {
           removeMarker();
         }
-      }, 250); // Pequeno atraso para garantir que o estado seja atualizado
+      }, 250);
     });
   }
 });
@@ -151,16 +139,12 @@ let isRotating = true;
 let lastInteractionTime = Date.now();
 
 function rotateCamera(timestamp) {
-  // clamp the rotation between 0 -360 degrees
-  // Divide timestamp by 200 to slow rotation to ~5 degrees / sec
   if (isRotating) {
     map.rotateTo((timestamp / 300) % 360, { duration: 0 });
   }
-  // Request the next frame of the animation.
   requestAnimationFrame(rotateCamera);
 }
 
-// Add event listeners for user interactions
 map.on('mousedown', () => {
   isRotating = false;
   lastInteractionTime = Date.now();
@@ -174,7 +158,6 @@ map.on('mouseup', () => {
   }, 100000);
 });
 
-// Define as tabelas que serão usadas
 const tabelas = [
   "point_alojamento_local",
   "aluguer_bicicletas",
@@ -201,7 +184,6 @@ const tabelas = [
   "point_porto",
   "praias",
   "restaurantes",
-  /* "ria_aveiro", */
   "point_surf",
   "terminal_ferry",
   "salinas",
@@ -209,7 +191,6 @@ const tabelas = [
   "barra",
 ];
 
-// Mapeamento de nomes amigáveis
 const nomesTratados = {
   "point_alojamento_local": "Alojamento Local",
   "aluguer_bicicletas": "Aluguer de Bicicletas",
@@ -236,7 +217,6 @@ const nomesTratados = {
   "point_porto": "Porto",
   "praias": "Praia",
   "restaurantes": "Restaurante",
-  /* "ria_aveiro": "Ria de Aveiro", // Comentado, então não incluído */
   "point_surf": "Surf",
   "terminal_ferry": "Terminal de Ferry",
   "salinas": "Salina",
@@ -246,12 +226,10 @@ const nomesTratados = {
 
 var originalPointsData = {};
 
-// Quando o mapa terminar de carregar...
 map.on("load", () => {
-  // Inicia a rotação após 5 segundos de inatividade
   setTimeout(() => {
     isRotating = true;
-    rotateCamera(0); // Inicia a animação da rotação
+    rotateCamera(0); 
   }, 100000);
 
   map.setFog({
@@ -263,13 +241,10 @@ map.on("load", () => {
     'star-intensity': 0.8
   })
 
-  // Nova camada WMS
   map.addSource('batimetria25mLayer', {
     'type': 'raster',
     'tiles': [
       'https://gis4cloud.pt/geoserver/wms?service=WMS&request=GetMap&layers=grupo4_ptas2024:Aveiro&styles=&format=image%2Fpng&transparent=true&version=1.1.1&width=256&height=256&srs=EPSG%3A3857&bbox={bbox-epsg-3857}'
-
-      //'https://gis4cloud.pt/geoserver/wms?service=WMS&request=GetMap&layers=grupo4_ptas2024:Aveiro_25m&styles=&format=image%2Fpng&transparent=true&version=1.1.1&width=256&height=256&srs=EPSG%3A3857&bbox={bbox-epsg-3857}'
     ],
     'tileSize': 256
   });
@@ -305,7 +280,6 @@ map.on("load", () => {
     let estacao = '';
     let imagemHTML = '';
 
-    // Verifica se o imgurl é diferente do URL específico antes de adicionar ao HTML
     if (imgurl !== "https://upload.wikimedia.org/wikipedia/commons/d/d1/Image_not_available.png") {
       imagemHTML = `<p><img src="${imgurl}" alt="Imagem" width="200px" height="150px"/></p>`;
     }
@@ -321,7 +295,6 @@ map.on("load", () => {
         <p><button class="btnPraias" id="estacao-barra">Ver Informações
         <i class="fas fa-info-circle" style="font-size: 18px; margin-left: 5px;"></i></button></p>
       `;
-      // Retorne apenas o conteúdo específico para 'barra'
       return `
         <h6><b>Tipo:</b> ${tabela}</h6>
         ${estacao}
@@ -360,10 +333,8 @@ map.on("load", () => {
       `;
     }
 
-    // Obter o nome amigável da tabela
     const nomeTratado = nomesTratados[tabela] || tabela;
 
-    // Conteúdo padrão para outros tipos de tabelas
     return `
       <h6><b>Tipo:</b> ${nomeTratado}</h6>
         ${imagemHTML}
@@ -378,7 +349,6 @@ map.on("load", () => {
 
   document.addEventListener('click', function (e) {
     if (e.target && e.target.id === 'saber-mais') {
-      // Parsear o JSON armazenado no atributo de data
       let extraInfo = JSON.parse(e.target.getAttribute('data-extra-info'));
       openModalWithExtraInfo(extraInfo);
     }
@@ -390,7 +360,6 @@ map.on("load", () => {
 
     var modal = document.getElementById('infoModal');
 
-    // Get the element to display the content in the modal
     var contentElement = document.getElementById('modalContent');
 
     var heightsArray = Object.keys(mareHeights.heights).map(function (key) {
@@ -401,10 +370,8 @@ map.on("load", () => {
       return mareHeights.times[key];
     });
 
-    // Agora você tem arrays de alturas e tempos que podem ser usados para criar o gráfico
     createChart(heightsArray, timesArray);
 
-    // Construct the HTML for the extra information
     var extraHTML = `
       <p><b>Informação sobre o mar:</b></p>
       <p><b>Velocidade do Vento:</b> ${extraInfo.velocidadevento || 'Desconhecido'}</p>
@@ -417,28 +384,22 @@ map.on("load", () => {
       <p><b>Baixa-mar:</b> ${extraInfo.mare_low_tides || 'Desconhecido'}</p>
     `;
 
-    // Set the content of the modal
     contentElement.innerHTML = extraHTML;
 
-    // Display the modal
     modal.style.display = 'block';
     modal.style.display = 'flex';
   }
 
-  // Defina uma variável fora da função para manter o gráfico
   var chart;
 
   function createChart(heights, times) {
-    // Certifique-se de que ambos 'heights' e 'times' são arrays
     if (Array.isArray(heights) && Array.isArray(times)) {
       var ctx = document.getElementById('mareGraph').getContext('2d');
 
-      // Destrua o gráfico existente se ele já existir
       if (chart) {
         chart.destroy();
       }
 
-      // Crie um novo gráfico
       chart = new Chart(ctx, {
         type: 'line',
         data: {
@@ -484,18 +445,16 @@ map.on("load", () => {
   loadStream('video7', 'https://video-auth1.iol.pt/beachcam/bcmira/playlist.m3u8');
 
   function addLayers() {
-    let currentPopup = null; // Variável para armazenar o popup atual
-    let closePopupTimeout = null; // Variável para armazenar o timeout
+    let currentPopup = null; 
+    let closePopupTimeout = null; 
 
     tabelas.forEach((tabela) => {
-      // Busca os dados da tabela
-      //https://gis4cloud.com/grupo4_ptas2024/
-      fetch(`bd.php?tabela=${tabela}`)
+      fetch(`https://gis4cloud.com/grupo4_ptas2024/bd.php?tabela=${tabela}`)
         .then((response) => {
           if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
           }
-          return response.json(); // Assuming the response is JSON
+          return response.json();
         })
         .then((data) => {
           map.addSource(tabela, {
@@ -503,18 +462,14 @@ map.on("load", () => {
             data: data,
           });
 
-          // Carrega a imagem do ícone
           map.loadImage(getLayerImage(tabela), function (error, image) {
             if (error) {
               console.error("Error loading image:", error);
-              // Handle errors gracefully
               return;
             }
 
-            // Adiciona a imagem ao mapa
             map.addImage(tabela, image);
 
-            // Adiciona uma nova camada ao mapa usando os dados e a imagem
             map.addLayer({
               id: tabela,
               type: "symbol",
@@ -527,13 +482,11 @@ map.on("load", () => {
               },
             });
 
-            // Cria um popup, mas não o adiciona ao mapa ainda.
             const popup = new mapboxgl.Popup({
-              closeButton: true, // Adiciona o botão de fechar
+              closeButton: true, 
               closeOnClick: false,
             });
 
-            // Função para fechar o popup atual se existir
             function closeCurrentPopup() {
               if (currentPopup) {
                 currentPopup.remove();
@@ -541,32 +494,24 @@ map.on("load", () => {
               }
             }
 
-            // Quando o mouse entra em um ponto na camada dentro da isocrona...
             map.on("mouseenter", tabela + "_within", function (e) {
-              closeCurrentPopup(); // Fecha o popup atual
+              closeCurrentPopup(); 
               if (closePopupTimeout) {
                 clearTimeout(closePopupTimeout);
                 closePopupTimeout = null;
               }
 
-              // Muda o estilo do cursor como um indicador de interface do usuário.
               map.getCanvas().style.cursor = "pointer";
 
-              // Copia a matriz de coordenadas.
               const coordinates = e.features[0].geometry.coordinates.slice();
               const nome = e.features[0].properties.nome ? e.features[0].properties.nome : 'Desconhecido';
               const imgurl = e.features[0].properties.imgurl ? e.features[0].properties.imgurl : 'Imagem desconhecida';
-              // Construa a URL do Google Maps Street View com as coordenadas do ponto
               var streetViewUrl = `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${coordinates[1]},${coordinates[0]}`;
 
-              // Garante que se o mapa estiver ampliado de tal forma que várias
-              // cópias do recurso estejam visíveis, o popup apareça
-              // sobre a cópia que está sendo apontada.
               while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
                 coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
               }
 
-              // Faz a chamada à API de reversão do OpenStreetMap para obter o endereço
               fetch(`https://nominatim.openstreetmap.org/reverse?lat=${coordinates[1]}&lon=${coordinates[0]}&format=json`)
                 .then(response => response.json())
                 .then(data => {
@@ -579,15 +524,13 @@ map.on("load", () => {
                     <p><strong>Código Postal:</strong> ${codigoPostal}</p>
                     <p><strong>Cidade:</strong> ${cidade}</p>
                   `;
-                  // Preenche o popup e define suas coordenadas
-                  // com base no recurso encontrado.
+
                   popup
                     .setLngLat(coordinates)
                     .setHTML(createPopupHTMLPI(tabela, nome, addressHTML, streetViewUrl, imgurl))
                     .addTo(map);
-                  currentPopup = popup; // Armazena o popup atual
+                  currentPopup = popup; 
 
-                  // Adiciona o manipulador de eventos para o botão "Adicionar à rota"
                   document.getElementById("add_PI_to_Route").addEventListener("click", function () {
                     addToRoute(coordinates);
                   });
@@ -595,34 +538,27 @@ map.on("load", () => {
                 .catch(error => console.error("Error fetching address:", error));
             });
 
-            // Quando o mouse sai de um ponto na camada...
             map.on("mouseleave", tabela + "_within", function () {
               map.getCanvas().style.cursor = "";
-              // Define o temporizador para fechar o popup após 2 segundos
               closePopupTimeout = setTimeout(() => {
-                closeCurrentPopup(); // Fecha o popup atual
+                closeCurrentPopup(); 
               }, 2000);
             });
 
-            // Quando o mouse entra em um ponto na camada...
             map.on("mouseenter", tabela, function (e) {
-              closeCurrentPopup(); // Fecha o popup atual
+              closeCurrentPopup();
               if (closePopupTimeout) {
                 clearTimeout(closePopupTimeout);
                 closePopupTimeout = null;
               }
-              // Muda o estilo do cursor como um indicador de interface do usuário.
+
               map.getCanvas().style.cursor = "pointer";
               const properties = e.features[0].properties;
-              // Copia a matriz de coordenadas.
               const coordinates = e.features[0].geometry.coordinates.slice();
               const nome = e.features[0].properties.nome ? e.features[0].properties.nome : 'Desconhecido';
               const imgurl = e.features[0].properties.imgurl ? e.features[0].properties.imgurl : 'Imagem desconhecida';
-              // Construa a URL do Google Maps Street View com as coordenadas do ponto
               var streetViewUrl = `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${coordinates[1]},${coordinates[0]}`;
 
-
-              // Verifica se a tabela é 'ondas' e extrai informações adicionais se verdadeiro
               let extraInfo = {};
               if (tabela === 'ondas') {
                 extraInfo = {
@@ -637,14 +573,11 @@ map.on("load", () => {
                   mare_heights: e.features[0].properties.mare_heights
                 };
               }
-              // Garante que se o mapa estiver ampliado de tal forma que várias
-              // cópias do recurso estejam visíveis, o popup apareça
-              // sobre a cópia que está sendo apontada.
+
               while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
                 coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
               }
 
-              // Faz a chamada à API de reversão do OpenStreetMap para obter o endereço
               fetch(`https://nominatim.openstreetmap.org/reverse?lat=${coordinates[1]}&lon=${coordinates[0]}&format=json`)
                 .then(response => response.json())
                 .then(data => {
@@ -657,15 +590,13 @@ map.on("load", () => {
                     <p><strong>Código Postal:</strong> ${codigoPostal}</p>
                     <p><strong>Cidade:</strong> ${cidade}</p>
                   `;
-                  // Preenche o popup e define suas coordenadas
-                  // com base no recurso encontrado.
+
                   popup
                     .setLngLat(coordinates)
                     .setHTML(createPopupHTMLPI(tabela, nome, addressHTML, streetViewUrl, imgurl, extraInfo))
                     .addTo(map);
                   currentPopup = popup;
 
-                  // Adiciona o manipulador de eventos para o botão "Adicionar à rota"
                   document.getElementById("add_PI_to_Route").addEventListener("click", function () {
                     addToRoute(coordinates);
                   });
@@ -673,44 +604,37 @@ map.on("load", () => {
                 .catch(error => console.error("Error fetching address:", error));
             });
 
-            // Quando o mouse sai de um ponto na camada...
             map.on("mouseleave", tabela, function () {
               map.getCanvas().style.cursor = "";
-              // Define o temporizador para fechar o popup após 2 segundos
               closePopupTimeout = setTimeout(() => {
-                closeCurrentPopup(); // Fecha o popup atual
+                closeCurrentPopup(); 
               }, 2000);
             });
           });
         })
-        .catch((error) => console.error("Error:", error)); // Regista qualquer erro que ocorra
+        .catch((error) => console.error("Error:", error));
     });
   }
 
   function addHeatMap() {
     tabelas.forEach((tabela) => {
-      // Busca os dados da tabela
-      //https://gis4cloud.com/grupo4_ptas2024/
-      fetch(`bd.php?tabela=${tabela}`)
+      fetch(`https://gis4cloud.com/grupo4_ptas2024/bd.php?tabela=${tabela}`)
         .then((response) => {
           if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
           }
-          return response.json(); // Assuming the response is JSON
+          return response.json(); 
         })
         .then((data) => {
-          // Verifica se já existe uma fonte com o ID 'heatmap-data-{tabela}'
           const sourceId = `heatmap-data-${tabela}`;
           const layerId = `heatmap-layer-${tabela}`;
 
           if (!map.getSource(sourceId)) {
-            // Adiciona a fonte 'heatmap-data' ao mapa
             map.addSource(sourceId, {
               type: 'geojson',
               data: data
             });
 
-            // Adiciona a camada 'heatmap-layer' ao mapa
             map.addLayer({
               'id': layerId,
               'type': 'heatmap',
@@ -721,25 +645,21 @@ map.on("load", () => {
     });
   }
 
-  // Função para remover o heatmap
   function removeHeatMap() {
     tabelas.forEach((tabela) => {
       const sourceId = `heatmap-data-${tabela}`;
       const layerId = `heatmap-layer-${tabela}`;
 
-      // Remove a camada do heatmap
       if (map.getLayer(layerId)) {
         map.removeLayer(layerId);
       }
 
-      // Remove a fonte de dados do heatmap
       if (map.getSource(sourceId)) {
         map.removeSource(sourceId);
       }
     });
   }
 
-  // Adiciona um event listener para o checkbox do heatmap
   document.getElementById("heatmap").addEventListener("change", function () {
     if (this.checked) {
       addHeatMap();
@@ -761,8 +681,6 @@ map.on("load", () => {
   ];
 
   function createPopupHTML(properties) {
-
-    // Constrói e retorna o HTML para o popup com base nas propriedades do percurso
 
     return `
 
@@ -788,8 +706,6 @@ map.on("load", () => {
 
   }
   function createPopupHTML_Nauticos(properties) {
-
-    // Constrói e retorna o HTML para o popup com base nas propriedades do percurso
 
     return `
 
@@ -818,29 +734,27 @@ map.on("load", () => {
 
   }
 
-  let currentPopup = null; // Variável para armazenar o popup atual
-
-  // Objeto mapeando os percursos às suas cores
+  let currentPopup = null;
 
   const coresDosPercursos = {
 
-    "percurso_azul": "#0000FF", // Azul
+    "percurso_azul": "#0000FF",
 
-    "percurso_dourado": "#FFD700", // Dourado
+    "percurso_dourado": "#FFD700",
 
-    "percurso_verde": "#008000", // Verde
+    "percurso_verde": "#008000",
 
-    "percurso_natureza": "#2E8B57", // Um verde mais natural
+    "percurso_natureza": "#2E8B57", 
 
-    "percurso_salreu": "#ADD8E6", // Um azul claro, por exemplo
+    "percurso_salreu": "#ADD8E6",
 
-    "percurso_fermela": "#FFC0CB", // Rosa, apenas como exemplo
+    "percurso_fermela": "#FFC0CB", 
 
-    "percurso_pardilho": "#A52A2A", // Marrom, apenas como exemplo
+    "percurso_pardilho": "#A52A2A", 
 
-    "percurso_veiros": "#FFFF00", // Amarelo, apenas como exemplo
+    "percurso_veiros": "#FFFF00", 
 
-    "percurso_btt": "#FFA500" // Laranja, apenas como exemplo
+    "percurso_btt": "#FFA500" 
   };
 
   const coresDosPercursosNauticos = {
@@ -864,11 +778,9 @@ map.on("load", () => {
 
     fetch(`https://gis4cloud.com/grupo4_ptas2024/percursos.php?tabela=${percurso}`)
 
-      .then((response) => response.json()) // Converte a resposta em JSON
+      .then((response) => response.json()) 
 
       .then((data) => {
-
-        // Adiciona os dados do percurso ao mapa como uma nova fonte
 
         map.addSource(percurso, {
 
@@ -877,10 +789,6 @@ map.on("load", () => {
           data: data,
 
         });
-
-
-
-        // Adiciona uma nova camada ao mapa para renderizar o percurso
 
         map.addLayer({
 
@@ -902,43 +810,26 @@ map.on("load", () => {
 
           paint: {
 
-            "line-color": coresDosPercursos[percurso], // Define a cor da linha com base no mapeamento
+            "line-color": coresDosPercursos[percurso], 
 
-            "line-width": 5, // Exemplo de largura da linha
+            "line-width": 5,
 
           },
 
         });
 
-
-
-        // Adiciona evento para exibir popup quando o mouse entra na camada do percurso
-
         map.on('mouseenter', percurso, function (e) {
-
-          // Certifique-se de que as propriedades do percurso estão presentes
-
           if (e.features.length > 0) {
 
             var feature = e.features[0];
 
-            // Cria o HTML para o popup com base nas propriedades do percurso
-
             var popupHTML = createPopupHTML(feature.properties);
-
-
-
-            // Fecha o popup atual se existir
 
             if (currentPopup) {
 
               currentPopup.remove();
 
             }
-
-
-
-            // Cria e exibe o popup
 
             currentPopup = new mapboxgl.Popup()
 
@@ -952,10 +843,6 @@ map.on("load", () => {
 
         });
 
-
-
-        // Adiciona evento para ocultar o popup quando o mouse sai da camada do percurso
-
         map.on('mouseleave', percurso, function () {
 
           map.getCanvas().style.cursor = '';
@@ -964,7 +851,7 @@ map.on("load", () => {
 
             currentPopup.remove();
 
-            currentPopup = null; // Reseta a variável currentPopup
+            currentPopup = null;
 
           }
         });
@@ -988,18 +875,16 @@ map.on("load", () => {
 
   percursos_nauticos.forEach(function (percurso_nautico) {
     fetch(`https://gis4cloud.com/grupo4_ptas2024/percursos_nauticos.php?tabela=${percurso_nautico}`)
-      .then((response) => response.json()) // Converte a resposta em JSON
+      .then((response) => response.json())
       .then((data) => {
-        // Adiciona os dados do percurso ao mapa como uma nova fonte
         map.addSource(percurso_nautico, {
           type: "geojson",
           data: data,
         });
 
-        // Adiciona uma nova camada ao mapa para renderizar o percurso
         map.addLayer({
           id: percurso_nautico,
-          type: "line", // Tipo de geometria do percurso, pode ser 'line' ou 'fill', dependendo do que você tem no banco de dados
+          type: "line",
           source: percurso_nautico,
           layout: {
             "line-join": "round",
@@ -1008,42 +893,26 @@ map.on("load", () => {
           },
           paint: {
 
-            "line-color": coresDosPercursosNauticos[percurso_nautico], // Define a cor da linha com base no mapeamento
+            "line-color": coresDosPercursosNauticos[percurso_nautico],
 
-            "line-width": 5, // Exemplo de largura da linha
+            "line-width": 5,
 
           },
         });
 
-
-
-        // Adiciona evento para exibir popup quando o mouse entra na camada do percurso
-
         map.on('mouseenter', percurso_nautico, function (e) {
-
-          // Certifique-se de que as propriedades do percurso estão presentes
 
           if (e.features.length > 0) {
 
             var feature = e.features[0];
 
-            // Cria o HTML para o popup com base nas propriedades do percurso
-
             var popupHTML = createPopupHTML_Nauticos(feature.properties);
-
-
-
-            // Fecha o popup atual se existir
 
             if (currentPopup) {
 
               currentPopup.remove();
 
             }
-
-
-
-            // Cria e exibe o popup
 
             currentPopup = new mapboxgl.Popup()
 
@@ -1057,10 +926,6 @@ map.on("load", () => {
 
         });
 
-
-
-        // Adiciona evento para ocultar o popup quando o mouse sai da camada do percurso
-
         map.on('mouseleave', percurso_nautico, function () {
 
           map.getCanvas().style.cursor = '';
@@ -1069,17 +934,15 @@ map.on("load", () => {
 
             currentPopup.remove();
 
-            currentPopup = null; // Reseta a variável currentPopup
+            currentPopup = null;
 
           }
         });
       });
   });
 
-  // Adiciona as camadas ao mapa quando o mapa é carregado pela primeira vez.
   addLayers();
 
-  // Adiciona as camadas ao mapa sempre que o estilo do mapa é alterado.
   map.on("style.load", addLayers);
 
   const layerClasses = {
@@ -1192,13 +1055,10 @@ map.on("load", () => {
     voleipraia: "Vólei de Praia",
   };
 
-  // Adicione uma variável para rastrear se os links das layers já foram adicionados
   let layersAdded = false;
 
   map.on("idle", () => {
-    // Verifique se os links das layers já foram adicionados
     if (!layersAdded) {
-      // Se não, adicione os links das layers às classes
       for (const [classId, layers] of Object.entries(layerClasses)) {
         const layersDiv = document.querySelector(`#${classId} .layers`);
         for (const layer of layers) {
@@ -1225,7 +1085,6 @@ map.on("load", () => {
         }
       }
 
-      // Adicionar botões de batimetria à div com ID "Batimetrias"
       const batimetriaDiv = document.querySelector("#Batimetrias .layers");
       const batimetriaLayers = ["batimetria25m", "batimetria2m"];
 
@@ -1252,7 +1111,6 @@ map.on("load", () => {
         batimetriaDiv.appendChild(layerContainer);
       }
 
-      // Atualize a variável para indicar que os links das layers foram adicionados
       layersAdded = true;
     }
   });
@@ -1279,12 +1137,10 @@ map.on("load", () => {
   }
 
   function toggleLayerVisibility(layer, switchElement) {
-    // Verifique tanto a camada original quanto a camada dentro da isocrona
     const layerId = [layer, layer + "_within"].find((id) => map.getLayer(id));
     if (layerId) {
       const visibility = map.getLayoutProperty(layerId, "visibility");
 
-      // Alterna a visibilidade da camada.
       if (visibility === "visible") {
         map.setLayoutProperty(layerId, "visibility", "none");
         switchElement.checked = false;
@@ -1295,7 +1151,6 @@ map.on("load", () => {
     }
   }
 
-  // Função para obter a imagem do ícone para uma tabela
   function getLayerImage(tabela) {
     switch (tabela) {
       case "point_alojamento_local":
@@ -1334,14 +1189,6 @@ map.on("load", () => {
         return "imagens/ondas.png";
       case "paragensautocarro":
         return "imagens/paragensautocarro.png";
-      /* case "percurso_azul":
-        return "imagens/percurso_azul.png";
-      case "percurso_dourado":
-        return "imagens/percurso_dourado.png";
-      case "percurso_natureza":
-        return "imagens/percurso_natureza.png";
-      case "percurso_verde":
-        return "imagens/percurso_verde.png"; */
       case "point_porto":
         return "imagens/porto.png";
       case "praias":
@@ -1350,8 +1197,6 @@ map.on("load", () => {
         return "imagens/windsign.png";
       case "restaurantes":
         return "imagens/restaurantes.png";
-      /*       case "ria_aveiro":
-        return "imagens/ria_aveiro.png"; */
       case "point_surf":
         return "imagens/surf.png";
       case "terminal_ferry":
@@ -1362,73 +1207,35 @@ map.on("load", () => {
         return "imagens/voleipraia.png";
     }
   }
-  /*   map.addSource("batimetria5m", {
-    type: "raster",
-    tiles: [
-      "https://gis4cloud.pt/geoserver/wms?service=WMS&request=GetMap&layers=grupo4_ptas2024:Aveiro%20Batimetria%20Reclassificada&styles=&format=image%2Fpng&transparent=true&version=1.1.1&width=256&height=256&srs=EPSG%3A3857&bbox={bbox-epsg-3857}",
-    ],
-    tileSize: 256,
-  });
-
-  map.addLayer({
-    id: "batimetria5m",
-    type: "raster",
-    source: "batimetria5m",
-    paint: {},
-  }); */
-  /*   map.addSource("batimetria25m", {
-    type: "raster",
-    tiles: [
-      "https://gis4cloud.pt/geoserver/grupo4_ptas2024/wms?service=WMS&version=1.1.0&request=GetMap&layers=grupo4_ptas2024%3AAveiro&bbox=-54562.5%2C104837.5%2C-44187.5%2C112287.5&width=768&height=551&srs=EPSG%3A3763&styles=&format=application/openlayers",
-    ],
-    tileSize: 256,
-  });
- 
-  map.addLayer({
-    id: "batimetria25m",
-    type: "raster",
-    source: "batimetria25m",
-    paint: {},
-  }); */
 });
 
-// Quando o estilo do mapa terminar de carregar...
 map.on("style.load", () => {
-  // Define a propriedade "lightPreset" do mapa para "dusk"
   map.setConfigProperty("basemap", "lightPreset", "dusk");
   updateIsochroneColor("dusk");
 });
 
 
-// Função para atualizar a cor da camada isócrona
 function updateIsochroneColor(periodType) {
   let color;
   if (periodType === "dusk" || periodType === "night") {
-    color = "#FFE900"; // Uma cor mais clara para melhor visibilidade
+    color = "#FFE900"; 
   } else {
-    color = "#5a3fc0"; // A cor padrão
+    color = "#5a3fc0"; 
   }
-  // Atualize a propriedade 'fill-color' da camada isócrona
   map.setPaintProperty("isochrone", "fill-color", color);
 }
 
-
-// Função para selecionar o período do dia
 function selectPeriod(periodType) {
-  // Verifica se o período já está selecionado
   const isSelected = document.querySelector(`.periods .option[data-value="${periodType}"]`).classList.contains('selected');
 
-  // Se o período já estiver selecionado, não faz nada
   if (isSelected) {
     return;
   }
 
-  // Remove a seleção de todos os períodos
   document.querySelectorAll('.periods .option').forEach(option => {
     option.classList.remove('selected');
   });
 
-  // Adiciona a seleção apenas ao período clicado
   document.querySelector(`.periods .option[data-value="${periodType}"]`).classList.add('selected');
 
   document.querySelectorAll('.periods .option').forEach(option => {
@@ -1449,24 +1256,18 @@ function selectPeriod(periodType) {
   updateIsochroneColor(periodType);
 }
 
-// Quando o estado do elemento "selectAll" mudar...
 document.getElementById("selectAll").addEventListener("change", function () {
-  // Atualiza todas as configurações para o novo estado
   configIds.forEach((id) => map.setConfigProperty("basemap", id, this.checked));
 });
 
-// Para cada checkbox dentro do elemento '.map-overlay-inner'...
 document
   .querySelectorAll('.map-overlay-inner input[type="checkbox"]')
   .forEach((checkbox) => {
-    // Quando o estado do checkbox mudar...
     checkbox.addEventListener("change", function () {
-      // Atualiza a configuração correspondente para o novo estado
       map.setConfigProperty("basemap", this.id, this.checked);
     });
   });
 
-// Define os IDs das configurações
 const configIds = [
   "showPlaceLabels",
   "showPointOfInterestLabels",
@@ -1501,17 +1302,13 @@ function toggleArrow(element) {
   element.querySelector("span").classList.toggle("fa-arrow-down");
 }
 
-// Armazene as coordenadas do último ponto clicado
 var lastClickedPoint = null;
 
-// Verifica se a fonte já existe antes de adicionar uma nova fonte
 function addOrUpdateSource(sourceId, data) {
   const source = map.getSource(sourceId);
   if (source) {
-    // Se a fonte já existir, atualize os dados
     source.setData(data);
   } else {
-    // Se a fonte não existir, adicione-a
     map.addSource(sourceId, {
       type: "geojson",
       data: data,
@@ -1519,30 +1316,23 @@ function addOrUpdateSource(sourceId, data) {
   }
 }
 
-// Variável para verificar se o utilizador já clicou no mapa
 var mapClicked = false;
 
-// Função para calcular a isócrona
 function calculateIsochrone() {
-  // Se nenhum ponto foi clicado ainda, retorne
   if (mapClicked == false) {
     return;
   }
 
-  // Restaure os dados originais para todas as tabelas
   for (const [tabela, data] of Object.entries(originalPointsData)) {
-    // Verifique se a fonte de dados já está adicionada
     if (!map.getSource(tabela)) {
       addOrUpdateSource(tabela, data);
     }
   }
-  // Se nenhum ponto foi clicado ainda, retorne
+
   if (lastClickedPoint === null) return;
 
-  // Obtenha as coordenadas do último ponto clicado
   var coordinates = lastClickedPoint;
 
-  // Obtenha os elementos selecionados dinamicamente
   var selectedVehicle = document.querySelector('.veiculos .option.selected');
   var routingProfile = selectedVehicle ? selectedVehicle.getAttribute('data-value') : null;
 
@@ -1552,35 +1342,29 @@ function calculateIsochrone() {
   var sliderValue = document.getElementById("myRange").value;
   var contour;
 
-  // Determine o valor de contour com base no tipo de métrica selecionada
   if (contourType === 'minutes') {
     contour = valuesMinutos[sliderValue];
   } else if (contourType === 'meters') {
     contour = valuesMetros[sliderValue];
   } else {
-    contour = ''; // Ou outro valor padrão apropriado ao seu caso
+    contour = ''; 
   }
 
-  // Construa a URL da API do Mapbox Isochrone
   var apiUrl = `https://api.mapbox.com/isochrone/v1/mapbox/${routingProfile}/${coordinates.lng}%2C${coordinates.lat}?contours_${contourType}=${contour}&polygons=true&denoise=1&access_token=pk.eyJ1Ijoic2RhbmllbHNpbHZhIiwiYSI6ImNsdmY0bTUwNDAzbWwyamw4NjUwMW5paTUifQ.0MAtfqLmatOkT_NjHAo9Ag`;
 
-  // Se a camada de isócrona já existir, remova-a
   if (map.getLayer("isochrone")) {
     map.removeLayer("isochrone");
     map.removeSource("isochrone");
   }
 
-  // Faça uma solicitação para a API do Mapbox Isochrone
   fetch(apiUrl)
     .then((response) => response.json())
     .then((data) => {
-      // Adicione os dados ao mapa como uma nova fonte
       map.addSource("isochrone", {
         type: "geojson",
         data: data,
       });
 
-      // Adicione uma nova camada ao mapa usando os dados
       map.addLayer({
         id: "isochrone",
         type: "fill",
@@ -1595,25 +1379,19 @@ function calculateIsochrone() {
       const periodType = document.querySelector('.periods .option.selected').getAttribute('data-value');
       updateIsochroneColor(periodType);
 
-      // Ajuste o zoom do mapa para caber na isócrona
       var bounds = new mapboxgl.LngLatBounds();
       data.features[0].geometry.coordinates[0].forEach((coord) =>
         bounds.extend(coord)
       );
       map.fitBounds(bounds, { padding: 20 });
 
-      // Para cada tabela de dados...
       tabelas.forEach((tabela) => {
-        // Verifica se a fonte de dados está definida
         const source = map.getSource(tabela);
         if (source) {
-          // Se a fonte de dados existe, então você pode acessá-la
           const pointsData = source._data;
 
-          // Armazene os dados dos pontos originais
           originalPointsData[tabela] = pointsData;
 
-          // Use a função turf.pointsWithinPolygon para encontrar os pontos que estão dentro do polígono da isócrona
           const pointsWithin = turf.pointsWithinPolygon(pointsData, data);
 
           if (map.getLayer(tabela)) {
@@ -1621,7 +1399,6 @@ function calculateIsochrone() {
             map.removeSource(tabela);
           }
 
-          // Adiciona os pontos dentro da isócrona ao mapa como uma nova fonte
           if (map.getLayer(tabela + "_within")) {
             map.removeLayer(tabela + "_within");
           }
@@ -1630,30 +1407,26 @@ function calculateIsochrone() {
           }
           addOrUpdateSource(tabela + "_within", pointsWithin);
 
-          // Adiciona uma nova camada ao mapa usando os pontos dentro da isócrona
           map.addLayer({
             id: tabela + "_within",
             type: "symbol",
             source: tabela + "_within",
             layout: {
               "icon-image": tabela,
-              "icon-size": 0.02, // Altere o tamanho do ícone conforme necessário
+              "icon-size": 0.02,
               "icon-allow-overlap": true,
             },
           });
         } else {
-          // Se a fonte de dados não está definida, lida com isso de alguma forma
           console.error("Fonte de dados não encontrada para tabela: ", tabela);
         }
       });
     });
 }
 
-// Quando o usuário clica no mapa...
 map.on("click", function (e) {
   mapClicked = true;
 
-  // Atualize o último ponto clicado
   lastClickedPoint = e.lngLat;
 
   tabelas.forEach((tabela) => {
@@ -1663,7 +1436,6 @@ map.on("click", function (e) {
     }
   });
 
-  // Calcule a isócrona
   calculateIsochrone();
 });
 
@@ -1671,7 +1443,6 @@ var slider = document.getElementById("myRange");
 var output = document.getElementById("demo");
 var sliderContainer = document.getElementById("sliderContainer");
 
-// Define os valores possíveis e seus correspondentes textuais para minutos e metros
 var valuesMinutos = {
   1: "5",
   2: "10",
@@ -1689,15 +1460,12 @@ var valuesMetros = {
   5: "5000"
 };
 
-// Inicializa o valor inicial
 output.innerHTML = valuesMinutos[slider.value];
 
-// Atualiza o valor mostrado conforme o slider é movido
 slider.oninput = function () {
   updateSliderValue();
 };
 
-// Função para atualizar o valor do slider e recalcular a isócrona
 function updateSliderValue() {
   var selectedMetric = document.querySelector('.metrica .option.selected');
   var contourType = selectedMetric ? selectedMetric.getAttribute('data-value') : null;
@@ -1711,9 +1479,7 @@ function updateSliderValue() {
   calculateIsochrone();
 }
 
-// Função para selecionar a métrica (Minutos ou Metros)
 function selectMetric(metricType) {
-  // Atualiza visualmente a seleção
   document.querySelectorAll('.metrica .option').forEach(option => {
     if (option.getAttribute('data-value') === metricType) {
       option.classList.add('selected');
@@ -1722,19 +1488,16 @@ function selectMetric(metricType) {
     }
   });
 
-  // Atualiza os valores do slider com base na métrica selecionada
   if (metricType === 'minutes') {
-    slider.setAttribute('max', 6); // Define o máximo como 6 para minutos
+    slider.setAttribute('max', 6); 
     output.innerHTML = valuesMinutos[slider.value];
   } else {
-    slider.setAttribute('max', 5); // Define o máximo como 5 para metros
+    slider.setAttribute('max', 5); 
     output.innerHTML = valuesMetros[slider.value];
   }
 
-  // Mostra o slidecontainer ao selecionar minutos ou metros
   sliderContainer.style.display = 'block';
 
-  // Atualiza o valor do slider
   updateSliderValue();
 
   calculateIsochrone();
@@ -1745,24 +1508,21 @@ function selectOption(element, inputId, value) {
 
   const container = element.parentElement;
 
-  // Verifica se o elemento clicado já está selecionado
   if (element.classList.contains('selected')) {
     element.classList.remove('selected');
     if (input) {
-      input.value = ''; // Limpa o valor do input se encontrado
+      input.value = '';
     } else {
       console.warn("Input element not found with ID:", inputId);
     }
   } else {
-    // Deseleciona todas as outras opções dentro do mesmo container
     container.querySelectorAll('.option').forEach(option => {
       option.classList.remove('selected');
     });
 
-    // Seleciona o elemento clicado
     element.classList.add('selected');
     if (input) {
-      input.value = value; // Define o valor do input como o valor selecionado se encontrado
+      input.value = value; 
     } else {
       console.warn("Input element not found with ID:", inputId);
     }
@@ -1771,19 +1531,15 @@ function selectOption(element, inputId, value) {
   calculateIsochrone();
 }
 
-// Função para limpar todas as isócronas do mapa
 function limparIsocronas() {
-  // Remover a camada de isócronas, se existir
   if (map.getLayer("isochrone")) {
     map.removeLayer("isochrone");
   }
 
-  // Remover a fonte de isócronas, se existir
   if (map.getSource("isochrone")) {
     map.removeSource("isochrone");
   }
 
-  // Limpar as fontes e camadas de pontos dentro das isócronas
   tabelas.forEach((tabela) => {
     const sourceWithinId = tabela + "_within";
     if (map.getLayer(sourceWithinId)) {
@@ -1794,11 +1550,9 @@ function limparIsocronas() {
     }
   });
 
-  // Limpar a referência do último ponto clicado
   lastClickedPoint = null;
   refreshLayersAfterClear();
 
-  // Limpar os campos de pesquisa de moradas
   document.getElementById("addressInputA").value = "";
   document.getElementById("addressInputB").value = "";
   document.getElementById("addressInputIntermedio").value = "";
@@ -1808,7 +1562,7 @@ function limparIsocronas() {
 var weatherMarker;
 var openWeatherMapApiKey = "c2d56cde527ab835895db4be206e6c9d";
 
-var popup_tempo; // Mantenha uma referência ao popup atual aqui
+var popup_tempo; 
 var isMarkerBeingDragged = false;
 
 document.getElementById("addWeatherPoint").addEventListener("click", function () {
@@ -1823,39 +1577,32 @@ document.getElementById("addWeatherPoint").addEventListener("click", function ()
       fetchWeatherData(weatherMarker.getLngLat());
     });
 
-  // Fetch weather data immediately after adding the marker
   fetchWeatherData(center);
 });
 
 function fetchWeatherData(lngLat) {
   isMarkerBeingDragged = true;
 
-  // Construa a URL da API do OpenWeatherMap
   var apiUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lngLat.lat}&lon=${lngLat.lng}&appid=${openWeatherMapApiKey}`;
 
-  // Faça uma solicitação para a API do OpenWeatherMap
   fetch(apiUrl)
     .then((response) => response.json())
     .then((data) => {
-      // Os dados meteorológicos estão agora no objeto de dados
-      var temperature = data.main.temp - 273.15; // Converta a temperatura de Kelvin para Celsius
-      var feelsLike = data.main.feels_like - 273.15; // Converta a sensação térmica de Kelvin para Celsius
-      var tempMin = data.main.temp_min - 273.15; // Converta a temperatura mínima de Kelvin para Celsius
-      var tempMax = data.main.temp_max - 273.15; // Converta a temperatura máxima de Kelvin para Celsius
-      var humidity = data.main.humidity; // Humidade
-      var seaLevel = data.main.sea_level; // Nível do mar
-      var windSpeed = data.wind.speed * 3.6; // Converta a velocidade do vento de m/s para km/h
-      var weatherIcon = data.weather[0].icon; // Obtenha o ícone do tempo
+      var temperature = data.main.temp - 273.15; 
+      var feelsLike = data.main.feels_like - 273.15; 
+      var tempMin = data.main.temp_min - 273.15;
+      var tempMax = data.main.temp_max - 273.15; 
+      var humidity = data.main.humidity; 
+      var seaLevel = data.main.sea_level; 
+      var windSpeed = data.wind.speed * 3.6; 
+      var weatherIcon = data.weather[0].icon; 
 
-      // Construa a URL do ícone do tempo
       var weatherIconUrl = `http://openweathermap.org/img/w/${weatherIcon}.png`;
 
-      // Remova o popup_tempo existente, se houver
       if (popup_tempo) {
         popup_tempo.remove();
       }
 
-      // Agora você pode adicionar um popup_tempo ao mapa na localização clicada com as informações meteorológicas
       popup_tempo = new mapboxgl.Popup({ offset: 25 })
         .setLngLat(lngLat)
         .setHTML(
@@ -1880,10 +1627,9 @@ function fetchWeatherData(lngLat) {
 }
 
 document.getElementById("addPointA").addEventListener("click", function () {
-  // Se o marcador A já existir, remova-o
+
   if (markerA) markerA.remove();
 
-  // Adicione um novo marcador A no centro do mapa
   markerA = new mapboxgl.Marker({ color: "red", draggable: true })
     .setLngLat(map.getCenter())
     .addTo(map);
@@ -1896,7 +1642,6 @@ document.getElementById("addPointA").addEventListener("click", function () {
 
   markerA.setPopup(popupA);
 
-  // Adiciona evento de clique ao popup para remover o marcador
   popupA.getElement().addEventListener('click', function () {
     if (markerA) {
       markerA.remove();
@@ -1906,10 +1651,9 @@ document.getElementById("addPointA").addEventListener("click", function () {
 });
 
 document.getElementById("addPointB").addEventListener("click", function () {
-  // Se o marcador B já existir, remova-o
+
   if (markerB) markerB.remove();
 
-  // Adicione um novo marcador B no centro do mapa
   markerB = new mapboxgl.Marker({ color: "blue", draggable: true })
     .setLngLat(map.getCenter())
     .addTo(map);
@@ -1922,7 +1666,6 @@ document.getElementById("addPointB").addEventListener("click", function () {
 
   markerB.setPopup(popupB);
 
-  // Adiciona evento de clique ao popup para remover o marcador
   popupB.getElement().addEventListener('click', function () {
     if (markerB) {
       markerB.remove();
@@ -1932,10 +1675,9 @@ document.getElementById("addPointB").addEventListener("click", function () {
 });
 
 document.getElementById("addPointIntermedio").addEventListener("click", function () {
-  // Se o marcador intermédio já existir, remova-o
+
   if (markerIntermedio) markerIntermedio.remove();
 
-  // Adicione um novo marcador B no centro do mapa
   markerIntermedio = new mapboxgl.Marker({ color: "orange", draggable: true })
     .setLngLat(map.getCenter())
     .addTo(map);
@@ -1948,7 +1690,6 @@ document.getElementById("addPointIntermedio").addEventListener("click", function
 
   markerIntermedio.setPopup(popupIntermedio);
 
-  // Adiciona evento de clique ao popup para remover o marcador
   popupIntermedio.getElement().addEventListener('click', function () {
     if (markerIntermedio) {
       markerIntermedio.remove();
@@ -1959,12 +1700,11 @@ document.getElementById("addPointIntermedio").addEventListener("click", function
   calculateRoute();
 });
 
-var markerPI = null; // Variável para armazenar o marcador do ponto de interesse
+var markerPI = null; 
 
 function addToRoute(coordinates) {
   if (markerPI) markerPI.remove();
 
-  // Adiciona um novo marcador para o ponto de interesse
   markerPI = new mapboxgl.Marker({ color: 'green' })
     .setLngLat(coordinates)
     .addTo(map);
@@ -1977,7 +1717,6 @@ function addToRoute(coordinates) {
 
   markerPI.setPopup(popupPI_escolhido);
 
-  // Adiciona evento de clique ao popup para remover o marcador
   popupPI_escolhido.getElement().addEventListener('click', function () {
     if (markerPI) {
       markerPI.remove();
@@ -1985,11 +1724,10 @@ function addToRoute(coordinates) {
     }
   });
 
-  calculateRoute(); // Recalcula a rota incluindo o novo ponto de interesse
+  calculateRoute(); 
 }
 
 
-// Função para adicionar o autocomplete e a busca de endereço
 function addAutocompleteAndSearch(inputId, markerColor, map) {
   $(function () {
     $(`#${inputId}`).autocomplete({
@@ -1998,7 +1736,6 @@ function addAutocompleteAndSearch(inputId, markerColor, map) {
 
         axios.get(url)
           .then(res => {
-            // Filtra as moradas dentro dos limites do mapa
             const featuresWithinBounds = res.data.features.filter(feature => {
               const coords = feature.geometry.coordinates;
               const lngLat = mapboxgl.LngLat.convert(coords);
@@ -2021,13 +1758,11 @@ function addAutocompleteAndSearch(inputId, markerColor, map) {
         const coords = ui.item.feature.geometry.coordinates;
         const description = ui.item.feature.place_name;
 
-        // Centralize o mapa na localização
         map.flyTo({
           center: coords,
           zoom: 15
         });
 
-        // Adiciona o marcador correspondente ao campo de busca
         if (inputId === "addressInputA") {
           if (markerA) markerA.remove();
           markerA = new mapboxgl.Marker({ color: markerColor, draggable: true })
@@ -2076,49 +1811,41 @@ function addAutocompleteAndSearch(inputId, markerColor, map) {
             .on("dragend", function () {
               fetchWeatherData(weatherMarker.getLngLat());
             });
-          fetchWeatherData(weatherMarker.getLngLat()); // Fetch weather data immediately after adding the marker
+          fetchWeatherData(weatherMarker.getLngLat());
         }
       }
     });
   });
 }
 
-// Adiciona autocomplete e busca para o campo do Ponto A
 addAutocompleteAndSearch("addressInputA", "red", map);
 
-// Adiciona autocomplete e busca para o campo do Ponto B
 addAutocompleteAndSearch("addressInputB", "blue", map);
 
-// Adiciona autocomplete e busca para o campo do Ponto Intermédio
 addAutocompleteAndSearch("addressInputIntermedio", "orange", map);
 
-// Adiciona autocomplete e busca para o campo do Ponto Meteorológico
 addAutocompleteAndSearch("addressInputWeather", "purple", map);
 
 var route;
 var lineIds = [];
 var lineDistance;
 
-// Função para calcular a rota
 function calculateRoute() {
-  if (!markerA || !markerB) return; // Se os pontos A e B não foram definidos, retorne
+  if (!markerA || !markerB) return;
 
   var pointA = markerA.getLngLat();
   var pointB = markerB.getLngLat();
-  var pointAtual = markerAtual ? markerAtual.getLngLat() : null; // Verifique se o ponto de localização atual está definido
-  var pointIntermedio = markerIntermedio ? markerIntermedio.getLngLat() : null; // Verifique se o ponto intermédio está definido
-  var pointPI = markerPI ? markerPI.getLngLat() : null; // Verifique se o ponto de interesse está definido
-  var selectedCategory = document.getElementById("selectedCategory").value; // Obtém a categoria de ponto de interesse selecionada
+  var pointAtual = markerAtual ? markerAtual.getLngLat() : null;
+  var pointIntermedio = markerIntermedio ? markerIntermedio.getLngLat() : null; 
+  var pointPI = markerPI ? markerPI.getLngLat() : null; 
+  var selectedCategory = document.getElementById("selectedCategory").value; 
 
-  // Converta as coordenadas para um formato que a API de roteamento possa entender
   var coordinates = `${pointA.lng},${pointA.lat}`;
 
-  // Se o ponto intermédio estiver definido, inclua-o nas coordenadas
   if (pointIntermedio) {
     coordinates += `;${pointIntermedio.lng},${pointIntermedio.lat}`;
   }
 
-  // Se o ponto de interesse estiver definido, inclua-o nas coordenadas
   if (pointPI) {
     coordinates += `;${pointPI.lng},${pointPI.lat}`;
   }
@@ -2133,16 +1860,14 @@ function calculateRoute() {
   var language = 'pt';
   var apiUrl = `https://api.mapbox.com/directions/v5/mapbox/${profile}/${coordinates}?steps=true&geometries=geojson&language=${language}&access_token=${mapboxgl.accessToken}`;
 
-  // Remova todas as linhas antigas do mapa
   lineIds.forEach((lineId) => {
     if (map.getLayer(lineId)) {
       map.removeLayer(lineId);
       map.removeSource(lineId);
     }
   });
-  lineIds = []; // Limpe o array de IDs de linha
+  lineIds = [];
 
-  // Faça uma solicitação para a API de roteamento
   fetch(apiUrl)
     .then((response) => {
       if (!response.ok) {
@@ -2151,26 +1876,19 @@ function calculateRoute() {
       return response.json();
     })
     .then((data) => {
-      // Verifique se há etapas de direção disponíveis
       if (!data.routes || !data.routes[0] || !data.routes[0].legs || !data.routes[0].legs[0] || !data.routes[0].legs[0].steps) {
         console.warn("Não há direções disponíveis para esta rota.");
         return;
       }
-
-      // A resposta da API de roteamento incluirá uma rota que você pode adicionar ao mapa
       var route = data.routes[0].geometry;
-
-      // Calcule a distância da rota em metros usando turf.js
       var distance = turf.length(route, { units: "kilometers" }) * 1000;
 
-      // Crie um objeto GeoJSON com a rota e adicione a distância como uma propriedade
       var routeGeoJSON = {
         type: "Feature",
         properties: { distance: distance },
         geometry: route
       };
 
-      // Adicione a rota ao mapa
       if (map.getLayer("route")) {
         map.removeLayer("route");
         map.removeSource("route");
@@ -2214,7 +1932,6 @@ function calculateRoute() {
           "-" +
           unreachablePoint.lat;
 
-        // Calcule a distância da linha em metros usando turf.js
         var lineDistance =
           turf.length(lineToNearestPoint, { units: "kilometers" }) * 1000;
 
@@ -2231,15 +1948,13 @@ function calculateRoute() {
           },
         });
 
-        lineIds.push(lineId); // Adicione o ID da linha ao array de IDs de linha
+        lineIds.push(lineId); 
       });
 
       animateAlongRoute(route);
 
-      // Variável global para armazenar o pop-up atual
       var currentPopup = null;
 
-      // Função para formatar a duração da viagem
       function formatTripDuration(durationInMinutes) {
         if (durationInMinutes >= 60) {
           var hours = Math.floor(durationInMinutes / 60);
@@ -2250,7 +1965,6 @@ function calculateRoute() {
         }
       }
 
-      // Função para formatar a distância da viagem
       function formatTripDistance(distanceInMeters) {
         if (distanceInMeters >= 1000) {
           var distanceInKm = (distanceInMeters / 1000).toFixed(1);
@@ -2260,7 +1974,6 @@ function calculateRoute() {
         }
       }
 
-      // Função para criar o conteúdo HTML do pop-up da rota
       function createPopupHTMLRoute(tripDuration, tripDistance, directions) {
         var popupContent = `
                             <div class="route-popup">
@@ -2277,14 +1990,11 @@ function calculateRoute() {
         return popupContent;
       }
 
-      // Função para mostrar o pop-up no mapa
       function showRoutePopup(popupHTML, coordinates) {
-        // Fechar pop-up anterior, se existir
         if (currentPopup) {
           currentPopup.remove();
         }
 
-        // Criar novo pop-up
         currentPopup = new mapboxgl.Popup({
           closeButton: true,
           closeOnClick: false,
@@ -2294,15 +2004,13 @@ function calculateRoute() {
           .setHTML(popupHTML)
           .addTo(map);
 
-        // Alterar o cursor para indicar interatividade
         map.getCanvas().style.cursor = 'pointer';
       }
 
-      // Evento de movimento do mouse sobre a rota
       map.on("mousemove", "route", function (e) {
-        var tripDurationInMinutes = Math.round(data.routes[0].duration / 60); // Duração da viagem em minutos
-        var tripDistanceInMeters = Math.round(data.routes[0].distance); // Distância da viagem em metros
-        var directions = data.routes[0].legs[0].steps; // Array de passos da rota
+        var tripDurationInMinutes = Math.round(data.routes[0].duration / 60);
+        var tripDistanceInMeters = Math.round(data.routes[0].distance); 
+        var directions = data.routes[0].legs[0].steps;
 
         var formattedTripDuration = formatTripDuration(tripDurationInMinutes);
         var formattedTripDistance = formatTripDistance(tripDistanceInMeters);
@@ -2314,19 +2022,16 @@ function calculateRoute() {
         showRoutePopup(popupHTML, coordinates);
       });
 
-      // Evento para o botão de fechar pop-up
       document.addEventListener('click', function (event) {
         if (event.target.classList.contains('mapboxgl-popup-close-button')) {
           if (currentPopup) {
             currentPopup.remove();
-            currentPopup = null; // Limpar a referência
+            currentPopup = null; 
           }
         }
       });
-      //https://gis4cloud.com/grupo4_ptas2024/
-      // Se uma categoria de ponto de interesse estiver selecionada, busque os pontos de interesse
       if (selectedCategory) {
-        fetch(`bd.php?tabela=${selectedCategory}`)
+        fetch(`https://gis4cloud.com/grupo4_ptas2024/bd.php?tabela=${selectedCategory}`)
           .then((response) => {
             if (!response.ok) {
               throw new Error(`Erro na requisição de pontos de interesse: ${response.status}`);
@@ -2334,7 +2039,6 @@ function calculateRoute() {
             return response.json();
           })
           .then((pointsOfInterest) => {
-            // Encontre o ponto de interesse mais próximo na rota
             var nearestPointOfInterest = pointsOfInterest.features.reduce((nearestPoint, currentPoint) => {
               var distanceToRoute = turf.pointToLineDistance(currentPoint, route);
               if (!nearestPoint || distanceToRoute < nearestPoint.distanceToRoute) {
@@ -2347,14 +2051,12 @@ function calculateRoute() {
               }
             }, null);
 
-            // Se um ponto de interesse próximo foi encontrado, recalcule a rota para incluí-lo
             if (nearestPointOfInterest) {
               coordinates = `${pointA.lng},${pointA.lat}`;
               if (pointIntermedio) {
                 coordinates += `;${pointIntermedio.lng},${pointIntermedio.lat}`;
               }
 
-              // Se o ponto de interesse estiver definido, inclua-o nas coordenadas
               if (pointPI) {
                 coordinates += `;${pointPI.lng},${pointPI.lat}`;
               }
@@ -2375,26 +2077,21 @@ function calculateRoute() {
                   return response.json();
                 })
                 .then((data) => {
-                  // Verifique se há etapas de direção disponíveis
                   if (!data.routes || !data.routes[0] || !data.routes[0].legs || !data.routes[0].legs[0] || !data.routes[0].legs[0].steps) {
                     console.warn("Não há direções disponíveis para esta rota recalculada.");
                     return;
                   }
 
-                  // A resposta da API de roteamento incluirá a nova rota que você pode adicionar ao mapa
                   var newRoute = data.routes[0].geometry;
 
-                  // Calcule a distância da rota em metros usando turf.js
                   var distance = turf.length(newRoute, { units: "kilometers" }) * 1000;
 
-                  // Crie um objeto GeoJSON com a nova rota e adicione a distância como uma propriedade
                   var newRouteGeoJSON = {
                     type: "Feature",
                     properties: { distance: distance },
                     geometry: newRoute
                   };
 
-                  // Adicione a nova rota ao mapa
                   if (map.getLayer("route")) {
                     map.removeLayer("route");
                     map.removeSource("route");
@@ -2415,12 +2112,11 @@ function calculateRoute() {
 
                   animateAlongRoute(newRoute);
 
-                  // Adicione um marcador para o ponto de interesse mais próximo (markerPI_maisProximo)
                   if (markerPI_maisProximo) {
-                    markerPI_maisProximo.remove(); // Remova o marcador anterior, se existir
+                    markerPI_maisProximo.remove();
                   } else {
                     markerPI_maisProximo = new mapboxgl.Marker({
-                      color: "black" // Cor preta
+                      color: "black"
                     })
                       .setLngLat(nearestPointOfInterest.point.geometry.coordinates)
                       .addTo(map);
@@ -2433,7 +2129,6 @@ function calculateRoute() {
 
                     markerPI_maisProximo.setPopup(popupMaisProximo);
 
-                    // Adiciona evento de clique ao popup para remover o marcador
                     popupMaisProximo.getElement().addEventListener('click', function () {
                       if (markerPI_maisProximo) {
                         markerPI_maisProximo.remove();
@@ -2441,10 +2136,8 @@ function calculateRoute() {
                       }
                     });
                   }
-                  // Variável global para armazenar o pop-up atual
                   var currentPopup = null;
 
-                  // Função para formatar a duração da viagem
                   function formatTripDuration(durationInMinutes) {
                     if (durationInMinutes >= 60) {
                       var hours = Math.floor(durationInMinutes / 60);
@@ -2455,7 +2148,6 @@ function calculateRoute() {
                     }
                   }
 
-                  // Função para formatar a distância da viagem
                   function formatTripDistance(distanceInMeters) {
                     if (distanceInMeters >= 1000) {
                       var distanceInKm = (distanceInMeters / 1000).toFixed(1);
@@ -2465,7 +2157,6 @@ function calculateRoute() {
                     }
                   }
 
-                  // Função para criar o conteúdo HTML do pop-up da rota
                   function createPopupHTMLRoute(tripDuration, tripDistance, directions) {
                     var popupContent = `
                                         <div class="route-popup">
@@ -2482,14 +2173,11 @@ function calculateRoute() {
                     return popupContent;
                   }
 
-                  // Função para mostrar o pop-up no mapa
                   function showRoutePopup(popupHTML, coordinates) {
-                    // Fechar pop-up anterior, se existir
                     if (currentPopup) {
                       currentPopup.remove();
                     }
 
-                    // Criar novo pop-up
                     currentPopup = new mapboxgl.Popup({
                       closeButton: true,
                       closeOnClick: false,
@@ -2499,15 +2187,13 @@ function calculateRoute() {
                       .setHTML(popupHTML)
                       .addTo(map);
 
-                    // Alterar o cursor para indicar interatividade
                     map.getCanvas().style.cursor = 'pointer';
                   }
 
-                  // Evento de movimento do mouse sobre a rota
                   map.on("mousemove", "route", function (e) {
-                    var tripDurationInMinutes = Math.round(data.routes[0].duration / 60); // Duração da viagem em minutos
-                    var tripDistanceInMeters = Math.round(data.routes[0].distance); // Distância da viagem em metros
-                    var directions = data.routes[0].legs[0].steps; // Array de passos da rota
+                    var tripDurationInMinutes = Math.round(data.routes[0].duration / 60);
+                    var tripDistanceInMeters = Math.round(data.routes[0].distance);
+                    var directions = data.routes[0].legs[0].steps; 
 
                     var formattedTripDuration = formatTripDuration(tripDurationInMinutes);
                     var formattedTripDistance = formatTripDistance(tripDistanceInMeters);
@@ -2519,12 +2205,11 @@ function calculateRoute() {
                     showRoutePopup(popupHTML, coordinates);
                   });
 
-                  // Evento para o botão de fechar pop-up
                   document.addEventListener('click', function (event) {
                     if (event.target.classList.contains('mapboxgl-popup-close-button')) {
                       if (currentPopup) {
                         currentPopup.remove();
-                        currentPopup = null; // Limpar a referência
+                        currentPopup = null;
                       }
                     }
                   });
@@ -2552,28 +2237,22 @@ function calculateRoute() {
 
 
 function animateAlongRoute(route) {
-  // Calculate the total length of the route
   const lineDistance = turf.length(route, { units: "kilometers" });
 
-  // Calculate the number of steps based on the length of the route
-  let steps = Math.round(lineDistance * 50); // Ajuste o multiplicador conforme necessário para ajustar a velocidade
+  let steps = Math.round(lineDistance * 50);
 
-  // Definir um limite mínimo para o número de etapas
   const minSteps = 100;
   steps = Math.max(steps, minSteps);
 
   const arc = [];
 
-  // Create an arc with the calculated coordinates
   for (let i = 0; i < lineDistance; i += lineDistance / steps) {
     const segment = turf.along(route, i, { units: "kilometers" });
     arc.push(segment.geometry.coordinates);
   }
 
-  // Update the route with calculated arc coordinates
   route.coordinates = arc;
 
-  // Initial point at the start of the route
   const point = {
     type: "FeatureCollection",
     features: [
@@ -2590,7 +2269,6 @@ function animateAlongRoute(route) {
 
   let counter = 0;
 
-  // Add the point to the map
   if (!map.getSource("point")) {
     map.addSource("point", {
       type: "geojson",
@@ -2598,7 +2276,6 @@ function animateAlongRoute(route) {
     });
   }
 
-  // Load the selected icon based on the current option
   loadSelectedIcon();
 
   function loadSelectedIcon() {
@@ -2620,12 +2297,10 @@ function animateAlongRoute(route) {
     map.loadImage(imageUrl, function (error, image) {
       if (error) throw error;
 
-      // Remove the existing layer if it exists
       if (map.getLayer("point")) {
         map.removeLayer("point");
       }
 
-      // Remove the existing image if it exists
       if (map.hasImage('icon')) {
         map.removeImage('icon');
       }
@@ -2637,7 +2312,7 @@ function animateAlongRoute(route) {
         'type': 'symbol',
         'layout': {
           'icon-image': 'icon',
-          'icon-size': 0.5, // Reduz o tamanho do ícone para 0.5
+          'icon-size': 0.5,
           'icon-rotate': ['get', 'bearing'],
           'icon-rotation-alignment': 'map',
           'icon-allow-overlap': true,
@@ -2648,8 +2323,6 @@ function animateAlongRoute(route) {
     });
   }
 
-
-  // Function to animate along the route
   function animate() {
     const start = route.coordinates[counter >= steps ? counter - 1 : counter];
     const end = route.coordinates[counter >= steps ? counter : counter + 1];
@@ -2671,18 +2344,15 @@ function animateAlongRoute(route) {
     counter++;
   }
 
-  // Start the animation
   animate();
 
-  // Add event listener to the "replay" button
   document.getElementById("replay").addEventListener("click", () => {
     counter = 0;
     animate();
   });
 
-  // Add event listener to the routing profile select
   document.getElementById("routingProfile").addEventListener("change", function () {
-    const selectedValue = this.value; // Obtém o valor do perfil selecionado
+    const selectedValue = this.value;
     selectOption(this, "routingProfile", selectedValue);
   });
 }
@@ -2698,10 +2368,8 @@ document.querySelectorAll(".class-title").forEach((title) => {
 });
 
 function limparTudo() {
-  // Limpe as isócronas
   limparIsocronas();
 
-  // Remova os marcadores, se existirem
   if (markerA) markerA.remove();
   if (markerB) markerB.remove();
   if (markerIntermedio) markerIntermedio.remove();
@@ -2709,13 +2377,11 @@ function limparTudo() {
   if (markerAtual) markerAtual.remove();
   if (markerPI_maisProximo) markerPI_maisProximo.remove();
 
-  // Remova a rota, se existir
   if (map.getLayer("route")) {
     map.removeLayer("route");
     map.removeSource("route");
   }
 
-  // Remova todas as linhas antigas do mapa
   lineIds.forEach((lineId) => {
     if (map.getLayer(lineId)) {
       map.removeLayer(lineId);
@@ -2726,12 +2392,10 @@ function limparTudo() {
 
   if (weatherMarker) weatherMarker.remove();
 
-  // Oculta a imagem do ícone ao invés de removê-la
   if (map.getLayer("point")) {
     map.setLayoutProperty('point', 'visibility', 'none');
   }
 
-  // Redefina os marcadores e a rota
   markerA = null;
   markerB = null;
   markerIntermedio = null;
@@ -2746,14 +2410,11 @@ function limparTudo() {
     closeOnClick: false,
   });
 
-  // Esconde o botão "Replay Animation"
   document.getElementById("replay").style.display = "none";
 
-  // Esconde o botão "Adicionar ponto intermédio" e o input de texto correspondente
   document.getElementById("addPointIntermedio").style.display = "none";
   document.getElementById("addressInputIntermedio").style.display = "none";
 
-  // Esconde o botão "Selecionar categoria do ponto de interesse"
   document.getElementById("selectedCategory").style.display = "none";
   document.getElementById("selectedCategoryLabel").style.display = "none";
 }
