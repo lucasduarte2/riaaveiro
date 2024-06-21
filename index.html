@@ -23,6 +23,8 @@
       integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
       crossorigin="anonymous"
     />
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" />
     <script src="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
@@ -80,10 +82,14 @@
             <label>Tipo de métrica:</label>
             <div class="metrica" id="metricOptions">
               <div class="option" data-value="minutes" onclick="selectMetric('minutes')">
-                <label>Minutos</label>
+                <label>Minutos
+                  <i class="fa fa-hourglass-half" style="font-size: 20px;"></i>
+                </label>
               </div>
               <div class="option" data-value="meters" onclick="selectMetric('meters')">
-                <label>Metros</label>
+                <label>Metros
+                  <i class="fas fa-ruler-vertical" style="font-size: 20px;transform: rotate(-45deg);margin-left: 5px;"></i>
+                </label>
               </div>
             </div>   
           </fieldset>
@@ -99,17 +105,23 @@
           <br />
           <fieldset class="select-fieldset">
             <fieldset class="select-fieldset">
-              <button id="addPointA">Adicionar ponto A</button>
+              <button id="addPointA">Adicionar ponto A
+                <i class="fa fa-map-marker" style="font-size: 20px;color:red"></i>
+              </button>
               <input type="text" id="addressInputA" style="width: 100%; margin-top: 5px;" placeholder="Digite a localização do ponto A" />
             </fieldset>
 
             <fieldset class="select-fieldset">
-              <button id="addPointB">Adicionar ponto B</button>
+              <button id="addPointB">Adicionar ponto B
+                <i class="fa fa-map-marker" style="font-size: 20px;color:blue"></i>
+              </button>
               <input type="text" id="addressInputB" style="width: 100%; margin-top: 5px;" placeholder="Digite a localização do ponto B" />
             </fieldset>
 
             <fieldset class="select-fieldset">
-              <button id="addPointIntermedio" style="display: none;">Adicionar ponto intermédio</button>
+              <button id="addPointIntermedio" style="display: none;">Adicionar ponto intermédio
+                <i class="fa fa-map-marker" style="font-size: 20px;color:yellow"></i>
+              </button>
               <input type="text" id="addressInputIntermedio" style="width: 100%; margin-top: 5px; display: none;" placeholder="Digite a localização do ponto intermédio" />
             </fieldset>
 
@@ -149,21 +161,28 @@
               </select>
             </fieldset>
 
-            <button id="calculateRouteButton">Calcular</button>
+            <button id="calculateRouteButton">Calcular
+              <i class="fa fa-location-arrow" style="font-size: 20px;"></i>
+            </button>
             <div class="overlay">
-              <button id="replay" style="display: none;">Repetir animação</button>
+              <button id="replay" style="display: none;">Repetir animação
+                <i class="fa fa-refresh" style="font-size: 20px;"></i>
+              </button>
             </div>
           </fieldset>
 
           <br />
           <button type="button" class="btn btn-warning" onclick="limparTudo()">
             Limpar
+            <i class="fa fa-trash" style="font-size: 20px;"></i>
           </button>
         </div>
         
         <div id="weather-settings" class="tab-content">
           <fieldset>
-            <button id="addWeatherPoint">Adicionar ponto meteorológico</button>
+            <button id="addWeatherPoint">Adicionar ponto meteorológico
+              <i class="fa fa-map-marker" style="font-size: 20px;color:purple"></i>
+            </button>
             <input type="text" id="addressInputWeather" style="width: 100%; margin-top: 5px;" placeholder="Digite a localização do ponto meteorológico" />
           </fieldset>
         </div>

@@ -312,12 +312,14 @@ map.on("load", () => {
 
     if (tabela === 'ondas') {
       extraHTML = `
-        <p><button class="btnPraias" id="saber-mais" data-extra-info='${JSON.stringify(extraInfo)}'>Saber mais</button></p>
+        <p><button class="btnPraias" id="saber-mais" data-extra-info='${JSON.stringify(extraInfo)}'>Ver Informações
+        <i class="fas fa-info-circle" style="font-size: 18px; margin-left: 5px;"></i></button></p>
       `;
     } else if (tabela === 'barra') {
       estacao = `
         ${imagemHTML}
-        <p><button class="btnPraias" id="estacao-barra">Ver Informações</button></p>
+        <p><button class="btnPraias" id="estacao-barra">Ver Informações
+        <i class="fas fa-info-circle" style="font-size: 18px; margin-left: 5px;"></i></button></p>
       `;
       // Retorne apenas o conteúdo específico para 'barra'
       return `
@@ -326,29 +328,35 @@ map.on("load", () => {
       `;
     } else if (tabela === 'praias' && nome === 'Praia da Barra') {
       extraHTML = `
-        <p><button class="btnPraias" id="praia-barra">Ver Praia</button></p>
+        <p><button class="btnPraias" id="praia-barra">Ver Praia
+        <i class="fa fa-video-camera" style="font-size: 18px; margin-left: 5px;"></i></button></p>
       `;
 
     } else if (tabela === 'praias' && nome === 'Praia da Furadouro') {
       extraHTML = `
-        <p><button class="btnPraias" id="praia-furadouro">Ver Praia</button></p>
+        <p><button class="btnPraias" id="praia-furadouro">Ver Praia
+        <i class="fa fa-video-camera" style="font-size: 18px; margin-left: 5px;"></i></button></p>
       `;
 
     } else if (tabela === 'praias' && nome === 'Praia da Torreira') {
       extraHTML = `
-        <p><button class="btnPraias" id="praia-torreira">Ver Praia</button></p>
+        <p><button class="btnPraias" id="praia-torreira">Ver Praia
+        <i class="fa fa-video-camera" style="font-size: 18px; margin-left: 5px;"></i></button></p>
       `;
     } else if (tabela === 'praias' && nome === 'Praia da Costa Nova') {
       extraHTML = `
-        <p><button class="btnPraias" id="praia-costa-nova">Ver Praia</button></p>
+        <p><button class="btnPraias" id="praia-costa-nova">Ver Praia
+        <i class="fa fa-video-camera" style="font-size: 18px; margin-left: 5px;"></i></button></p>
       `;
     } else if (tabela === 'praias' && nome === 'Praia da Vagueira') {
       extraHTML = `
-        <p><button class="btnPraias" id="praia-vagueira">Ver Praia</button></p>
+        <p><button class="btnPraias" id="praia-vagueira">Ver Praia
+        <i class="fa fa-video-camera" style="font-size: 18px; margin-left: 5px;"></i></button></p>
       `;
     } else if (tabela === 'praias' && nome === 'Praia de Mira') {
       extraHTML = `
-        <p><button class="btnPraias" id="praia-mira">Ver Praia</button></p>
+        <p><button class="btnPraias" id="praia-mira">Ver Praia
+        <i class="fa fa-video-camera" style="font-size: 18px; margin-left: 5px;"></i></button></p>
       `;
     }
 
@@ -363,7 +371,8 @@ map.on("load", () => {
       ${addressHTML}
       <p><a href="${streetViewUrl}" target="_blank">Ver no Google Street View</a></p>
       ${extraHTML}
-      <p><button id="add_PI_to_Route">Adicionar à rota</button></p>
+      <p><button id="add_PI_to_Route">Adicionar à rota
+      <i class="fa fa-road" style="font-size: 18px; margin-left: 5px;"></i></button></p>
     `;
   }
 
@@ -1847,7 +1856,7 @@ function fetchWeatherData(lngLat) {
       }
 
       // Agora você pode adicionar um popup_tempo ao mapa na localização clicada com as informações meteorológicas
-      popup_tempo = new mapboxgl.Popup()
+      popup_tempo = new mapboxgl.Popup({ offset: 25 })
         .setLngLat(lngLat)
         .setHTML(
           `<h6>Informações meteorológicas</h6>
