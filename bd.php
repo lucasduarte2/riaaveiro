@@ -1,7 +1,6 @@
 <?php
 function getGeoJSON($tabela)
 {
-    // Verificar se a tabela é 'spatial_ref_sys' e pular
     if ($tabela === 'spatial_ref_sys') {
         return json_encode(
             array(
@@ -13,16 +12,12 @@ function getGeoJSON($tabela)
     }
 
     $cacheFile = 'cache/' . $tabela . '.json';
-    // Definir o tempo de expiração do cache em segundos (1 hora)
     $cacheTime = 3600;
 
-    // Verificar se o arquivo de cache existe e se ainda é válido
     if (file_exists($cacheFile) && time() - filemtime($cacheFile) < $cacheTime) {
-        // Se os dados estiverem em cache e forem recentes, retornar os dados em cache
         return file_get_contents($cacheFile);
     }
 
-    // Se os dados não estiverem em cache ou forem antigos, fazer uma nova consulta ao banco de dados
     $conn = pg_connect("host=www.gis4cloud.com dbname=grupo4_ptas2024 user=grupo4_ptas2024 password=riaaveiro2024");
     if (!$conn) {
         die("Erro ao conectar à base de dados.");
@@ -60,14 +55,11 @@ function getGeoJSON($tabela)
             $mare_heights = json_decode($row['mare_heights'], true);
             
             $mare_heights_filtrado = array_filter($mare_heights, function($entry) use ($dataAtual) {
-                // Converte a string de tempo para um objeto DateTime
                 $entryTime = DateTime::createFromFormat('d-m-Y H:i:s', $entry['time']);
-                // Formata a data do objeto DateTime para comparação
                 $entryDate = $entryTime->format('Y-m-d');
                 return $entryDate === $dataAtual;
             });
-            
-            // Agora vamos extrair os tempos e alturas do array filtrado
+
             $times = array_map(function($entry) {
                 $date = new DateTime($entry['time']);
                 return $date->format('H:i');
@@ -128,7 +120,6 @@ function getGeoJSON($tabela)
 
     pg_close($conn);
 
-    // Escrever os dados atualizados no arquivo de cache
     file_put_contents($cacheFile, json_encode($geojson));
 
     return json_encode($geojson);

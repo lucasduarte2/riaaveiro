@@ -315,7 +315,6 @@
       </div>
     </div>
 
-   <!-- Modal -->
    <div id="modalEstacaoBarra" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.4); justify-content: center; align-items: center;">
     <div style="background-color: #fefefe; margin: auto; padding: 20px; border: 1px solid #888; width: 80%; max-width: 800px; max-height: 90%; overflow-y: auto; border-radius: 15px;">
       <span id="closeModal" style="color: #aaa; position: absolute; top: 10px; right: 10px; font-size: 28px; font-weight: bold; cursor: pointer;" onclick="closeModal()">&times;</span>
@@ -331,7 +330,6 @@
     </div>
   </div>
 
-  <!-- Modal -->
   <div id="modalEstacaoFuradouro" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.4); justify-content: center; align-items: center;">
     <div style="background-color: #fefefe; margin: auto; padding: 20px; border: 1px solid #888; width: 80%; max-width: 800px; max-height: 90%; overflow-y: auto; border-radius: 15px;">
       <span id="closeModalFuradouro" style="color: #aaa; position: absolute; top: 10px; right: 10px; font-size: 28px; font-weight: bold; cursor: pointer;" onclick="closeModalFuradouro()">&times;</span>
@@ -432,7 +430,6 @@
     </div>
   </div>
 
-   <!-- Modal -->
    <div id="modalEstacaoTorreira" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.4); justify-content: center; align-items: center;">
     <div style="background-color: #fefefe; margin: auto; padding: 20px; border: 1px solid #888; width: 80%; max-width: 800px; max-height: 90%; overflow-y: auto; border-radius: 15px;">
       <span id="closeModalTorreira" style="color: #aaa; position: absolute; top: 10px; right: 10px; font-size: 28px; font-weight: bold; cursor: pointer;" onclick="closeModalTorreira()">&times;</span>
@@ -533,7 +530,6 @@
     </div>
   </div>
 
-  <!-- Modal -->
   <div id="modalEstacaoPraiaBarra" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.4); justify-content: center; align-items: center;">
     <div style="background-color: #fefefe; margin: auto; padding: 20px; border: 1px solid #888; width: 80%; max-width: 800px; max-height: 90%; overflow-y: auto; border-radius: 15px;">
       <span id="closeModalBarra" style="color: #aaa; position: absolute; top: 10px; right: 10px; font-size: 28px; font-weight: bold; cursor: pointer;" onclick="closeModalBarra()">&times;</span>
@@ -629,7 +625,6 @@
     </div>
   </div>
 
-  <!-- Modal -->
   <div id="modalEstacaoCostaNova" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.4); justify-content: center; align-items: center;">
     <div style="background-color: #fefefe; margin: auto; padding: 20px; border: 1px solid #888; width: 80%; max-width: 800px; max-height: 90%; overflow-y: auto; border-radius: 15px;">
       <span id="closeModalCostaNova" style="color: #aaa; position: absolute; top: 10px; right: 10px; font-size: 28px; font-weight: bold; cursor: pointer;" onclick="closeModalCostaNova()">&times;</span>
@@ -730,7 +725,6 @@
     </div>
   </div>
 
-  <!-- Modal -->
   <div id="modalEstacaoVagueira" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.4); justify-content: center; align-items: center;">
     <div style="background-color: #fefefe; margin: auto; padding: 20px; border: 1px solid #888; width: 80%; max-width: 800px; max-height: 90%; overflow-y: auto; border-radius: 15px;">
       <span id="closeModalVagueira" style="color: #aaa; position: absolute; top: 10px; right: 10px; font-size: 28px; font-weight: bold; cursor: pointer;" onclick="closeModalVagueria()">&times;</span>
@@ -831,7 +825,6 @@
     </div>
   </div>
 
-  <!-- Modal -->
   <div id="modalEstacaoMira" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.4); justify-content: center; align-items: center;">
     <div style="background-color: #fefefe; margin: auto; padding: 20px; border: 1px solid #888; width: 80%; max-width: 800px; max-height: 90%; overflow-y: auto; border-radius: 15px;">
       <span id="closeModalMira" style="color: #aaa; position: absolute; top: 10px; right: 10px; font-size: 28px; font-weight: bold; cursor: pointer;" onclick="closeModalMira()">&times;</span>
@@ -928,10 +921,8 @@
   </div>
 
   <div id="infoModal" class="modal">
-    <!-- Modal content -->
     <div class="modal-content2">
       <div id="modalContent">
-        <!-- The extra information will be inserted here -->
       </div>
       <canvas id="mareGraph" width="700" height="300"></canvas>
     </div>
@@ -941,11 +932,8 @@
 <script>
   document.addEventListener('DOMContentLoaded', (event) => {
 
-  //----------------------------------------- FURADOURO
-
   document.addEventListener('click', function (e) {
   if (e.target && e.target.id === 'praia-furadouro') {
-    // Exibe o modal com display flex
     var modal = document.getElementById('modalEstacaoFuradouro');
     modal.style.display = 'flex';
     modal.style.justifyContent = 'center';
@@ -953,17 +941,13 @@
   }
 });
 
-  // Quando o usuário clica no <span> (x), fecha o modal
   document.getElementById('closeModalFuradouro').onclick = function() {
     document.getElementById('modalEstacaoFuradouro').style.display = 'none';
   }
 
 
-  //-----------------------------------------TORREIRA
-
   document.addEventListener('click', function (e) {
   if (e.target && e.target.id === 'praia-torreira') {
-    // Exibe o modal com display flex
     var modal = document.getElementById('modalEstacaoTorreira');
     modal.style.display = 'flex';
     modal.style.justifyContent = 'center';
@@ -971,16 +955,12 @@
   }
 });
 
-  // Quando o usuário clica no <span> (x), fecha o modal
   document.getElementById('closeModalTorreira').onclick = function() {
     document.getElementById('modalEstacaoTorreira').style.display = 'none';
   }
 
-  //-----------------------------------------Barra
-
   document.addEventListener('click', function (e) {
   if (e.target && e.target.id === 'praia-barra') {
-    // Exibe o modal com display flex
     var modal = document.getElementById('modalEstacaoPraiaBarra');
     modal.style.display = 'flex';
     modal.style.justifyContent = 'center';
@@ -988,16 +968,12 @@
   }
 });
 
-  // Quando o usuário clica no <span> (x), fecha o modal
   document.getElementById('closeModalBarra').onclick = function() {
     document.getElementById('modalEstacaoPraiaBarra').style.display = 'none';
   }
 
-//-----------------------------------------Costa Nova
-
 document.addEventListener('click', function (e) {
   if (e.target && e.target.id === 'praia-costa-nova') {
-    // Exibe o modal com display flex
     var modal = document.getElementById('modalEstacaoCostaNova');
     modal.style.display = 'flex';
     modal.style.justifyContent = 'center';
@@ -1005,16 +981,12 @@ document.addEventListener('click', function (e) {
   }
 });
 
-  // Quando o usuário clica no <span> (x), fecha o modal
   document.getElementById('closeModalCostaNova').onclick = function() {
     document.getElementById('modalEstacaoCostaNova').style.display = 'none';
   }
 
-  //-----------------------------------------Vagueira
-
 document.addEventListener('click', function (e) {
   if (e.target && e.target.id === 'praia-vagueira') {
-    // Exibe o modal com display flex
     var modal = document.getElementById('modalEstacaoVagueira');
     modal.style.display = 'flex';
     modal.style.justifyContent = 'center';
@@ -1022,16 +994,12 @@ document.addEventListener('click', function (e) {
   }
 });
 
-  // Quando o usuário clica no <span> (x), fecha o modal
   document.getElementById('closeModalVagueira').onclick = function() {
     document.getElementById('modalEstacaoVagueira').style.display = 'none';
   }
 
-  //-----------------------------------------Mira
-
 document.addEventListener('click', function (e) {
   if (e.target && e.target.id === 'praia-mira') {
-    // Exibe o modal com display flex
     var modal = document.getElementById('modalEstacaoMira');
     modal.style.display = 'flex';
     modal.style.justifyContent = 'center';
@@ -1039,19 +1007,12 @@ document.addEventListener('click', function (e) {
   }
 });
 
-  // Quando o usuário clica no <span> (x), fecha o modal
   document.getElementById('closeModalMira').onclick = function() {
     document.getElementById('modalEstacaoMira').style.display = 'none';
   }
 
-
-  //-----------------------------------------ESTAÇAO BARRA
-
-  
-
   document.addEventListener('click', function (e) {
   if (e.target && e.target.id === 'estacao-barra') {
-      // Exibe o modal com display flex
       var modal = document.getElementById('modalEstacaoBarra');
       modal.style.display = 'flex';
       modal.style.justifyContent = 'center';
@@ -1059,12 +1020,10 @@ document.addEventListener('click', function (e) {
     }
   });
 
-  // Quando o usuário clica no <span> (x), fecha o modal
   document.getElementById('closeModal').onclick = function() {
     document.getElementById('modalEstacaoBarra').style.display = 'none';
   }
 
-  // Quando o usuário clica fora do modal, ele também é fechado
   window.onclick = function(event) {
     var modal = document.getElementById('modalEstacaoBarra');
     if (event.target === modal) {

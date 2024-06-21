@@ -11,7 +11,7 @@ $stmtDataUltimaAtualizacao = $pdo->query($queryDataUltimaAtualizacao);
 $dataUltimaAtualizacao = $stmtDataUltimaAtualizacao->fetch(PDO::FETCH_ASSOC);
 
 if ($dataUltimaAtualizacao['ultima_atualizacao'] != $hoje) {
-    $query = "SELECT id, lat, lng FROM ondas WHERE data_ult_at != :hoje OR data_ult_at IS NULL LIMIT 100"; // Limitar o nÃºmero de registros processados
+    $query = "SELECT id, lat, lng FROM ondas WHERE data_ult_at != :hoje OR data_ult_at IS NULL LIMIT 100";
     $stmt = $pdo->prepare($query);
     $stmt->bindParam(':hoje', $hoje);
     $stmt->execute();

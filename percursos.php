@@ -1,5 +1,4 @@
 <?php
-// Conectar ao banco de dados PostgreSQL
 $conn = pg_connect("host=www.gis4cloud.com dbname=grupo4_ptas2024 user=grupo4_ptas2024 password=riaaveiro2024");
 
 if (!$conn) {
@@ -7,16 +6,13 @@ if (!$conn) {
     exit;
 }
 
-// Verificar se o parâmetro 'tabela' foi passado via GET
 if (!isset($_GET['tabela'])) {
     echo "Parâmetro 'tabela' não especificado.";
     exit;
 }
 
-// Obter o nome da tabela do parâmetro da URL
 $tabela = $_GET['tabela'];
 
-// Preparar e executar a consulta SQL para obter os dados GeoJSON
 $query = "SELECT id, 
                  ST_AsGeoJSON(geom) AS geom,
                  nome_do_percurso,
@@ -34,7 +30,6 @@ if (!$result) {
     exit;
 }
 
-// Montar o GeoJSON FeatureCollection
 $geojson = array(
     'type' => 'FeatureCollection',
     'features' => array()
@@ -61,13 +56,10 @@ while ($row = pg_fetch_assoc($result)) {
     array_push($geojson['features'], $feature);
 }
 
-// Fechar a conexão com o banco de dados
 pg_close($conn);
 
-// Convertendo o GeoJSON para JSON
 $json = json_encode($geojson);
 
-// Exibindo o GeoJSON
 header('Content-Type: application/json');
 echo $json;
 ?>
