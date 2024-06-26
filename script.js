@@ -279,7 +279,7 @@ map.on("load", () => {
     let extraHTML = '';
     let estacao = '';
     let imagemHTML = '';
-
+    const nomeTratado = nomesTratados[tabela] || tabela;
     if (imgurl !== "https://upload.wikimedia.org/wikipedia/commons/d/d1/Image_not_available.png") {
       imagemHTML = `<p><img src="${imgurl}" alt="Imagem" width="200px" height="150px"/></p>`;
     }
@@ -332,8 +332,6 @@ map.on("load", () => {
         <i class="fa fa-video-camera" style="font-size: 18px; margin-left: 5px;"></i></button></p>
       `;
     }
-
-    const nomeTratado = nomesTratados[tabela] || tabela;
 
     return `
       <h6><b>Tipo:</b> ${nomeTratado}</h6>
