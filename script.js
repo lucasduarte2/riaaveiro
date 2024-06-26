@@ -2284,13 +2284,13 @@ function animateAlongRoute(route) {
 
     switch (selectedProfile) {
       case "driving-traffic":
-        imageUrl = "https://i.ibb.co/jWxT7Np/image-2.png";
+        imageUrl = "https://i.ibb.co/9GXBB5F/car.png";
         break;
       case "walking":
-        imageUrl = "https://cdn-icons-png.flaticon.com/128/16419/16419629.png";
+        imageUrl = "https://i.ibb.co/ydQW2Fk/gajo.png";
         break;
       case "cycling":
-        imageUrl = "https://cdn-icons-png.flaticon.com/128/2772/2772608.png";
+        imageUrl = "https://i.ibb.co/jLBLfF8/bike.png";
         break;
     }
 
