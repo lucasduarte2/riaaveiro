@@ -221,7 +221,7 @@ const nomesTratados = {
   "terminal_ferry": "Terminal de Ferry",
   "salinas": "Salina",
   "voleipraia": "Volei de Praia",
-  "barra": "Barra"
+  "barra": "Estação Meteorológica"
 };
 
 var originalPointsData = {};
