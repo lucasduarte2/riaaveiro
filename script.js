@@ -1,7 +1,7 @@
 var markerA, markerB, markerIntermedio, markerAtual, markerPI_maisProximo;
 
 function callPhpFile() {
-  fetch('mares.php')
+  fetch('https://gis4cloud.com/grupo4_ptas2024/mares.php')
     .then(response => {
       if (!response.ok) {
         throw new Error('Erro na rede');
