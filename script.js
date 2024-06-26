@@ -296,7 +296,7 @@ map.on("load", () => {
         <i class="fas fa-info-circle" style="font-size: 18px; margin-left: 5px;"></i></button></p>
       `;
       return `
-        <h6><b>Tipo:</b> ${tabela}</h6>
+        <h6><b>Tipo:</b> ${nomeTratado}</h6>
         ${estacao}
       `;
     } else if (tabela === 'praias' && nome === 'Praia da Barra') {
