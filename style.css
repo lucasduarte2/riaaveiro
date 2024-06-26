@@ -636,3 +636,27 @@ body {
   border-bottom-right-radius: 15px;
   border-top-right-radius: 15px;
 }
+.custom-tab {
+  display: flex;
+}
+
+.custom-tablinks {
+  flex: 1;
+  padding: 10px 0;
+  cursor: pointer;
+  text-align: center;
+  border: none;
+  background-color: #F8F8F8;
+  color: rgb(0, 0, 0);
+  transition: 0.3s;
+}
+
+.custom-tablinks:hover {
+  background-color: #0057B4;
+  color: rgb(255, 255, 255);
+}
+
+.custom-tablinks.active {
+  background-color: #0057B4;
+  color: rgb(255, 255, 255);
+}

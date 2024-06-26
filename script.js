@@ -1,5 +1,32 @@
 var markerA, markerB, markerIntermedio, markerAtual, markerPI_maisProximo;
 
+function openWidget(evt, widgetName) {
+  var i, tabcontent, tablinks;
+  tabcontent = document.getElementsByClassName("custom-tabcontent");
+  for (i = 0; i < tabcontent.length; i++) {
+    tabcontent[i].style.display = "none";
+  }
+  tablinks = document.getElementsByClassName("custom-tablinks");
+  for (i = 0; i < tablinks.length; i++) {
+    tablinks[i].className = tablinks[i].className.replace(" active", "");
+  }
+  document.getElementById(widgetName).style.display = "block";
+  evt.currentTarget.className += " active";
+
+  if (widgetName == 'windfinder') {
+    var widgetDiv = document.getElementById('windfinder-widget');
+    widgetDiv.innerHTML = '';
+    var s = document.createElement('script');
+    s.src = 'https://www.windfinder.com/widget/forecast/js/barra?unit_wave=m&unit_rain=mm&unit_temperature=c&unit_wind=kmh&unit_pressure=hPa&days=4&show_day=0';
+    widgetDiv.appendChild(s);
+  } else if (widgetName == 'windy') {
+    document.getElementById('windy-widget').innerHTML = '<iframe src="https://embed.windy.com/embed2.html?lat=40.643&lon=-8.745&detailLat=40.643&detailLon=-8.745&width=800&height=600&zoom=10&level=surface&overlay=waves&product=ecmwf&menu=&message=true&marker=&calendar=12&pressure=&type=map&location=coordinates&detail=&metricWind=default&metricTemp=default&radarRange=-1&key=WkB9eYcd1J6eTaWz7f8M1Hknm2jHEnOH" frameborder="0" style="width: 100%; height: 502px;"></iframe>';
+  }
+}
+
+// Get the first element with class="custom-tablinks" and click on it
+document.getElementsByClassName("custom-tablinks")[0].click();
+
 function callPhpFile() {
   fetch('https://gis4cloud.com/grupo4_ptas2024/mares.php')
     .then(response => {
@@ -2284,13 +2311,13 @@ function animateAlongRoute(route) {
 
     switch (selectedProfile) {
       case "driving-traffic":
-        imageUrl = "https://i.ibb.co/jWxT7Np/image-2.png";
+        imageUrl = "https://i.ibb.co/9GXBB5F/car.png";
         break;
       case "walking":
-        imageUrl = "https://cdn-icons-png.flaticon.com/128/16419/16419629.png";
+        imageUrl = "https://i.ibb.co/ydQW2Fk/gajo.png";
         break;
       case "cycling":
-        imageUrl = "https://cdn-icons-png.flaticon.com/128/2772/2772608.png";
+        imageUrl = "https://i.ibb.co/jLBLfF8/bike.png";
         break;
     }
 
