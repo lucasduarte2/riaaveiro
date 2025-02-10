@@ -514,7 +514,7 @@ map.on("load", () => {
   );
   loadStream(
     "video3",
-    "https://video-auth1.iol.pt/beachcam/barra/playlist.m3u8"
+    "https://video-auth1.iol.pt/beachcam/costanova/playlist.m3u8"
   );
   loadStream(
     "video4",
