@@ -522,7 +522,7 @@ map.on("load", () => {
   );
   loadStream(
     "video5",
-    "https://video-auth1.iol.pt/beachcam/vagueiracasablanca/playlist.m3u8"
+    "https://video-auth1.iol.pt/beachcam/costanova/playlist.m3u8"
   );
   loadStream(
     "video6",
