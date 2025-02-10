@@ -455,10 +455,18 @@ map.on("load", () => {
       hls.on(Hls.Events.MANIFEST_PARSED, function () {
         video.play();
       });
+      hls.on(Hls.Events.ERROR, function (event, data) {
+        if (data.type === Hls.ErrorTypes.NETWORK_ERROR) {
+          console.error(`Erro ao carregar o stream: ${streamUrl}`);
+        }
+      });
     } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
       video.src = streamUrl;
       video.addEventListener('canplay', function () {
         video.play();
+      });
+      video.addEventListener('error', function () {
+        console.error(`Erro ao carregar o stream: ${streamUrl}`);
       });
     }
   }
@@ -1249,7 +1257,12 @@ function updateIsochroneColor(periodType) {
   } else {
     color = "#5a3fc0"; 
   }
-  map.setPaintProperty("isochrone", "fill-color", color);
+
+  if (map.getLayer("isochrone")) {
+    map.setPaintProperty("isochrone", "fill-color", color);
+  } else {
+    console.warn("A camada 'isochrone' não existe no estilo do mapa.");
+  }
 }
 
 function selectPeriod(periodType) {
