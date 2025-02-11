@@ -583,7 +583,7 @@ map.on("load", () => {
               }
             }
 
-            map.on("mouseenter", tabela + "_within", function (e) {
+            map.on("click", tabela + "_within", function (e) {
               closeCurrentPopup();
               if (closePopupTimeout) {
                 clearTimeout(closePopupTimeout);
